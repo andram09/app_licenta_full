@@ -6,6 +6,9 @@ const Objective = require('./Objective');
 const Category = require('./Category');
 const Expense = require('./Expense');
 const ExpenseCategory = require('./ExpenseCategory');
+//auth
+const RefreshToken = require('./RefreshToken');
+const UserToken = require('./UserToken');
 
 // --- RELATII ---
 
@@ -33,6 +36,17 @@ Expense.belongsTo(Trip, { foreignKey: 'id_trip' });
 ExpenseCategory.hasMany(Expense, { foreignKey: 'id_expense_category' });
 Expense.belongsTo(ExpenseCategory, { foreignKey: 'id_expense_category' });
 
+//---auth---
+// User -> RefreshTokens
+// La stergerea unui user, stergem si toate refresh token-urile sale
+User.hasMany(RefreshToken, { foreignKey: 'id_user', onDelete: 'CASCADE' });
+RefreshToken.belongsTo(User, { foreignKey: 'id_user' });
+
+// User -> UserTokens
+// La stergerea unui user, stergem si toate token-urile sale de resetare parola
+User.hasMany(UserToken, { foreignKey: 'id_user', onDelete: 'CASCADE' });
+UserToken.belongsTo(User, { foreignKey: 'id_user' });
+
 module.exports = {
   sequelize,
   User,
@@ -41,5 +55,7 @@ module.exports = {
   Objective,
   Category,
   Expense,
-  ExpenseCategory
+  ExpenseCategory,
+  RefreshToken,
+  UserToken
 };
