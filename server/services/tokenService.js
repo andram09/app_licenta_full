@@ -1,15 +1,14 @@
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+import jwt from "jsonwebtoken";
 
-const generateAccessToken = (user) => {
+export const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user.id_user, email: user.email, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_ACCESS_EXPIRATION || '15m' }
+    { expiresIn: '7d' }
   );
 };
 
-const verifyAccessToken = (token) => {
+export const verifyAccessToken = (token) => {
   try {
     return jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
@@ -17,7 +16,3 @@ const verifyAccessToken = (token) => {
   }
 };
 
-module.exports = {
-  generateAccessToken,
-  verifyAccessToken
-};

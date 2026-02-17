@@ -1,8 +1,8 @@
-const Joi = require('joi');
+import Joi from "joi";
 
 // Schema de validare pentru parola - definita separat pentru a fi reutilizata
 // in mai multe scheme fara duplicare de cod
-const passwordSchema = Joi.string()
+export const passwordSchema = Joi.string()
   .min(8)
   .max(50)
   .pattern(new RegExp('(?=.*[a-z])'))
@@ -18,7 +18,7 @@ const passwordSchema = Joi.string()
   });
 
 // Schema pentru inregistrare
-const registerSchema = Joi.object({
+export const registerSchema = Joi.object({
   first_name: Joi.string()
     .min(2)
     .max(50)
@@ -55,7 +55,7 @@ const registerSchema = Joi.object({
 // Schema pentru autentificare
 // La login nu verificam complexitatea parolei - doar ca exista
 // Motivul: un user creat inainte de introducerea regulilor nu trebuie blocat
-const loginSchema = Joi.object({
+export const loginSchema = Joi.object({
   email: Joi.string()
     .email()
     .required()
@@ -73,7 +73,7 @@ const loginSchema = Joi.object({
 
 // Schema pentru cererea de resetare parola
 // Userul introduce doar email-ul pentru a primi link-ul de reset
-const forgotPasswordSchema = Joi.object({
+export const forgotPasswordSchema = Joi.object({
   email: Joi.string()
     .email()
     .required()
@@ -84,7 +84,7 @@ const forgotPasswordSchema = Joi.object({
 });
 
 // Schema pentru resetarea efectiva a parolei
-const resetPasswordSchema = Joi.object({
+export const resetPasswordSchema = Joi.object({
   token: Joi.string()
     .required()
     .messages({
@@ -103,10 +103,3 @@ const resetPasswordSchema = Joi.object({
       'any.required': 'Password confirmation is required'
     })
 });
-
-module.exports = {
-  registerSchema,
-  loginSchema,
-  forgotPasswordSchema,
-  resetPasswordSchema
-};

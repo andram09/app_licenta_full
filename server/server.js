@@ -1,33 +1,43 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
-const db = require('./models/index');
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+
+import {sequelize} from "./models/index.js";
+
+import {router as authRouter} from "./routes/authRouter.js"
+
+dotenv.config();
 
 const app = express();
 
-// --- Middlewares ---
+// Middlewares
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
-// --- Rute API ---
+// dacă folosești cookies pentru JWT
+import cookieParser from "cookie-parser";
+app.use(cookieParser());
 
-// Ruta de test pentru a verifica starea serverului
-app.get('/test', (req, res) => {
+// API Routes
+app.use("/auth", authRouter);
+
+// Test route
+app.get("/test", (req, res) => {
   res.json({ status: "Server is up and running" });
 });
 
-// --- Pornire Server si sincronizare BD ---
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 
-// force: false asigura ca tabelele nu sunt sterse si recreate la fiecare restart
-db.sequelize.sync({ alter: true }) 
+sequelize.sync({ alter: true })
   .then(() => {
-    console.log('MySQL connection established and tables synced.');
+    console.log("DB connection established and tables synced.");
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   })
-  .catch(err => {
-    console.error('Database synchronization failed:', err);
-  });
+  .catch((err) => {
+    console.error("Database synchronization failed:", err);
+  }
+);

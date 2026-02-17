@@ -1,8 +1,8 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db.config');
+import { DataTypes } from "sequelize";
+import sequelize from "../config/db.config.js";
 
 // Tabel pentru stocarea token-urilor de resetare parola
-const UserToken = sequelize.define('UserToken', {
+export const UserToken = sequelize.define('UserToken', {
   id_token: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -35,5 +35,3 @@ const UserToken = sequelize.define('UserToken', {
   updatedAt: false,
   createdAt: 'created_at'
 });
-
-module.exports = UserToken;

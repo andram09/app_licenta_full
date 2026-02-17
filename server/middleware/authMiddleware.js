@@ -1,9 +1,9 @@
-const { verifyAccessToken } = require('../services/tokenService');
+import { verifyAccessToken } from '../services/tokenService.js';
 
 // Verifica daca request-ul vine de la un user autentificat
 // Aplicat pe toate rutele protejate
-const authMiddleware = (req, res, next) => {
-  const token = req.cookies.accessToken;
+export const authMiddleware = (req, res, next) => {
+  const token = req.cookies?.accessToken;
 
   if (!token) {
     return res.status(401).json({ success: false, message: 'Access denied. No token provided.' });
@@ -22,12 +22,10 @@ const authMiddleware = (req, res, next) => {
 
 // Verifica daca userul autentificat are rolul de ADMIN
 // Aplicat intotdeauna dupa authMiddleware
-const adminMiddleware = (req, res, next) => {
+export const adminMiddleware = (req, res, next) => {
   if (req.user.role !== 'ADMIN') {
     return res.status(403).json({ success: false, message: 'Access denied. Admins only.' });
   }
 
   next();
 };
-
-module.exports = { authMiddleware, adminMiddleware };

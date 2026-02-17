@@ -1,7 +1,7 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db.config');
+import { DataTypes } from "sequelize";
+import sequelize from "../config/db.config.js";
 
-const Expense = sequelize.define('Expense', {
+export const Expense = sequelize.define('Expense', {
     id_expense: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -31,5 +31,3 @@ const Expense = sequelize.define('Expense', {
     timestamps: true
 }
 );
-
-module.exports = Expense;

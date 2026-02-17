@@ -1,53 +1,38 @@
-const sequelize = require('../config/db.config');
-const User = require('./User');
-const Trip = require('./Trip');
-const TripDay = require('./TripDay');
-const Objective = require('./Objective');
-const Category = require('./Category');
-const Expense = require('./Expense');
-const ExpenseCategory = require('./ExpenseCategory');
-//auth
-const RefreshToken = require('./RefreshToken');
-const UserToken = require('./UserToken');
+import sequelize from "../config/db.config.js";
 
-// --- RELATII ---
+import { User } from "./User.js";
+import { Trip } from "./Trip.js";
+import { TripDay } from "./TripDay.js";
+import { Objective } from "./Objective.js";
+import { Category } from "./Category.js";
+import { Expense } from "./Expense.js";
+import { ExpenseCategory } from "./ExpenseCategory.js";
+import { UserToken } from "./UserToken.js";
 
-// User -> Trips
-User.hasMany(Trip, { foreignKey: 'id_user', onDelete: 'CASCADE' });
-Trip.belongsTo(User, { foreignKey: 'id_user' });
+// RELATII
 
-// Trip -> TripDays
-Trip.hasMany(TripDay, { foreignKey: 'id_trip', onDelete: 'CASCADE' });
-TripDay.belongsTo(Trip, { foreignKey: 'id_trip' });
+User.hasMany(Trip, { foreignKey: "id_user", onDelete: "CASCADE" });
+Trip.belongsTo(User, { foreignKey: "id_user" });
 
-// TripDay -> Objectives
-TripDay.hasMany(Objective, { foreignKey: 'id_trip_day', onDelete: 'CASCADE' });
-Objective.belongsTo(TripDay, { foreignKey: 'id_trip_day' });
+Trip.hasMany(TripDay, { foreignKey: "id_trip", onDelete: "CASCADE" });
+TripDay.belongsTo(Trip, { foreignKey: "id_trip" });
 
-// Category -> Objectives
-Category.hasMany(Objective, { foreignKey: 'id_category' });
-Objective.belongsTo(Category, { foreignKey: 'id_category' });
+TripDay.hasMany(Objective, { foreignKey: "id_trip_day", onDelete: "CASCADE" });
+Objective.belongsTo(TripDay, { foreignKey: "id_trip_day" });
 
-// Trip -> Expenses
-Trip.hasMany(Expense, { foreignKey: 'id_trip', onDelete: 'CASCADE' });
-Expense.belongsTo(Trip, { foreignKey: 'id_trip' });
+Category.hasMany(Objective, { foreignKey: "id_category" });
+Objective.belongsTo(Category, { foreignKey: "id_category" });
 
-// ExpenseCategory -> Expenses
-ExpenseCategory.hasMany(Expense, { foreignKey: 'id_expense_category' });
-Expense.belongsTo(ExpenseCategory, { foreignKey: 'id_expense_category' });
+Trip.hasMany(Expense, { foreignKey: "id_trip", onDelete: "CASCADE" });
+Expense.belongsTo(Trip, { foreignKey: "id_trip" });
 
-//---auth---
-// User -> RefreshTokens
-// La stergerea unui user, stergem si toate refresh token-urile sale
-User.hasMany(RefreshToken, { foreignKey: 'id_user', onDelete: 'CASCADE' });
-RefreshToken.belongsTo(User, { foreignKey: 'id_user' });
+ExpenseCategory.hasMany(Expense, { foreignKey: "id_expense_category" });
+Expense.belongsTo(ExpenseCategory, { foreignKey: "id_expense_category" });
 
-// User -> UserTokens
-// La stergerea unui user, stergem si toate token-urile sale de resetare parola
-User.hasMany(UserToken, { foreignKey: 'id_user', onDelete: 'CASCADE' });
-UserToken.belongsTo(User, { foreignKey: 'id_user' });
+User.hasMany(UserToken, { foreignKey: "id_user", onDelete: "CASCADE" });
+UserToken.belongsTo(User, { foreignKey: "id_user" });
 
-module.exports = {
+export {
   sequelize,
   User,
   Trip,
@@ -56,6 +41,5 @@ module.exports = {
   Category,
   Expense,
   ExpenseCategory,
-  RefreshToken,
   UserToken
 };
