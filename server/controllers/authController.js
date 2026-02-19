@@ -39,7 +39,6 @@ export const authController = {
 
       if (existingUser) {
         return res.status(409).json({
-          success: false,
           message: "An account with this email already exists."
         });
       }
@@ -54,14 +53,12 @@ export const authController = {
       });
 
       return res.status(201).json({
-        success: true,
         message: "Account created successfully."
       });
 
     } catch (error) {
       console.error("Register error:", error);
       return res.status(500).json({
-        success: false,
         message: "Something went wrong."
       });
     }
@@ -80,7 +77,6 @@ export const authController = {
 
       if (!user) {
         return res.status(401).json({
-          success: false,
           message: "Invalid email or password."
         });
       }
@@ -92,7 +88,6 @@ export const authController = {
 
       if (!isPasswordValid) {
         return res.status(401).json({
-          success: false,
           message: "Invalid email or password."
         });
       }
@@ -102,7 +97,6 @@ export const authController = {
       res.cookie("accessToken", token, cookieOptions);
 
       return res.status(200).json({
-        success: true,
         message: "Logged in successfully.",
         data: {
           id: user.id_user,
@@ -116,7 +110,6 @@ export const authController = {
     } catch (error) {
       console.error("Login error:", error);
       return res.status(500).json({
-        success: false,
         message: "Something went wrong."
       });
     }
@@ -127,7 +120,6 @@ export const authController = {
     res.clearCookie("accessToken", cookieOptions);
 
     return res.status(200).json({
-      success: true,
       message: "Logged out successfully."
     });
   },
@@ -139,13 +131,11 @@ export const authController = {
 
       if (!user) {
         return res.status(404).json({
-          success: false,
           message: "User not found."
         });
       }
 
       return res.status(200).json({
-        success: true,
         data: {
           id: user.id_user,
           first_name: user.first_name,
@@ -158,7 +148,6 @@ export const authController = {
     } catch (error) {
       console.error("GetMe error:", error);
       return res.status(500).json({
-        success: false,
         message: "Something went wrong."
       });
     }
@@ -177,7 +166,6 @@ export const authController = {
 
       if (!user) {
         return res.status(200).json({
-          success: true,
           message: "If your email is registered, you will receive a password reset link shortly."
         });
       }
@@ -213,14 +201,12 @@ export const authController = {
       });
 
       return res.status(200).json({
-        success: true,
         message: "If your email is registered, you will receive a password reset link shortly."
       });
 
     } catch (error) {
       console.error("ForgotPassword error:", error);
       return res.status(500).json({
-        success: false,
         message: "Something went wrong."
       });
     }
@@ -237,7 +223,6 @@ export const authController = {
 
       if (!userToken || new Date() > userToken.expires_at) {
         return res.status(400).json({
-          success: false,
           message: "This reset link is invalid or expired."
         });
       }
@@ -252,14 +237,12 @@ export const authController = {
       await userToken.update({ used_at: new Date() });
 
       return res.status(200).json({
-        success: true,
         message: "Your password has been reset successfully."
       });
 
     } catch (error) {
       console.error("ResetPassword error:", error);
       return res.status(500).json({
-        success: false,
         message: "Something went wrong."
       });
     }

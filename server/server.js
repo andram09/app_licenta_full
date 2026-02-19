@@ -1,29 +1,22 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-
+import cookieParser from "cookie-parser";
 import {sequelize} from "./models/index.js";
-
-import {router as authRouter} from "./routes/authRouter.js"
+import { apiRouter } from "./routes/index.js";
 
 dotenv.config();
 
 const app = express();
 
 // Middlewares
-
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
-// dacă folosești cookies pentru JWT
-import cookieParser from "cookie-parser";
-app.use(cookieParser());
+app.use("/", apiRouter)
 
-// API Routes
-app.use("/auth", authRouter);
-
-// Test route
+// ruta test
 app.get("/test", (req, res) => {
   res.json({ status: "Server is up and running" });
 });
