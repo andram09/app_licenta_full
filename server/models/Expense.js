@@ -11,6 +11,10 @@ export const Expense = sequelize.define('Expense', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
+    id_objective:{
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
     id_expense_category: {
         type: DataTypes.INTEGER,
         allowNull: true
@@ -22,6 +26,15 @@ export const Expense = sequelize.define('Expense', {
     currency: {
         type: DataTypes.STRING(3),
         defaultValue: 'EUR'
+    },
+    no_of_people: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: 1,
+    },
+    date:{
+        type: DataTypes. DATE,
+        allowNull: true
     },
     note: {
         type: DataTypes.TEXT

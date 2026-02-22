@@ -17,6 +17,9 @@ Trip.belongsTo(User, { foreignKey: "id_user" });
 Trip.hasMany(TripDay, { foreignKey: "id_trip", onDelete: "CASCADE" });
 TripDay.belongsTo(Trip, { foreignKey: "id_trip" });
 
+Trip.hasMany(Objective, { foreignKey: 'id_trip', onDelete: 'CASCADE' });
+Objective.belongsTo(Trip, { foreignKey: 'id_trip' });
+
 TripDay.hasMany(Objective, { foreignKey: "id_trip_day", onDelete: "CASCADE" });
 Objective.belongsTo(TripDay, { foreignKey: "id_trip_day" });
 
@@ -31,6 +34,9 @@ Expense.belongsTo(ExpenseCategory, { foreignKey: "id_expense_category" });
 
 User.hasMany(UserToken, { foreignKey: "id_user", onDelete: "CASCADE" });
 UserToken.belongsTo(User, { foreignKey: "id_user" });
+
+Objective.hasMany(Expense, {foreignKey: "id_objective", onDelete:"CASCADE"});
+Expense.belongsTo(Objective, { foreignKey: "id_objective", onDelete: "CASCADE" });
 
 export {
   sequelize,

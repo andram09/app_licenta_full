@@ -7,9 +7,13 @@ export const Objective = sequelize.define('Objective', {
         primaryKey: true,
         autoIncrement: true
     },
-    id_trip_day: {
+    id_trip:{
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+    id_trip_day: {
+        type: DataTypes.INTEGER,
+        allowNull: true
     },
     id_category: {
         type: DataTypes.INTEGER,
@@ -50,6 +54,6 @@ export const Objective = sequelize.define('Objective', {
 },
     {
         tableName: 'objectives',
-        timestamps: false
+        timestamps: true
     }
 );
