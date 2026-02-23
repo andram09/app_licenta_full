@@ -22,7 +22,7 @@ app.get("/test", (req, res) => {
 });
 
 const PORT = process.env.PORT || 8080;
-// sequelize.sync({ force: true })
+
 sequelize.sync({ alter: process.env.NODE_ENV === "development" })
   .then(() => {
     console.log("DB connection established and tables synced.");
