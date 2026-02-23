@@ -21,5 +21,5 @@ export const TripDay = sequelize.define('TripDay', {
     }
 },{
     tableName: 'trip_days',
-    timestamps: false
+    timestamps: true
 });

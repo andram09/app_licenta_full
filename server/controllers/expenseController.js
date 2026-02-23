@@ -1,21 +1,39 @@
 import { Expense, Trip, Objective, ExpenseCategory } from '../models/index.js';
 import { sequelize } from '../models/index.js';
 
-export const expenseController = {
+const ALLOWED_CURRENCIES = ["EUR", "USD", "RON"];
 
+export const expenseController = {
     // POST /api/trips/:tripId/expenses
     createExpense: async (req, res) => {
         try {
             const { tripId } = req.params;
-            const {
-                id_objective,
-                id_expense_category,
-                amount,
-                currency,
-                no_of_people,
-                date,
-                note
-            } = req.body;
+            const { id_objective, id_expense_category, amount, currency, no_of_people, date, note } = req.body;
+
+            // validari
+            if (!amount || isNaN(amount) || Number(amount) <= 0) {
+                return res.status(400).json({
+                    message: "Amount must be a number greater than 0."
+                });
+            }
+
+            if (!currency || !ALLOWED_CURRENCIES.includes(currency)) {
+                return res.status(400).json({
+                    message: "Invalid currency."
+                });
+            }
+
+            if (!no_of_people || isNaN(no_of_people) || Number(no_of_people) < 1) {
+                return res.status(400).json({
+                    message: "Number of people must be at least 1."
+                });
+            }
+
+            if (!date || isNaN(Date.parse(date))) {
+                return res.status(400).json({
+                    message: "Invalid date format."
+                });
+            }
 
             const trip = await Trip.findOne({
                 where: { id_trip: tripId, id_user: req.user.id }
@@ -37,13 +55,23 @@ export const expenseController = {
                 }
             }
 
+            if (id_expense_category) {
+                const category = await ExpenseCategory.findByPk(id_expense_category);
+
+                if (!category) {
+                    return res.status(400).json({
+                        message: "Invalid expense category."
+                    });
+                }
+            }
+
             const expense = await Expense.create({
                 id_trip: tripId,
                 id_objective: id_objective || null,
                 id_expense_category,
-                amount,
+                amount: Number(amount),
                 currency,
-                no_of_people,
+                no_of_people: Number(no_of_people),
                 date,
                 note
             });
@@ -138,7 +166,7 @@ export const expenseController = {
             const totalPerPersonRaw = await Expense.findAll({
                 attributes: [
                     [
-                        sequelize.fn("SUM",sequelize.literal("amount / COALESCE(no_of_people,1)")),
+                        sequelize.fn("SUM", sequelize.literal("amount / COALESCE(no_of_people,1)")),
                         "totalPerPerson"
                     ]
                 ],

@@ -20,7 +20,7 @@ export const Category = sequelize.define('Category', {
 },
     {
         tableName: 'categories',
-        timestamps: false
+        timestamps: true
     }
 );
 

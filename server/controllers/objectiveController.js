@@ -1,5 +1,6 @@
 import { Objective, TripDay, Trip, Category } from '../models/index.js';
 import { Op } from 'sequelize';
+import sequelize from "../config/db.config.js"
 
 const reorderObjectives = async (id_trip_day) => {
     if (!id_trip_day) return;
@@ -17,7 +18,7 @@ const reorderObjectives = async (id_trip_day) => {
 
 export const objectiveController = {
 
-    // GET /api/objectives/trip/:tripId/unassigned - Obiective neatribuite
+    // GET /objectives/trip/:tripId/unassigned - Obiective neatribuite
     getUnassignedObjectives: async (req, res) => {
         try {
             const { tripId } = req.params;
@@ -52,23 +53,50 @@ export const objectiveController = {
     },
 
     // CREATE - obiectiv neatribuit
-    // POST /api/trips/:tripId/objectives
+    // POST /trips/:tripId/objectives
     createObjective: async (req, res) => {
         try {
             const { tripId } = req.params;
-            const {
-                id_category,
-                title,
-                description,
-                coord_lat,
-                coord_lng,
-                address,
-                source_type,
-                external_place_id,
-                external_provider
-            } = req.body;
+            const { id_category, title, description, coord_lat, coord_lng, address, source_type, external_place_id, external_provider } = req.body;
 
-            // verificam ca trip-ul apartine userului
+            //validations
+            if (!title || title.trim().length < 2) {
+                return res.status(400).json({
+                    message: "Title must contain at least 2 characters."
+                });
+            }
+
+            const ALLOWED_SOURCES = ["MANUAL", "API"];
+            if (source_type && !ALLOWED_SOURCES.includes(source_type)) {
+                return res.status(400).json({
+                    message: "Invalid source type."
+                });
+            }
+
+            if (source_type === "API" && !external_place_id) {
+                return res.status(400).json({
+                    message: "External place id is required for API objectives."
+                });
+            }
+
+            if (coord_lat !== undefined) {
+                const lat = Number(coord_lat);
+                if (isNaN(lat) || lat < -90 || lat > 90) {
+                    return res.status(400).json({
+                        message: "Invalid latitude value."
+                    });
+                }
+            }
+
+            if (coord_lng !== undefined) {
+                const lng = Number(coord_lng);
+                if (isNaN(lng) || lng < -180 || lng > 180) {
+                    return res.status(400).json({
+                        message: "Invalid longitude value."
+                    });
+                }
+            }
+
             const trip = await Trip.findOne({
                 where: { id_trip: tripId, id_user: req.user.id }
             });
@@ -81,10 +109,10 @@ export const objectiveController = {
                 id_trip: tripId,
                 id_trip_day: null, //neatribuit initial
                 id_category,
-                title,
+                title: title.trim(),
                 description,
-                coord_lat,
-                coord_lng,
+                coord_lat: coord_lat ? Number(coord_lat):null,
+                coord_lng: coord_lng ? Number(coord_lng):null,
                 address,
                 source_type: source_type || 'MANUAL',
                 external_place_id,
@@ -104,8 +132,9 @@ export const objectiveController = {
     },
 
     // MOVE - drag&drop
-    // PATCH /api/objectives/:id/move
+    // PATCH /objectives/:id/move
     moveObjective: async (req, res) => {
+        const transaction = await sequelize.transaction();
         try {
             const { id } = req.params;
             const { id_trip_day: newDayId, position_in_day: newPosition } = req.body;
@@ -113,14 +142,17 @@ export const objectiveController = {
             const objective = await Objective.findByPk(id, {
                 include: {
                     model: Trip
-                }
+                },
+                transaction
             });
 
             if (!objective) {
+                await transaction.rollback();
                 return res.status(404).json({ message: 'Objective not found.' });
             }
 
             if (objective.Trip?.id_user !== req.user.id) {
+                await transaction.rollback();
                 return res.status(403).json({ message: 'Forbidden.' });
             }
 
@@ -137,7 +169,8 @@ export const objectiveController = {
                             where: {
                                 id_trip_day: oldDayId,
                                 position_in_day: { [Op.gt]: oldPosition }
-                            }
+                            },
+                            transaction
                         }
                     );
                 }
@@ -150,7 +183,8 @@ export const objectiveController = {
                             where: {
                                 id_trip_day: newDayId,
                                 position_in_day: { [Op.gte]: newPosition }
-                            }
+                            },
+                            transaction
                         }
                     );
                 }
@@ -158,7 +192,7 @@ export const objectiveController = {
                 await objective.update({
                     id_trip_day: newDayId || null,
                     position_in_day: newDayId ? newPosition : null
-                });
+                }, {transaction});
 
             }
 
@@ -175,7 +209,8 @@ export const objectiveController = {
                                     [Op.gte]: newPosition,
                                     [Op.lt]: oldPosition
                                 }
-                            }
+                            },
+                            transaction
                         }
                     );
                 }
@@ -191,21 +226,24 @@ export const objectiveController = {
                                     [Op.lte]: newPosition,
                                     [Op.gt]: oldPosition
                                 }
-                            }
+                            },
+                            transaction
                         }
                     );
                 }
 
                 await objective.update({
                     position_in_day: newPosition
-                });
+                }, {transaction});
             }
+            await transaction.commit();
 
             return res.status(200).json({
                 message: 'Objective moved successfully.'
             });
 
         } catch (error) {
+            await transaction.rollback();
             console.error('Move objective error:', error);
             return res.status(500).json({ message: 'Something went wrong.' });
         }
@@ -213,7 +251,7 @@ export const objectiveController = {
 
 
     // UPDATE detalii (ora, descriere)
-    // PUT /api/objectives/:id
+    // PUT /objectives/:id
     updateObjective: async (req, res) => {
         try {
             const { id } = req.params;
@@ -248,7 +286,7 @@ export const objectiveController = {
         }
     },
 
-    // DELETE /api/objectives/:id
+    // DELETE /objectives/:id
     deleteObjective: async (req, res) => {
         try {
             const { id } = req.params;

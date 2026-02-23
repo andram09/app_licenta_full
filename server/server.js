@@ -10,7 +10,7 @@ dotenv.config();
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -22,8 +22,8 @@ app.get("/test", (req, res) => {
 });
 
 const PORT = process.env.PORT || 8080;
-
-sequelize.sync({ alter: true })
+// sequelize.sync({ force: true })
+sequelize.sync({ alter: process.env.NODE_ENV === "development" })
   .then(() => {
     console.log("DB connection established and tables synced.");
     app.listen(PORT, () => {

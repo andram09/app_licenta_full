@@ -69,10 +69,55 @@ export const tripController = {
 
     // POST /api/trips - Creare calatorie + generare zile automat
     createTrip: async (req, res) => {
+        const transaction = await sequelize.transaction();
+
         try {
             const { destination_name, destination_lat, destination_lng, number_of_days, start_date } = req.body;
 
-            // Cream calatoria
+            //validations
+            if (!destination_name || destination_name.trim().length < 2) {
+                await transaction.rollback();
+                return res.status(400).json({
+                    message: "Destination name must contain at least 2 characters."
+                });
+            }
+
+            const daysNumber = Number(number_of_days);
+            if (!daysNumber || isNaN(daysNumber) || daysNumber < 1 || daysNumber > 30) {
+                await transaction.rollback();
+                return res.status(400).json({
+                    message: "Number of days must be between 1 and 30."
+                });
+            }
+
+            if (start_date && isNaN(Date.parse(start_date))) {
+                await transaction.rollback();
+                return res.status(400).json({
+                    message: "Invalid start date format."
+                });
+            }
+
+            if (destination_lat !== undefined) {
+                const lat = Number(destination_lat);
+                if (isNaN(lat) || lat < -90 || lat > 90) {
+                    await transaction.rollback();
+                    return res.status(400).json({
+                        message: "Invalid latitude value."
+                    });
+                }
+            }
+
+            if (destination_lng !== undefined) {
+                const lng = Number(destination_lng);
+                if (isNaN(lng) || lng < -180 || lng > 180) {
+                    await transaction.rollback();
+                    return res.status(400).json({
+                        message: "Invalid longitude value."
+                    });
+                }
+            }
+
+            // creez calatoria
             const trip = await Trip.create({
                 id_user: req.user.id,
                 destination_name,
@@ -80,9 +125,9 @@ export const tripController = {
                 destination_lng,
                 number_of_days,
                 start_date
-            });
+            }, { transaction });
 
-            // Generam zilele automat
+            // generare zile automat
             const days = [];
             for (let i = 1; i <= number_of_days; i++) {
                 let calendar_date = null;
@@ -101,7 +146,9 @@ export const tripController = {
                 });
             }
 
-            await TripDay.bulkCreate(days); // Creez mai multe randuri de query catre BD
+            await TripDay.bulkCreate(days, { transaction }); // Creez mai multe randuri de query catre BD
+
+            await transaction.commit();
 
             return res.status(201).json({
                 message: 'Trip created successfully.',
@@ -126,6 +173,12 @@ export const tripController = {
 
             if (!trip) {
                 return res.status(404).json({ message: 'Trip not found.' });
+            }
+            
+            if (start_date && isNaN(Date.parse(start_date))) {
+                return res.status(400).json({
+                    message: "Invalid start date format."
+                });
             }
 
             // Actualizam doar data de plecare
