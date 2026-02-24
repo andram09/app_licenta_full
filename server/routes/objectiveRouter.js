@@ -7,8 +7,11 @@ export const router=express.Router();
 // pt toate rutele e nevoie ca userul sa fie logat deci folosesc authMiddleware
 router.use(authMiddleware)
 
-router.get("/trip/:tripId/unassigned", objectiveController.getUnassignedObjectives);
-router.post("/:tripId", objectiveController.createObjective);
-router.patch("/:id/move", objectiveController.moveObjective);
-router.put("/:id", objectiveController.updateObjective);
-router.delete("/:id", objectiveController.deleteObjective);
+//objectives
+router.get("/trips/:id/objectives/unassigned", objectiveController.getUnassignedObjectives);
+router.post("/trips/:id/objectives/manual", objectiveController.createObjectiveManual);
+router.post("/trips/:id/objectives/from-api", objectiveController.createFromApi);
+
+router.patch("/objectives/:id/move", objectiveController.moveObjective);
+router.put("/objectives/:id", objectiveController.updateObjective);
+router.delete("/objectives/:id", objectiveController.deleteObjective);

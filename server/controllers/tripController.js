@@ -174,7 +174,6 @@ export const tripController = {
             if (!trip) {
                 return res.status(404).json({ message: 'Trip not found.' });
             }
-            
             if (start_date && isNaN(Date.parse(start_date))) {
                 return res.status(400).json({
                     message: "Invalid start date format."
