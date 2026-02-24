@@ -14,6 +14,8 @@ router.post("/", tripController.createTrip)
 router.put("/:id", tripController.updateTripStartDate)
 router.delete("/:id", tripController.deleteTrip)
 router.put("/:id/duration", tripController.updateTripDuration)
+router.get("/:id/board", tripController.getTripBoard)
+
 
 // //objectives
 // router.get("/:tripId/objectives/unassigned", objectiveController.getUnassignedObjectives);

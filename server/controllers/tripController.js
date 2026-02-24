@@ -334,6 +334,81 @@ export const tripController = {
                 message: 'Something went wrong.'
             });
         }
+    },
+
+
+    // GET /trips/:tripId/board
+    getTripBoard: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const tripId = Number(id);
+
+            if (!tripId || isNaN(tripId)) {
+                return res.status(400).json({ message: "Invalid trip id." });
+            }
+
+            const trip = await Trip.findOne({
+                where: { id_trip: tripId, id_user: req.user.id }
+            });
+
+            if (!trip) {
+                return res.status(404).json({ message: "Trip not found." });
+            }
+
+            // toate zilele tripului
+            const days = await TripDay.findAll({
+                where: { id_trip: tripId },
+                order: [["day_index", "ASC"]]
+            });
+
+            const dayIds = days.map(d => d.id_day);
+
+            // toate obiectivele pentru zilele acestui trip (atribuite)
+            const assigned = dayIds.length ? await Objective.findAll({
+                    where: { id_trip_day: dayIds },
+                    include: [{ model: Category, attributes: ["id_category", "name"] }],
+                    order: [
+                        ["id_trip_day", "ASC"],
+                        ["position_in_day", "ASC"]
+                    ]
+                })
+                : [];
+
+            // obiectivele neatribuite
+            const unassigned = await Objective.findAll({
+                where: { id_trip: tripId, id_trip_day: null },
+                include: [{ model: Category, attributes: ["id_category", "name"] }],
+                order: [["createdAt", "DESC"]]
+            });
+
+            // group objective atribuite dupa zi
+            const assignedByDay = new Map();
+            for (const obj of assigned) {
+                const key = obj.id_trip_day;
+                if (!assignedByDay.has(key)) //daca nu am lista pt ziua asta, o fac
+                    assignedByDay.set(key, []);
+                assignedByDay.get(key).push(obj); //adaug obiectivul in lista zilei corespunzatoare
+            }
+
+            const daysWithObjectives = days.map(day => ({
+                id_day: day.id_day,
+                day_index: day.day_index,
+                calendar_date: day.calendar_date,
+                objectives: assignedByDay.get(day.id_day) || []
+            }));
+
+            return res.status(200).json({
+                data: {
+                    trip,
+                    days: daysWithObjectives,
+                    unassigned
+                }
+            });
+
+        } catch (error) {
+            console.error("Get trip board error:", error);
+            return res.status(500).json({ message: "Something went wrong." });
+        }
     }
 
 };
