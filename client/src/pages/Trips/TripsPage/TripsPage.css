@@ -1,0 +1,225 @@
+/* ============================
+   TripsPage - Design System
+   ============================ */
+
+.trips-page {
+    min-height: 100vh;
+    background-color: var(--color-light);
+    padding: var(--space-lg) var(--space-xl);
+    font-family: var(--font-body);
+}
+
+/* Header */
+.trips-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-white);
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--space-lg);
+    border: 1px solid var(--color-light);
+}
+
+.trips-header-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--color-navy);
+    letter-spacing: -0.01em;
+}
+
+.trips-header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.trips-username {
+    font-size: 14px;
+    color: var(--color-mid);
+    font-family: var(--font-body);
+}
+
+.trips-logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 8px 18px;
+    background: transparent;
+    color: var(--color-navy);
+    border: 1.5px solid var(--color-teal-lt);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.trips-logout-btn:hover {
+    border-color: var(--color-teal);
+    color: var(--color-teal);
+}
+
+/* Bara de actiuni */
+.trips-actions-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--space-lg);
+}
+
+.trips-create-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 11px 24px;
+    background: var(--color-navy);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition-normal), transform var(--transition-normal);
+}
+
+.trips-create-btn:hover {
+    background: var(--color-teal);
+    transform: translateY(-2px);
+}
+
+/* Continut */
+.trips-content {
+    width: 100%;
+}
+
+/* Mesaje de stare */
+.trips-state-msg {
+    text-align: center;
+    color: var(--color-gray);
+    font-size: 1rem;
+    padding: var(--space-3xl) 0;
+    font-family: var(--font-body);
+}
+
+.trips-error-msg {
+    text-align: center;
+    color: #c0392b;
+    font-size: 14px;
+    background: rgba(192, 57, 43, 0.07);
+    border: 1px solid rgba(192, 57, 43, 0.2);
+    border-radius: var(--radius-md);
+    padding: var(--space-md) var(--space-lg);
+    font-family: var(--font-body);
+}
+
+/* Grid de carduri */
+.trips-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-lg);
+}
+
+/* Card individual */
+.trip-card {
+    position: relative;
+    background: var(--color-white);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    border: 1px solid var(--color-light);
+    outline: none;
+    overflow: hidden;
+}
+
+.trip-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--color-light) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.trip-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-teal-lt);
+}
+
+.trip-card:hover::before {
+    opacity: 1;
+}
+
+.trip-card:focus-visible {
+    border-color: var(--color-teal);
+    box-shadow: 0 0 0 3px rgba(78, 142, 162, 0.2);
+}
+
+/* Destinatie */
+.trip-card-destination {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 600;
+    font-style: italic;
+    color: var(--color-navy);
+    margin: 0 0 var(--space-md) 0;
+    padding-right: var(--space-md);
+    letter-spacing: -0.01em;
+    position: relative;
+}
+
+/* Detalii */
+.trip-card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+}
+
+.trip-card-days {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--color-teal);
+    font-weight: 600;
+    font-family: var(--font-body);
+}
+
+.trip-card-date {
+    font-size: 13px;
+    color: var(--color-gray);
+    font-family: var(--font-body);
+}
+
+/* Buton Hartă */
+.trip-card-map-btn {
+    margin-top: var(--space-md);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--color-teal-lt);
+    background: transparent;
+    color: var(--color-mid);
+    font-size: 12px;
+    font-family: var(--font-body);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.trip-card-map-btn:hover {
+    border-color: var(--color-teal);
+    color: var(--color-teal);
+    background: var(--color-light);
+}

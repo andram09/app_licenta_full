@@ -1,0 +1,274 @@
+/* =============================================
+   LandingPage - Design System
+   ============================================= */
+
+.landing {
+    min-height: 100vh;
+    background-color: var(--color-white);
+    color: var(--color-navy);
+    font-family: var(--font-body);
+}
+
+/* HERO */
+.landing-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-3xl) var(--space-lg) var(--space-2xl);
+    background: linear-gradient(160deg, var(--color-white) 50%, var(--color-light) 100%);
+}
+
+.landing-hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-navy);
+    margin-bottom: var(--space-md);
+    max-width: 720px;
+}
+
+.landing-hero-title em {
+    font-style: italic;
+    color: var(--color-teal);
+}
+
+.landing-hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--color-mid);
+    margin-bottom: var(--space-xl);
+    line-height: 1.7;
+    max-width: 560px;
+}
+
+.landing-hero-actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* SECTIUNI */
+.landing-section {
+    padding: var(--space-2xl) var(--space-lg);
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.landing-section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    color: var(--color-navy);
+    margin-bottom: var(--space-xl);
+    text-align: center;
+    letter-spacing: -0.01em;
+}
+
+/* CUM FUNCTIONEAZA - sectiune dark */
+.landing-how-section {
+    background: var(--color-navy);
+    padding: var(--space-2xl) var(--space-lg);
+}
+
+.landing-how-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.landing-how-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    margin-bottom: var(--space-xl);
+    text-align: center;
+    letter-spacing: -0.01em;
+}
+
+.landing-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+}
+
+.landing-step {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(189, 216, 233, 0.12);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg) var(--space-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    animation: fadeUp 0.5s ease both;
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.landing-step:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card);
+}
+
+.landing-step:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.landing-step:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.landing-step:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.landing-step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: var(--color-teal);
+    color: var(--color-white);
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.landing-step-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    margin: 0;
+}
+
+.landing-step-desc {
+    font-size: 0.9rem;
+    color: rgba(189, 216, 233, 0.7);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* FUNCTIONALITATI - sectiune beige */
+.landing-features {
+    background-color: var(--color-beige);
+    padding: var(--space-2xl) var(--space-lg);
+}
+
+.landing-features-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.landing-features-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    color: var(--color-navy);
+    margin-bottom: var(--space-xl);
+    text-align: center;
+    letter-spacing: -0.01em;
+}
+
+.landing-features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+}
+
+.landing-feature {
+    background: var(--color-white);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-light);
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.landing-feature:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+}
+
+.landing-feature:nth-child(1) {
+    animation: fadeUp 0.5s 0.0s ease both;
+}
+
+.landing-feature:nth-child(2) {
+    animation: fadeUp 0.5s 0.1s ease both;
+}
+
+.landing-feature:nth-child(3) {
+    animation: fadeUp 0.5s 0.2s ease both;
+}
+
+.landing-feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: var(--color-light);
+    color: var(--color-teal);
+    flex-shrink: 0;
+}
+
+.landing-feature-title {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-navy);
+    margin: 0;
+}
+
+.landing-feature-desc {
+    font-size: 0.9rem;
+    color: var(--color-mid);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* FOOTER */
+.landing-footer {
+    background: var(--color-navy);
+    padding: var(--space-xl) var(--space-lg);
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: rgba(189, 216, 233, 0.6);
+    border-top: 1px solid rgba(189, 216, 233, 0.12);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+
+    .landing-steps,
+    .landing-features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .landing-hero {
+        padding: var(--space-2xl) var(--space-md) var(--space-xl);
+    }
+}
+
+@media (max-width: 480px) {
+    .landing-hero-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .landing-hero-actions .btn-primary,
+    .landing-hero-actions .btn-ghost {
+        width: 100%;
+        justify-content: center;
+    }
+}

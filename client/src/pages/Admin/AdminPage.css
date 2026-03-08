@@ -1,0 +1,96 @@
+/* =============================================
+   AdminPage - Design System
+   ============================================= */
+
+.admin-page {
+    min-height: 100vh;
+    background-color: var(--color-light);
+    padding: var(--space-lg) var(--space-xl);
+    font-family: var(--font-body);
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--color-navy);
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--space-xl);
+    border: 1px solid rgba(189, 216, 233, 0.12);
+}
+
+.admin-header-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.92);
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+.admin-header-user {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.admin-username {
+    font-size: 14px;
+    color: rgba(189, 216, 233, 0.7);
+    font-family: var(--font-body);
+}
+
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    background: rgba(78, 142, 162, 0.25);
+    color: var(--color-teal-lt);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid rgba(189, 216, 233, 0.2);
+}
+
+.admin-logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid rgba(189, 216, 233, 0.25);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.75);
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.admin-logout-btn:hover {
+    border-color: rgba(189, 216, 233, 0.5);
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.admin-placeholder {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: var(--space-2xl);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-light);
+}
+
+.admin-placeholder-text {
+    color: var(--color-mid);
+    font-family: var(--font-body);
+    font-size: 15px;
+    margin: 0;
+    line-height: 1.6;
+}
