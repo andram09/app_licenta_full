@@ -1,103 +1,107 @@
-/* ===========================
-   TripMapPage - Design System
-   =========================== */
-
+/* ── Page wrapper ─────────────────────────────────────────── */
 .map-page {
     display: flex;
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
     font-family: var(--font-body);
-    background: var(--color-light);
+    background: #F0F5EB;
 }
 
-/* ── Header ─────────────────────────────────────────────────────────────── */
+/* ── Header ───────────────────────────────────────────────── */
 .map-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 var(--space-lg);
-    height: 64px;
-    background: var(--color-white);
-    border-bottom: 1px solid var(--color-light);
-    gap: var(--space-md);
+    padding: 0 1.5rem;
+    height: 80px;
+    background: rgba(78, 142, 162, 0.342);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(189, 216, 233, 0.35);
+    gap: 1rem;
     flex-shrink: 0;
 }
 
 .map-header-left {
     display: flex;
-    gap: var(--space-sm);
+    gap: 8px;
 }
 
+/* ── Nav buttons (Planificare / Explorare) ────────────────── */
+.map-nav-btn {
+    padding: 8px 18px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--color-navy);
+    background: transparent;
+    color: var(--color-navy);
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+}
+
+.map-nav-btn:hover {
+    background: var(--color-navy);
+    color: #FFFFFF;
+}
+
+/* Primary nav btn (Călătoriile mele) */
+.map-nav-btn--right {
+    background: linear-gradient(135deg, #4E8EA2 0%, #3a7a8f 100%);
+    border: none;
+    color: #FFFFFF;
+    font-weight: 600;
+    box-shadow: 0 4px 14px rgba(78, 142, 162, 0.28);
+}
+
+.map-nav-btn--right:hover {
+    background: linear-gradient(135deg, #3a7a8f 0%, #2d6478 100%);
+    box-shadow: 0 6px 18px rgba(78, 142, 162, 0.38);
+    transform: translateY(-1px);
+}
+
+/* ── Page title ───────────────────────────────────────────── */
 .map-title {
     font-family: var(--font-display);
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
     color: var(--color-navy);
     margin: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    letter-spacing: -0.01em;
 }
 
 .map-destination {
-    font-style: italic;
     color: var(--color-teal);
 }
 
-.map-nav-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 16px;
-    border-radius: var(--radius-pill);
-    border: 1.5px solid var(--color-teal-lt);
-    background: var(--color-white);
-    color: var(--color-navy);
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    white-space: nowrap;
-}
-
-.map-nav-btn:hover {
-    border-color: var(--color-teal);
-    color: var(--color-teal);
-}
-
-.map-nav-btn--right {
-    border-color: var(--color-navy);
-    background: var(--color-navy);
-    color: var(--color-white);
-}
-
-.map-nav-btn--right:hover {
-    background: var(--color-teal);
-    border-color: var(--color-teal);
-    color: var(--color-white);
-}
-
-/* ── Tab-uri zi ─────────────────────────────────────────────────────────── */
+/* ── Day filter tabs ──────────────────────────────────────── */
 .map-day-tabs {
     display: flex;
-    gap: var(--space-sm);
-    padding: 10px var(--space-lg);
-    background: var(--color-white);
-    border-bottom: 1px solid var(--color-light);
+    gap: 7px;
+    padding: 10px 1.5rem;
+    background: rgba(240, 245, 235, 0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(189, 216, 233, 0.35);
     overflow-x: auto;
     flex-shrink: 0;
+    scrollbar-width: none;
+}
+
+.map-day-tabs::-webkit-scrollbar {
+    display: none;
 }
 
 .map-day-tab {
-    display: inline-flex;
-    align-items: center;
     padding: 6px 16px;
     border-radius: var(--radius-pill);
-    border: 1.5px solid var(--color-light);
-    background: var(--color-white);
+    border: 1.5px solid rgba(189, 216, 233, 0.8);
+    background: rgba(255, 255, 255, 0.70);
     color: var(--color-mid);
     font-family: var(--font-body);
     font-size: 12px;
@@ -108,75 +112,83 @@
 }
 
 .map-day-tab:hover {
-    border-color: var(--color-teal-lt);
+    border-color: var(--color-teal);
     color: var(--color-navy);
+    background: rgba(255, 255, 255, 0.90);
 }
 
 .map-day-tab--active {
-    background: var(--color-navy);
-    border-color: var(--color-navy);
-    color: var(--color-white);
+    background: var(--color-teal);
+    border-color: var(--color-teal);
+    color: #FFFFFF;
     font-weight: 600;
+    box-shadow: 0 3px 10px rgba(78, 142, 162, 0.28);
 }
 
-/* ── Layout principal ───────────────────────────────────────────────────── */
+/* ── Main layout ──────────────────────────────────────────── */
 .map-layout {
     display: flex;
     flex: 1;
     overflow: hidden;
 }
 
-/* ── Sidebar ─────────────────────────────────────────────────────────────── */
+/* ── Sidebar ──────────────────────────────────────────────── */
 .map-sidebar {
-    width: 280px;
-    min-width: 220px;
-    max-width: 320px;
+    flex: 0 0 40%;
+    min-width: 200px;
+    max-width: 480px;
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
-    padding: var(--space-sm);
+    gap: 15px;
+    padding: 20px 25px;
     overflow-y: auto;
-    background: var(--color-white);
-    border-right: 1px solid var(--color-light);
+    background: rgba(240, 245, 235, 0.80);
+    backdrop-filter: blur(8px);
+    border-right: 1px solid rgba(189, 216, 233, 0.40);
     flex-shrink: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(78, 142, 162, 0.25) transparent;
 }
 
 .map-sidebar-empty {
     color: var(--color-gray);
-    font-family: var(--font-body);
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 300;
     text-align: center;
-    padding: var(--space-md) 0;
+    padding: 1rem 0;
 }
 
+/* ── Objective list items ─────────────────────────────────── */
 .map-obj-item {
     width: 100%;
     text-align: left;
-    padding: 10px var(--space-md);
-    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    border-radius: 14px;
     border: 1px solid var(--color-light);
-    background: var(--color-white);
+    background: #FFFFFF;
     cursor: pointer;
     transition: all var(--transition-fast);
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 3px;
     font-family: var(--font-body);
+    box-shadow: var(--shadow-sm);
 }
 
 .map-obj-item:hover:not(.map-obj-item--no-coords) {
     border-color: var(--color-teal-lt);
-    background: var(--color-light);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
 }
 
 .map-obj-item--active {
     border-left: 3px solid var(--color-teal);
-    background: var(--color-light);
-    padding-left: calc(var(--space-md) - 2px);
+    background: rgba(78, 142, 162, 0.06);
+    padding-left: calc(12px - 2px);
 }
 
 .map-obj-item--no-coords {
-    opacity: 0.45;
+    opacity: 0.40;
     cursor: default;
 }
 
@@ -188,22 +200,25 @@
 }
 
 .map-obj-time {
-    font-size: 12px;
-    color: var(--color-gray);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-teal);
+    letter-spacing: 0.02em;
 }
 
 .map-obj-no-coords {
     font-size: 11px;
+    font-weight: 300;
     color: var(--color-gray);
     font-style: italic;
 }
 
-/* ── Harta ───────────────────────────────────────────────────────────────── */
+/* ── Map area ─────────────────────────────────────────────── */
 .map-main {
     flex: 1;
     position: relative;
     overflow: hidden;
-    padding: var(--space-md);
+    padding: 20px;
 }
 
 .trip-map-container {
@@ -211,35 +226,19 @@
     height: 100%;
     border-radius: var(--radius-xl);
     overflow: hidden;
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 8px 32px rgba(0, 29, 57, 0.14);
     z-index: 0;
 }
 
-.leaflet-popup {
-    z-index: 1000;
-}
-
-.leaflet-popup-content-wrapper {
-    border-radius: var(--radius-md) !important;
-    font-family: var(--font-body) !important;
-    box-shadow: var(--shadow-md) !important;
-}
-
-.leaflet-popup-content {
-    font-family: var(--font-body) !important;
-    font-size: 13px !important;
-    color: var(--color-navy) !important;
-}
-
-/* ── State messages ──────────────────────────────────────────────────────── */
+/* ── State messages ───────────────────────────────────────── */
 .map-state-msg {
     text-align: center;
-    padding: var(--space-3xl);
+    padding: 3rem;
     color: var(--color-gray);
-    font-family: var(--font-body);
-    font-size: 15px;
+    font-size: 14px;
+    font-weight: 300;
 }
 
 .map-state-msg--error {
-    color: #c0392b;
+    color: #e05454;
 }

@@ -31,6 +31,23 @@ export const Trip = sequelize.define('Trip', {
     type: DataTypes.DATEONLY,
     allowNull: true
   },
+  number_of_people: {
+    type: DataTypes.INTEGER,
+    defaultValue: 1,
+    allowNull: false
+  },
+  hotel_name: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  hotel_lat: {
+    type: DataTypes.DECIMAL(10, 8),
+    allowNull: true,
+  },
+  hotel_lng: {
+    type: DataTypes.DECIMAL(11, 8),
+    allowNull: true,
+  },
   deleted_at: {
     type: DataTypes.DATE,
     allowNull: true

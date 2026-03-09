@@ -1,105 +1,81 @@
-/* =============================================
-   Navbar - Design System
-   ============================================= */
-
+/* ── Navbar wrapper ───────────────────────────────────────── */
 .navbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 var(--space-xl);
-    height: 64px;
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--color-light);
+    padding: 0 2rem;
+    height: 80px;
+    background: rgba(78, 142, 162, 0.342);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(189, 216, 233, 0.35);
     position: sticky;
     top: 0;
-    z-index: 200;
-    transition: background var(--transition-normal);
+    z-index: 100;
 }
 
+/* ── Brand ────────────────────────────────────────────────── */
 .navbar-brand {
     font-family: var(--font-display);
-    font-size: 1.25rem;
+    font-size: 20px;
     font-weight: 600;
     color: var(--color-navy);
     text-decoration: none;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.02em;
     transition: color var(--transition-fast);
-}
-
-.navbar-brand span {
-    color: var(--color-teal);
 }
 
 .navbar-brand:hover {
     color: var(--color-teal);
 }
 
+/* ── Links list ───────────────────────────────────────────── */
 .navbar-links {
     display: flex;
     align-items: center;
-    gap: var(--space-xs);
+    gap: 4px;
     list-style: none;
     margin: 0;
     padding: 0;
 }
 
+/* ── Nav link ─────────────────────────────────────────────── */
 .navbar-link {
     padding: 6px 14px;
     border-radius: var(--radius-pill);
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-mid);
+    color: var(--color-navy);
     text-decoration: none;
-    transition: all var(--transition-fast);
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 500;
+    transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .navbar-link:hover {
+    background: rgba(0, 29, 57, 0.10);
     color: var(--color-navy);
-    background: var(--color-light);
 }
 
 .navbar-link--active {
     color: var(--color-navy);
     font-weight: 600;
-    text-decoration: underline;
-    text-decoration-color: var(--color-teal);
-    text-underline-offset: 3px;
-    text-decoration-thickness: 2px;
 }
 
-/* Buton Logout */
+/* ── Logout button ────────────────────────────────────────── */
 .navbar-logout-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-xs);
-    padding: 8px 18px;
+    padding: 7px 18px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--color-navy);
     background: transparent;
     color: var(--color-navy);
-    border: 1.5px solid var(--color-teal-lt);
-    border-radius: var(--radius-pill);
     font-family: var(--font-body);
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
     cursor: pointer;
-    transition: all var(--transition-normal);
+    transition: all var(--transition-fast);
 }
 
 .navbar-logout-btn:hover {
-    border-color: var(--color-teal);
-    color: var(--color-teal);
-    background: transparent;
-}
-
-@media (max-width: 640px) {
-    .navbar {
-        padding: 0 var(--space-md);
-    }
-
-    .navbar-link {
-        padding: 5px 10px;
-        font-size: 13px;
-    }
+    background: var(--color-navy);
+    color: #FFFFFF;
 }

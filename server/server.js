@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import {sequelize} from "./models/index.js";
+import { sequelize } from "./models/index.js";
 import { apiRouter } from "./routes/index.js";
 
 dotenv.config();
@@ -10,9 +10,9 @@ dotenv.config();
 const app = express();
 
 // Middlewares
-app.use(cors({ 
-  origin: process.env.FRONTEND_URL, 
-  credentials: true 
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true
 }));
 app.use(express.json());
 app.use(cookieParser());
@@ -26,7 +26,7 @@ app.get("/test", (req, res) => {
 
 const PORT = process.env.PORT || 8080;
 
-sequelize.sync({ alter: process.env.NODE_ENV === "development" })
+sequelize.sync({ alter: false })
   .then(() => {
     console.log("DB connection established and tables synced.");
     app.listen(PORT, () => {
@@ -36,4 +36,4 @@ sequelize.sync({ alter: process.env.NODE_ENV === "development" })
   .catch((err) => {
     console.error("Database synchronization failed:", err);
   }
-);
+  );

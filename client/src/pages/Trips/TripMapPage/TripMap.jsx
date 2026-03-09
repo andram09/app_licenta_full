@@ -21,6 +21,16 @@ const highlightIcon = new L.Icon({
     shadowSize: [41, 41],
 });
 
+// Iconica aurie pentru hotel
+const hotelIcon = new L.Icon({
+    iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png",
+    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+});
+
 // Subcomponenta care face flyTo si deschide popup-ul la selectie.
 // Primeste markerRefs din TripMap pentru a accesa instanta marker-ului.
 function FlyController({ objectives, highlightedObjId, markerRefs }) {
@@ -43,15 +53,16 @@ function FlyController({ objectives, highlightedObjId, markerRefs }) {
 }
 
 // Componenta Leaflet — afiseaza obiectivele cu coordonate pe harta
-export default function TripMap({ objectives, highlightedObjId, onMarkerClick }) {
+export default function TripMap({ objectives, highlightedObjId, onMarkerClick, hotel }) {
     const markerRefs = useRef({});
 
     const withCoords = objectives.filter(
         (o) => o.coord_lat != null && o.coord_lng != null
     );
 
-    const defaultCenter =
-        withCoords.length > 0
+    const defaultCenter = hotel && hotel.lat != null && hotel.lng != null
+        ? [parseFloat(hotel.lat), parseFloat(hotel.lng)]
+        : withCoords.length > 0
             ? [parseFloat(withCoords[0].coord_lat), parseFloat(withCoords[0].coord_lng)]
             : [45.9432, 24.9668];
 
@@ -67,6 +78,20 @@ export default function TripMap({ objectives, highlightedObjId, onMarkerClick })
                 highlightedObjId={highlightedObjId}
                 markerRefs={markerRefs}
             />
+
+            {hotel && hotel.lat != null && hotel.lng != null && (
+                <Marker
+                    position={[parseFloat(hotel.lat), parseFloat(hotel.lng)]}
+                    icon={hotelIcon}
+                >
+                    <Popup>
+                        <strong>🛏 {hotel.name}</strong>
+                        <div style={{ marginTop: "0.3rem", fontSize: "0.85em", color: "#666" }}>
+                            Punct de plecare (Hotel)
+                        </div>
+                    </Popup>
+                </Marker>
+            )}
 
             {withCoords.map((obj) => (
                 <Marker

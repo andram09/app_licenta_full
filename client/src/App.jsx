@@ -1,35 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route, Navigate } from "react-router-dom";
+
+import ProtectedRoute from "./components/ProtectedRoute";
+import LandingPage from "./pages/Landing/LandingPage";
+import LoginPage from "./pages/Auth/Login/LoginPage";
+import RegisterPage from "./pages/Auth/Register/RegisterPage";
+import ForgotPasswordPage from "./pages/Auth/ForgotPassword/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/Auth/ResetPassword/ResetPasswordPage";
+import TripsPage from "./pages/Trips/TripsPage/TripsPage";
+import CreateTripPage from "./pages/Trips/TripsPage/CreateTripPage";
+import ExplorePage from "./pages/Trips/ExplorePage/ExplorePage";
+import AdminPage from "./pages/Admin/AdminPage";
+import BoardPage from "./pages/Trips/BoardPage/BoardPage";
+import TripMapPage from "./pages/Trips/TripMapPage/TripMapPage";
+import BudgetPage from "./pages/Trips/BudgetPage/BudgetPage";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Routes>
+      {/* Landing Page - accesibila pentru toti */}
+      <Route path="/" element={<LandingPage />} />
+
+      {/* Rute publice */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+      {/* Rute protejate - doar USER */}
+      <Route element={<ProtectedRoute requiredRole="USER" />}>
+        <Route path="/trips" element={<TripsPage />} />
+        <Route path="/trips/create" element={<CreateTripPage />} />
+        <Route path="/trips/:id/explore" element={<ExplorePage />} />
+        <Route path="/trips/:id/board" element={<BoardPage />} />
+        <Route path="/trips/:id/map" element={<TripMapPage />} />
+        <Route path="/trips/:id/budget" element={<BudgetPage />} />
+      </Route>
+
+      {/* Rute protejate - doar ADMIN */}
+      <Route element={<ProtectedRoute requiredRole="ADMIN" />}>
+        <Route path="/admin" element={<AdminPage />} />
+      </Route>
+
+      {/* Orice ruta necunoscuta => landing */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;

@@ -2,15 +2,16 @@ import { Trip, TripDay, Objective, Category } from '../models/index.js'
 import sequelize from "../config/db.config.js";
 import { Op } from 'sequelize';
 
+
 export const tripController = {
 
-    // GET /api/trips - Lista calatoriilor user-ului autentificat
+    // GET /trips - Lista calatoriilor user-ului autentificat
     getAllTrips: async (req, res) => {
         try {
             // req.user.id vine din authMiddleware
             const trips = await Trip.findAll({
                 where: { id_user: req.user.id },
-                attributes: ['id_trip', 'destination_name', 'number_of_days', 'start_date', 'createdAt'],
+                attributes: ['id_trip', 'destination_name', 'number_of_days', 'start_date', 'createdAt', 'hotel_name'],
                 order: [['createdAt', 'DESC']]
             });
 
@@ -365,13 +366,13 @@ export const tripController = {
 
             // toate obiectivele pentru zilele acestui trip (atribuite)
             const assigned = dayIds.length ? await Objective.findAll({
-                    where: { id_trip_day: dayIds },
-                    include: [{ model: Category, attributes: ["id_category", "name"] }],
-                    order: [
-                        ["id_trip_day", "ASC"],
-                        ["position_in_day", "ASC"]
-                    ]
-                })
+                where: { id_trip_day: dayIds },
+                include: [{ model: Category, attributes: ["id_category", "name"] }],
+                order: [
+                    ["id_trip_day", "ASC"],
+                    ["position_in_day", "ASC"]
+                ]
+            })
                 : [];
 
             // obiectivele neatribuite
@@ -408,6 +409,97 @@ export const tripController = {
         } catch (error) {
             console.error("Get trip board error:", error);
             return res.status(500).json({ message: "Something went wrong." });
+        }
+    },
+
+    // PATCH /trips/:id/hotel — salveaza hotelul pentru o calatorie
+    saveHotel: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { hotel_name } = req.body;
+
+            // validare camp hotel_name
+            if (!hotel_name || hotel_name.trim().length < 3) {
+                return res.status(400).json({
+                    message: 'Numele hotelului trebuie sa aiba minim 3 caractere.'
+                });
+            }
+
+            // verificam ca trip-ul apartine userului autentificat
+            const trip = await Trip.findOne({
+                where: { id_trip: id, id_user: req.user.id }
+            });
+
+            if (!trip) {
+                return res.status(404).json({ message: 'Trip not found.' });
+            }
+
+            // functie helper pentru un apel Nominatim
+            const geocode = async (query) => {
+                const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
+                const res = await fetch(url, { headers: { 'User-Agent': 'TripPlannerApp/1.0' } });
+                if (!res.ok) return null;
+                const data = await res.json();
+                return data && data.length > 0 ? data[0] : null;
+            };
+
+            // incercam mai intai cu adresa exacta introdusa de user
+            let place = await geocode(hotel_name.trim());
+
+            // daca nu s-a gasit, incercam cu destinatia calatoriei adaugata
+            if (!place) {
+                place = await geocode(`${hotel_name.trim()}, ${trip.destination_name}`);
+            }
+
+            // daca nici asa nu s-a gasit, returnam 422
+            if (!place) {
+                return res.status(422).json({
+                    message: `Nu am gasit coordonatele pentru "${hotel_name.trim()}". Incearca sa scrii doar numele hotelului sau orasul (ex: "Hotel Marriott Barcelona").`
+                });
+            }
+
+            const hotel_lat = parseFloat(place.lat);
+            const hotel_lng = parseFloat(place.lon);
+            const hotel_display_name = place.display_name;
+
+            // salvam datele hotelului in trip
+            await trip.update({ hotel_name: hotel_name.trim(), hotel_lat, hotel_lng });
+
+            return res.status(200).json({
+                hotel_name: hotel_name.trim(),
+                hotel_display_name,
+                hotel_lat,
+                hotel_lng
+            });
+
+        } catch (error) {
+            console.error('Save hotel error:', error);
+            return res.status(500).json({ message: 'Something went wrong.' });
+        }
+
+    },
+
+    // DELETE /trips/:id/hotel — elimina hotelul salvat de pe o calatorie
+    removeHotel: async (req, res) => {
+        try {
+            const { id } = req.params;
+
+            const trip = await Trip.findOne({
+                where: { id_trip: id, id_user: req.user.id }
+            });
+
+            if (!trip) {
+                return res.status(404).json({ message: 'Trip not found.' });
+            }
+
+            // resetam campurile hotelului la null
+            await trip.update({ hotel_name: null, hotel_lat: null, hotel_lng: null });
+
+            return res.status(200).json({ message: 'Hotel removed successfully.' });
+
+        } catch (error) {
+            console.error('Remove hotel error:', error);
+            return res.status(500).json({ message: 'Something went wrong.' });
         }
     }
 

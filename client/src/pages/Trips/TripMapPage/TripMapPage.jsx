@@ -118,7 +118,7 @@ export default function TripMapPage() {
                 </div>
                 <h1 className="map-title">
                     Harta:
-                    <span className="map-destination">{trip?.destination_name}</span>
+                    <span className="map-destination"> {trip?.destination_name}</span>
                 </h1>
                 <button
                     className="map-nav-btn map-nav-btn--right"
@@ -190,6 +190,11 @@ export default function TripMapPage() {
                         objectives={visibleObjectives}
                         highlightedObjId={highlightedObjId}
                         onMarkerClick={handleMarkerClick}
+                        hotel={trip?.hotel_name ? {
+                            name: trip.hotel_name,
+                            lat: trip.hotel_lat,
+                            lng: trip.hotel_lng
+                        } : null}
                     />
                 </main>
             </div>

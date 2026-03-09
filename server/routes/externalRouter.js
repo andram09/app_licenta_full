@@ -2,15 +2,14 @@ import express from "express"
 import { externalController } from "../controllers/externalController.js"
 import { authMiddleware } from "../middleware/authMiddleware.js"
 
-export const router=express.Router();
+export const router = express.Router();
 
-router.use(authMiddleware);
+// /external/places?lat=...&lng=...&category=...
+router.get("/places", externalController.getPlacesByCategory);
 
-// /external/cultural?lat=...&lng=...
-router.get("/cultural", externalController.getCulturalPlaces);
+// /external/search?name=...&lat=...&lng=...&radius=...
+router.get("/search", externalController.searchPlacesByName);
 
-// /external/lifestyle?lat=...&lng=...&category=restaurant|cafe|bar|nightlife
-router.get("/lifestyle", externalController.getLifestylePlaces);
-
-
+// /external/cities?query=...
+router.get("/cities", externalController.getCities);
 

@@ -1,10 +1,12 @@
-import { fetchOpenTripMapByKinds } from "../services/externalPlacesService.js";
+import { fetchOpenTripMapByKinds, fetchOpenTripMapByName, fetchCitySuggestions } from "../services/externalPlacesService.js";
 
 export const externalController = {
 
-  getCulturalPlaces: async (req, res) => {
+  // GET /external/places?lat=...&lng=...&category=...
+  // endpoint unificat cu mapping explicit category -> kinds OpenTripMap
+  getPlacesByCategory: async (req, res) => {
     try {
-      const { lat, lng } = req.query;
+      const { lat, lng, category } = req.query;
 
       const latitude = Number(lat);
       const longitude = Number(lng);
@@ -20,45 +22,91 @@ export const externalController = {
         return res.status(400).json({ message: "Invalid latitude or longitude." });
       }
 
-      const kinds = "cultural,historic,museums,architecture,natural";
+      // mapping explicit: categoria din frontend -> kinds OpenTripMap
+      // folosim doar top-level kinds garantate de API (nu subcategorii compuse)
+      const KINDS_MAP = {
+        museums: "museums",
+        historic: "historic,religion",
+        architecture: "architecture,interesting_places",
+        parks: "natural,amusements",
+        restaurants: "restaurants,foods",
+        cafes: "cafes,bars",
+      };
 
-      const data = await fetchOpenTripMapByKinds(latitude, longitude, kinds);
+      const kinds = KINDS_MAP[category];
+
+      if (!kinds) {
+        return res.status(400).json({
+          message: `Unknown category "${category}". Accepted: ${Object.keys(KINDS_MAP).join(", ")}`
+        });
+      }
+
+      const RATE_MAP = {
+        restaurants: 1,
+        cafes: 1,
+      };
+      const rate = RATE_MAP[category] ?? 2;
+
+      const data = await fetchOpenTripMapByKinds(latitude, longitude, kinds, rate);
 
       return res.status(200).json(data);
 
     } catch (error) {
-      console.error("OpenTripMap cultural error:", error.message);
-      return res.status(500).json({ message: "Failed to fetch cultural places." });
+      console.error("OpenTripMap places error:", error.message);
+      return res.status(500).json({ message: "Failed to fetch places." });
     }
   },
 
-  getLifestylePlaces: async (req, res) => {
+  // GET /external/search?name=...&lat=...&lng=...&radius=...
+  // Autocomplete locuri turistice dupa text, in jurul coordonatelor date
+  searchPlacesByName: async (req, res) => {
     try {
-      const { lat, lng } = req.query;
+      const { name, lat, lng, radius } = req.query;
+
+      if (!name || name.trim().length < 3) {
+        return res.status(400).json({ message: "Query must have at least 3 characters." });
+      }
 
       const latitude = Number(lat);
       const longitude = Number(lng);
 
       if (
-        isNaN(latitude) ||
-        isNaN(longitude) ||
-        latitude < -90 ||
-        latitude > 90 ||
-        longitude < -180 ||
-        longitude > 180
+        isNaN(latitude) || isNaN(longitude) ||
+        latitude < -90 || latitude > 90 ||
+        longitude < -180 || longitude > 180
       ) {
         return res.status(400).json({ message: "Invalid latitude or longitude." });
       }
 
-      const kinds = "restaurants,cafes,bars,fast_food";
-
-      const data = await fetchOpenTripMapByKinds(latitude, longitude, kinds);
+      const r = radius ? Math.min(Number(radius), 10000) : 5000;
+      const data = await fetchOpenTripMapByName(name.trim(), latitude, longitude, r);
 
       return res.status(200).json(data);
 
     } catch (error) {
-      console.error("OpenTripMap lifestyle error:", error.message);
-      return res.status(500).json({ message: "Failed to fetch lifestyle places." });
+      console.error("OpenTripMap search error:", error.message);
+      return res.status(500).json({ message: "Failed to search places." });
+    }
+  },
+
+  // GET /external/cities?query=...
+  // autocomplete orase cu api Nominatim
+  getCities: async (req, res) => {
+    try {
+      const { query } = req.query;
+
+      if (!query || query.trim().length < 2) {
+        return res.status(400).json({ message: "Query must have at least 2 characters." });
+      }
+
+      // apelam Nominatim cu raspuns in romana
+      const results = await fetchCitySuggestions(query.trim(), "ro");
+
+      return res.status(200).json({ data: results });
+
+    } catch (error) {
+      console.error("Nominatim geocoding error:", error.message);
+      return res.status(500).json({ message: "Failed to fetch city suggestions." });
     }
   }
 

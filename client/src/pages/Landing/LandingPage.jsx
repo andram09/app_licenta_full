@@ -1,14 +1,13 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../store/authContext";
-import { ListChecks, Banknote, Map } from "lucide-react";
 import Navbar from "../../components/layout/Navbar";
+import { CalendarDays, Wallet, MapPin } from "lucide-react";
 import "./LandingPage.css";
 
 export default function LandingPage() {
     const { user, loading } = useAuth();
     const navigate = useNavigate();
 
-    // Determina destinatia butonului principal in functie de rol
     const handlePrimaryAction = () => {
         if (!user) {
             navigate("/register");
@@ -19,17 +18,15 @@ export default function LandingPage() {
         }
     };
 
-    // Text CTA adaptat dupa starea de autentificare
     const primaryLabel = !user ? "Creează-ți itinerariul" : user.role === "ADMIN" ? "Mergi la Dashboard" : "Călătoriile mele";
 
     return (
         <div className="landing">
             <Navbar />
 
-            {/*HERO*/}
             <section className="landing-hero">
                 <h1 className="landing-hero-title">
-                    Planifică-ți <em>călătoria</em>
+                    Planifică-ți călătoria
                 </h1>
                 <p className="landing-hero-subtitle">
                     Creează itinerarii complete, explorează obiective turistice,
@@ -38,11 +35,11 @@ export default function LandingPage() {
 
                 {!loading && (
                     <div className="landing-hero-actions">
-                        <button onClick={handlePrimaryAction} className="btn-primary">
+                        <button onClick={handlePrimaryAction} className="landing-cta-primary">
                             {primaryLabel}
                         </button>
                         {!user && (
-                            <Link to="/login" className="btn-ghost">
+                            <Link to="/login" className="landing-cta-secondary">
                                 Autentificare
                             </Link>
                         )}
@@ -50,7 +47,6 @@ export default function LandingPage() {
                 )}
             </section>
 
-            {/*CUM FUNCTIONEAZA*/}
             <div className="landing-how-section">
                 <div className="landing-how-inner">
                     <h2 className="landing-how-title">Cum funcționează</h2>
@@ -80,33 +76,26 @@ export default function LandingPage() {
                 </div>
             </div>
 
-            {/*FUNCTIONALITATI*/}
             <div className="landing-features">
                 <div className="landing-features-inner">
                     <h2 className="landing-features-title">Ce oferă aplicația</h2>
                     <div className="landing-features-grid">
                         <div className="landing-feature">
-                            <div className="landing-feature-icon">
-                                <ListChecks size={24} strokeWidth={1.5} />
-                            </div>
+                            <div className="landing-feature-icon"><CalendarDays size={28} strokeWidth={1.5} /></div>
                             <h3 className="landing-feature-title">Organizare pe zile</h3>
                             <p className="landing-feature-desc">
                                 Planificator vizual cu drag & drop pentru fiecare zi a călătoriei.
                             </p>
                         </div>
                         <div className="landing-feature">
-                            <div className="landing-feature-icon">
-                                <Banknote size={24} strokeWidth={1.5} />
-                            </div>
+                            <div className="landing-feature-icon"><Wallet size={28} strokeWidth={1.5} /></div>
                             <h3 className="landing-feature-title">Gestionare buget</h3>
                             <p className="landing-feature-desc">
                                 Urmărește cheltuielile și rămâi în limita bugetului stabilit.
                             </p>
                         </div>
                         <div className="landing-feature">
-                            <div className="landing-feature-icon">
-                                <Map size={24} strokeWidth={1.5} />
-                            </div>
+                            <div className="landing-feature-icon"><MapPin size={28} strokeWidth={1.5} /></div>
                             <h3 className="landing-feature-title">Hartă interactivă</h3>
                             <p className="landing-feature-desc">
                                 Vizualizează toate obiectivele pe hartă (Leaflet, extensibil).
@@ -116,7 +105,6 @@ export default function LandingPage() {
                 </div>
             </div>
 
-            {/*FOOTER*/}
             <footer className="landing-footer">
                 © {new Date().getFullYear()} TripPlanner - Aplicatie informatica pentru
                 planificarea itinerariilor turistice

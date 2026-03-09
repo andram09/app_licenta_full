@@ -50,6 +50,11 @@ export const Objective = sequelize.define('Objective', {
     },
     external_provider: {
         type: DataTypes.ENUM('OPENTRIPMAP', 'FOURSQUARE')
+    },
+    estimated_cost: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true,
+        defaultValue: null
     }
 },
     {

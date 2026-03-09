@@ -7,27 +7,60 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const refreshUser = async () => {
+  // Preia datele userului logat din cookie-ul existent
+  // Endpoint corect: GET /auth/profile (nu /auth/me)
+  const fetchMe = async () => {
     try {
-      const response = await api.get("/auth/me"); //cookie valid(logat)=>200; nu exista cookie(nu e logat)=> 401
-      setUser(response.data.data); //user e în response.data.data
+      const response = await api.get("/auth/profile");
+      setUser(response.data.data); // raspunsul are forma { data: { id, first_name, last_name, email, role } }
     } catch (error) {
-      setUser(null);
+      setUser(null); // cookie invalid sau expirat => user neautentificat
     } finally {
       setLoading(false);
     }
   };
 
+  // Login: POST /auth/login => seteaza cookie httpOnly => apoi preia datele userului
+  const login = async (email, password) => {
+    const response = await api.post("/auth/login", { email, password });
+    // dupa login reusit, populam userul din context prin fetchMe
+    await fetchMe();
+    return response.data; // returnam raspunsul pentru a putea face redirect in pagina
+  };
+
+  // Register: POST /auth/register => cont nou, fara autologin
+  const register = async (first_name, last_name, email, password) => {
+    const response = await api.post("/auth/register", {
+      first_name,
+      last_name,
+      email,
+      password,
+    });
+    return response.data;
+  };
+
+  // Logout: POST /auth/logout => backend sterge cookie => resetam starea locala
+  const logout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch (error) {
+      // chiar daca apelul esueaza, resetam starea locala
+      console.error("Logout error:", error);
+    } finally {
+      setUser(null);
+    }
+  };
+
+  // La montarea aplicatiei, verifica daca exista un cookie valid
   useEffect(() => {
-    refreshUser();
+    fetchMe();
   }, []);
 
-  const value = useMemo(() => ({ //re-rander doar la schimbari
-    user,
-    setUser,
-    loading,
-    refreshUser
-  }), [user, loading]);
+  // Memoizare pentru a evita re-render-uri inutile
+  const value = useMemo(
+    () => ({ user, loading, login, register, logout, fetchMe }),
+    [user, loading]
+  );
 
   return (
     <AuthContext.Provider value={value}>
@@ -36,7 +69,7 @@ export function AuthProvider({ children }) {
   );
 }
 
-//custom hook
+// Hook custom pentru acces usor la context
 export function useAuth() {
   return useContext(AuthContext);
 }

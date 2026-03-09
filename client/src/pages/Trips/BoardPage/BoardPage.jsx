@@ -1,30 +1,97 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-    DndContext,
-    DragOverlay,
-    PointerSensor,
-    useSensor,
-    useSensors,
-    useDroppable,
-    closestCorners,
-} from "@dnd-kit/core";
-import {
-    SortableContext,
-    useSortable,
-    verticalListSortingStrategy,
-    arrayMove,
-} from "@dnd-kit/sortable";
+import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors, useDroppable, closestCorners, } from "@dnd-kit/core";
+import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove, } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, ArrowLeft, Map, List } from "lucide-react";
 import { api } from "../../../api/axios";
 import EditObjectiveModal from "./EditObjectiveModal";
+import { ArrowLeft } from "lucide-react";
+import { useRouteOptimizer } from "../../../hooks/useRouteOptimizer";
 import "./BoardPage.css";
 
+// ── Modal hotel — punct de plecare pentru optimizare ────────────────────────
+function HotelModal({ onConfirm, onSkip, onClose, isLoading, error, initialValue }) {
+    const [inputValue, setInputValue] = useState(initialValue || "");
+    // mod de editare — false inseamna ca afisam hotelul salvat, true ca userul scrie un hotel nou
+    const [editing, setEditing] = useState(!initialValue);
+
+    // submit la tasta Enter doar in modul de editare
+    const handleKeyDown = (e) => {
+        if (editing && e.key === "Enter" && inputValue.trim().length >= 3 && !isLoading) {
+            onConfirm(inputValue.trim());
+        }
+    };
+
+    return (
+        <div className="hotel-modal-overlay" onClick={onClose}>
+            <div className="hotel-modal" onClick={(e) => e.stopPropagation()}>
+                <h2 className="hotel-modal-title">Punct de plecare</h2>
+                <p className="hotel-modal-desc">
+                    {initialValue && !editing
+                        ? "Ai un hotel salvat pentru această călătorie. Vrei să optimizezi traseul pornind de la el?"
+                        : "Introdu adresa hotelului pentru a calcula traseul optim pornind de acolo. Acest pas este opțional."
+                    }
+                </p>
+
+                {/* afisam inputul doar cand userul editeaza sau nu are hotel salvat */}
+                {editing ? (
+                    <>
+                        <input
+                            className="hotel-modal-input"
+                            type="text"
+                            placeholder="ex: Hotel Marriott, Barcelona"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            autoFocus
+                        />
+                        {/* afisam eroarea daca exista */}
+                        {error && <p className="hotel-modal-error">{error}</p>}
+                    </>
+                ) : (
+                    /* afisam hotelul salvat ca text, cu optiunea de a-l schimba */
+                    <div className="hotel-modal-saved">
+                        <span className="hotel-modal-saved-name">🛏 {initialValue}</span>
+                        <button
+                            className="hotel-modal-change-btn"
+                            type="button"
+                            onClick={() => setEditing(true)}
+                            disabled={isLoading}
+                        >
+                            Schimbă
+                        </button>
+                    </div>
+                )}
+
+                <div className="hotel-modal-actions">
+                    <button
+                        className="hotel-modal-skip-btn"
+                        type="button"
+                        onClick={() => onConfirm(null, false)}
+                        disabled={isLoading}
+                    >
+                        Fara hotel. Porneste optimizarea de la primul obiectiv din zi.
+                    </button>
+                    <button
+                        className="hotel-modal-confirm-btn"
+                        type="button"
+                        onClick={() => {
+                            const val = editing ? inputValue.trim() : initialValue;
+                            onConfirm(val, true);
+                        }}
+                        disabled={(editing && inputValue.trim().length < 3) || isLoading}
+                    >
+                        {isLoading ? "Se caută..." : initialValue && !editing ? "Folosește hotelul salvat" : "Confirmă hotel"}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 // ── Card sortabil ───────────────────────────────────────────────────────────
-function SortableCard({ objective, onEdit }) {
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-        useSortable({ id: String(objective.id_objective) });
+function SortableCard({ objective, onEdit, onDelete }) {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: String(objective.id_objective) });
 
     return (
         <div
@@ -38,6 +105,16 @@ function SortableCard({ objective, onEdit }) {
             {...listeners}
             className="board-card"
         >
+            <button
+                className="board-card-delete-btn"
+                type="button"
+                aria-label="Șterge obiectiv"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => { e.stopPropagation(); onDelete(objective.id_objective); }}
+            >
+                ✕
+            </button>
+
             <p className="board-card-title">{objective.title}</p>
             {objective.planned_time && (
                 <p className="board-card-time">{objective.planned_time.slice(0, 5)}</p>
@@ -47,35 +124,76 @@ function SortableCard({ objective, onEdit }) {
                     {(objective.description || objective.address || "").slice(0, 80)}
                 </p>
             )}
-            <button
-                className="board-card-details-btn"
-                type="button"
-                onClick={(e) => { e.stopPropagation(); onEdit(objective); }}
-            >
-                Adaugă detalii
-            </button>
+            <div className="board-card-actions">
+                <button
+                    className="board-card-details-btn"
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); onEdit(objective); }}
+                >
+                    Adaugă detalii
+                </button>
+            </div>
         </div>
     );
 }
 
-// ── Coloană droppable ───────────────────────────────────────────────────────
-function Column({ colKey, title, objectives, onEdit }) {
+function Column({ colKey, title, objectives, onEdit, onDelete, onOptimize, isOptimizing, optimizeResult }) {
     const { setNodeRef, isOver } = useDroppable({ id: colKey });
     const ids = objectives.map((o) => String(o.id_objective));
+
+    // numaram doar obiectivele cu coordonate — cele fara nu pot fi optimizate
+    const optimizableCount = objectives.filter(
+        (o) => o.coord_lat != null && o.coord_lng != null
+    ).length;
+
+    const canOptimize = optimizableCount >= 2 && !isOptimizing;
 
     return (
         <div className={`board-column${isOver ? " board-column--over" : ""}`}>
             <div className="board-column-header">
-                <h2 className="board-column-title">{title}</h2>
-                <span className="board-column-count">{objectives.length}</span>
+                <div className="board-column-header-top">
+                    <h2 className="board-column-title">{title}</h2>
+                    <span className="board-column-count">{objectives.length}</span>
+                </div>
+
+                {/* butonul de optimizare — apare doar la coloanele de zile, nu la Neatribuite */}
+                {onOptimize && (
+                    <div className="board-column-optimize">
+                        <button
+                            type="button"
+                            className="board-optimize-btn"
+                            onClick={() => onOptimize(colKey)}
+                            disabled={!canOptimize}
+                            title={
+                                optimizableCount < 2
+                                    ? "Adauga cel putin 2 obiective cu locatie"
+                                    : "Optimizeaza traseul zilei"
+                            }
+                        >
+                            {isOptimizing ? "..." : "Optimizeaza ruta"}
+                        </button>
+
+                        {optimizeResult && (
+                            <span className="board-optimize-result">
+                                {Number(optimizeResult.totalDistanceKm).toFixed(1)} km
+                            </span>
+                        )}
+                    </div>
+                )}
             </div>
+
             <SortableContext items={ids} strategy={verticalListSortingStrategy}>
                 <div ref={setNodeRef} className="board-column-body">
                     {objectives.length === 0 && (
                         <p className="board-column-empty">Trage obiective aici</p>
                     )}
                     {objectives.map((obj) => (
-                        <SortableCard key={obj.id_objective} objective={obj} onEdit={onEdit} />
+                        <SortableCard
+                            key={obj.id_objective}
+                            objective={obj}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
+                        />
                     ))}
                 </div>
             </SortableContext>
@@ -83,7 +201,6 @@ function Column({ colKey, title, objectives, onEdit }) {
     );
 }
 
-// Card in DragOverlay
 function CardPreview({ objective }) {
     return (
         <div className="board-card board-card--overlay">
@@ -92,7 +209,6 @@ function CardPreview({ objective }) {
     );
 }
 
-//Pagina principala
 export default function BoardPage() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -106,12 +222,18 @@ export default function BoardPage() {
     const [activeObj, setActiveObj] = useState(null);
     const [editingObj, setEditingObj] = useState(null);
 
+    const [optimizeResults, setOptimizeResults] = useState({});
+    const { optimize, isLoading: isOptimizing, error: optimizeError } = useRouteOptimizer(id);
+
+    // stare pentru modalul de hotel
+    const [hotelModal, setHotelModal] = useState(null); // { colKey } sau null
+    const [hotelLoading, setHotelLoading] = useState(false);
+    const [hotelError, setHotelError] = useState(null);
+
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
     );
 
-    // Excludem cardul activ din candidatii de coliziune (closestCorners e mai bun
-    // decat closestCenter pentru kanban: evita preferinta gresita pentru coloana vecina)
     const collisionDetection = useCallback(
         (args) =>
             closestCorners({
@@ -123,7 +245,6 @@ export default function BoardPage() {
         []
     );
 
-    // ── Fetch board ───────────────────────────────────────────────────────
     useEffect(() => {
         const fetchBoard = async () => {
             try {
@@ -146,7 +267,7 @@ export default function BoardPage() {
                         })
                         : null;
                     meta[key] = {
-                        title: `Ziua ${day.day_index}${label ? ` · ${label}` : ""}`,
+                        title: `Ziua ${day.day_index}${label ? ` - ${label}` : ""}`,
                         id_day: day.id_day,
                     };
                 }
@@ -155,15 +276,13 @@ export default function BoardPage() {
                 setColumnOrder(order);
                 setColumnMeta(meta);
             } catch (err) {
-                setError(err?.response?.data?.message || "Nu am putut încărca planificarea.");
+                setError(err?.response?.data?.message || "Nu am putut incarca planificarea.");
             } finally {
                 setLoading(false);
             }
         };
         fetchBoard();
     }, [id]);
-
-    // ── Helpers ───────────────────────────────────────────────────────────
 
     function findColKey(objId) {
         for (const [key, objs] of Object.entries(columns)) {
@@ -180,11 +299,8 @@ export default function BoardPage() {
         return null;
     }
 
-    // ── Handler edit modal ────────────────────────────────────────────────
-    // updatedFields = { description, planned_time } - valorile din modal dupa salvare
     const handleEditSaved = (updatedFields) => {
         const objId = editingObj.id_objective;
-        // Actualizăm obiectivul în toate coloanele fără refetch
         setColumns((prev) => {
             const next = {};
             for (const [key, objs] of Object.entries(prev)) {
@@ -197,6 +313,91 @@ export default function BoardPage() {
         setEditingObj(null);
     };
 
+    // ── Handler stergere obiectiv ──────────────────────────────────────────
+    const handleDeleteObjective = async (objId) => {
+        if (!window.confirm("Sigur vrei să ștergi acest obiectiv?")) return;
+        try {
+            await api.delete(`/objectives/${objId}`);
+            // Eliminam obiectivul din toate coloanele fara reload
+            setColumns((prev) => {
+                const next = {};
+                for (const [key, objs] of Object.entries(prev)) {
+                    next[key] = objs.filter((o) => o.id_objective !== objId);
+                }
+                return next;
+            });
+        } catch (err) {
+            alert(err?.response?.data?.message || "Nu am putut șterge obiectivul.");
+        }
+    };
+
+    // ── Handler optimizare ruta — deschide mai intai modalul de hotel ──────
+    const handleOptimize = (colKey) => {
+        setHotelError(null);
+        setHotelModal({ colKey });
+    };
+
+    // executa optimizarea efectiva dupa ce userul a ales ce face cu hotelul
+    const runOptimize = async (colKey, hotelName, useHotelAsStart) => {
+        const dayId = columnMeta[colKey]?.id_day;
+        if (!dayId) return;
+
+        // salvam hotelul pe trip doar daca e un hotel nou (diferit de cel deja salvat) și vrem să-l folosim
+        if (useHotelAsStart && hotelName && hotelName !== trip?.hotel_name) {
+            setHotelLoading(true);
+            setHotelError(null);
+            try {
+                const res = await api.patch(`/trips/${id}/hotel`, { hotel_name: hotelName });
+                // actualizam starea locala cu noul hotel_name returnat
+                setTrip((prev) => ({ ...prev, hotel_name: res.data.hotel_name }));
+            } catch (err) {
+                const msg = err?.response?.data?.message || "Nu am putut salva hotelul.";
+                setHotelError(msg);
+                setHotelLoading(false);
+                return; // ramane deschis modalul
+            }
+            setHotelLoading(false);
+        }
+
+        setHotelModal(null);
+
+        // Pasam datele hotelului curent catre optimizator daca user-ul a ales asta
+        const currentHotel = useHotelAsStart ? (
+            hotelName && hotelName !== trip?.hotel_name
+                ? null // Va fi citit de pe backend din baza de date in optimizeController (sau pasat explicit daca vrem sa fim defensivi, dar optimize route il citeste de pe Trip.findOne)
+                : trip // folosim hotelul din starea locala daca exista
+        ) : null;
+
+        const startPointPayload = useHotelAsStart && trip?.hotel_lat ? {
+            lat: trip.hotel_lat,
+            lng: trip.hotel_lng
+        } : null;
+
+        const result = await optimize(dayId, startPointPayload);
+        if (!result) return;
+
+        // reordonam cardurile in coloana conform ordinii returnate de Held-Karp
+        setColumns((prev) => {
+            const currentObjs = prev[colKey];
+            const reordered = result.orderedObjectives
+                .map((o) => currentObjs.find((c) => c.id_objective === o.id_objective))
+                .filter(Boolean);
+
+            // obiectivele fara coordonate le lasam la sfarsit, neatinse
+            const withoutCoords = currentObjs.filter(
+                (o) => o.coord_lat == null || o.coord_lng == null
+            );
+
+            return { ...prev, [colKey]: [...reordered, ...withoutCoords] };
+        });
+
+        // salvam distanta pentru aceasta coloana
+        setOptimizeResults((prev) => ({
+            ...prev,
+            [colKey]: { totalDistanceKm: result.totalDistanceKm },
+        }));
+    };
+
     const handleDragStart = ({ active }) => {
         setActiveObj(findObjective(active.id));
     };
@@ -206,11 +407,8 @@ export default function BoardPage() {
         if (!over || active.id === over.id) return;
 
         const sourceKey = findColKey(active.id);
-
         const targetKey =
-            columns[over.id] !== undefined
-                ? over.id
-                : findColKey(over.id);
+            columns[over.id] !== undefined ? over.id : findColKey(over.id);
 
         if (!sourceKey || !targetKey) return;
 
@@ -220,7 +418,6 @@ export default function BoardPage() {
         const objId = Number(active.id);
         const snap = structuredClone(columns);
 
-        // Reordonare in aceeasi coloana
         if (sourceKey === targetKey) {
             const objs = columns[sourceKey];
             const from = objs.findIndex((o) => String(o.id_objective) === active.id);
@@ -230,12 +427,12 @@ export default function BoardPage() {
             setColumns((prev) => ({ ...prev, [sourceKey]: arrayMove(objs, from, to) }));
 
             const idDay = columnMeta[sourceKey].id_day;
-            if (idDay === null) return; // Neatribuite nu are poziție
+            if (idDay === null) return;
 
             try {
                 await api.patch(`/objectives/${objId}/move`, {
                     id_trip_day: idDay,
-                    position_in_day: to + 1, // 1-based
+                    position_in_day: to + 1,
                 });
             } catch {
                 setColumns(snap);
@@ -243,12 +440,10 @@ export default function BoardPage() {
             return;
         }
 
-        // Mutare intre coloane diferite
         const sourceObjs = columns[sourceKey].filter(
             (o) => String(o.id_objective) !== active.id
         );
         const targetObjs = [...columns[targetKey]];
-
         const overIndex = targetObjs.findIndex((o) => String(o.id_objective) === over.id);
         if (overIndex >= 0) {
             targetObjs.splice(overIndex, 0, obj);
@@ -276,11 +471,10 @@ export default function BoardPage() {
         }
     };
 
-    // ── Render ────────────────────────────────────────────────────────────
     if (loading) {
         return (
             <div className="board-page">
-                <p className="board-state-msg">Se încarcă planificarea...</p>
+                <p className="board-state-msg">Se incarca planificarea...</p>
             </div>
         );
     }
@@ -303,11 +497,10 @@ export default function BoardPage() {
                             type="button"
                             onClick={() => navigate(`/trips/${id}/explore`)}
                         >
-                            <ArrowLeft size={14} strokeWidth={1.75} />
-                            Explorare
+                            <ArrowLeft size={16} strokeWidth={2} /> Explorare
                         </button>
                         <h1 className="board-title">
-                            Planificare pe zile:
+                            Planificare pe zile:{" "}
                             <span className="board-destination">{trip?.destination_name}</span>
                         </h1>
                     </div>
@@ -315,9 +508,15 @@ export default function BoardPage() {
                         <button
                             className="board-map-btn"
                             type="button"
+                            onClick={() => navigate(`/trips/${id}/budget`)}
+                        >
+                            Buget
+                        </button>
+                        <button
+                            className="board-map-btn"
+                            type="button"
                             onClick={() => navigate(`/trips/${id}/map`)}
                         >
-                            <Map size={14} strokeWidth={1.75} />
                             Hartă
                         </button>
                         <button
@@ -325,7 +524,6 @@ export default function BoardPage() {
                             type="button"
                             onClick={() => navigate("/trips")}
                         >
-                            <List size={14} strokeWidth={1.75} />
                             Călătoriile mele
                         </button>
                     </div>
@@ -345,6 +543,10 @@ export default function BoardPage() {
                                 title={columnMeta[colKey].title}
                                 objectives={columns[colKey]}
                                 onEdit={setEditingObj}
+                                onDelete={handleDeleteObjective}
+                                onOptimize={colKey !== "unassigned" ? handleOptimize : null}
+                                isOptimizing={isOptimizing}
+                                optimizeResult={optimizeResults[colKey] ?? null}
                             />
                         ))}
                     </div>
@@ -355,15 +557,24 @@ export default function BoardPage() {
                 </DndContext>
             </div>
 
-            {
-                editingObj && (
-                    <EditObjectiveModal
-                        objective={editingObj}
-                        onClose={() => setEditingObj(null)}
-                        onSaved={handleEditSaved}
-                    />
-                )
-            }
+            {editingObj && (
+                <EditObjectiveModal
+                    objective={editingObj}
+                    onClose={() => setEditingObj(null)}
+                    onSaved={handleEditSaved}
+                />
+            )}
+
+            {/* modal hotel — apare cand userul apasa Optimizeaza ruta */}
+            {hotelModal && (
+                <HotelModal
+                    isLoading={hotelLoading}
+                    error={hotelError}
+                    initialValue={trip?.hotel_name || null}
+                    onConfirm={(hotelName, useHotelAsStart) => runOptimize(hotelModal.colKey, hotelName, useHotelAsStart)}
+                    onClose={() => { setHotelModal(null); setHotelError(null); }}
+                />
+            )}
         </>
     );
 }

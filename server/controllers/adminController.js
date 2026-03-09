@@ -1,15 +1,16 @@
-import { User, Trip, Expense, ExpenseCategory, sequelize } from "../models/index.js";
+import { User, Trip, Expense, ExpenseCategory, Objective, sequelize } from "../models/index.js";
 
 export const adminController = {
 
     getDashboardStats: async (req, res) => {
         try {
-            //total users si trips
-            const totalUsers = await User.count();
+            //total users unde role='USER'
+            const totalUsers = await User.count({ where: { role: 'USER' } });
+            //total trips
             const totalTrips = await Trip.count();
 
             const avgTripsPerUser = totalUsers > 0 ? parseFloat((totalTrips / totalUsers).toFixed(2)) : 0;
-            
+
             //medie durata trip
             const avgTripDurationRaw = await Trip.findAll({
                 attributes: [
@@ -18,7 +19,11 @@ export const adminController = {
                 raw: true
             });
 
-            const avgTripDuration = avgTripDurationRaw[0].avgDuration ? parseFloat(avgTripDurationRaw[0].avgDuration) : 0;
+            const avgTripDuration = avgTripDurationRaw[0].avgDuration ? parseFloat(parseFloat(avgTripDurationRaw[0].avgDuration).toFixed(1)) : 0;
+
+            // avgObjectivesPerTrip
+            const totalObjectives = await Objective.count();
+            const avgObjectivesPerTrip = totalTrips > 0 ? parseFloat((totalObjectives / totalTrips).toFixed(1)) : 0;
 
             //top destinations
             const topDestinationsRaw = await Trip.findAll({
@@ -35,6 +40,27 @@ export const adminController = {
             const topDestinations = topDestinationsRaw.map(item => ({
                 destination: item.destination_name,
                 tripsCount: parseInt(item.count)
+            }));
+
+            // tripsPerMonth 
+            const tripsPerMonthRaw = await Trip.findAll({
+                attributes: [
+                    [sequelize.fn("MONTH", sequelize.col("createdAt")), "month"],
+                    [sequelize.fn("YEAR", sequelize.col("createdAt")), "year"],
+                    [sequelize.fn("COUNT", sequelize.col("id_trip")), "count"]
+                ],
+                group: ["year", "month"],
+                order: [
+                    [sequelize.literal("year"), "ASC"],
+                    [sequelize.literal("month"), "ASC"]
+                ],
+                raw: true
+            });
+
+            const monthNames = ["Ian", "Feb", "Mar", "Apr", "Mai", "Iun", "Iul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const tripsPerMonth = tripsPerMonthRaw.map(item => ({
+                month: `${monthNames[parseInt(item.month) - 1]} ${item.year}`,
+                count: parseInt(item.count)
             }));
 
             //top expense categories
@@ -66,8 +92,10 @@ export const adminController = {
                 totalUsers,
                 totalTrips,
                 avgTripsPerUser,
-                avgTripDuration: parseFloat(avgTripDuration),
+                avgTripDuration,
+                avgObjectivesPerTrip,
                 topDestinations,
+                tripsPerMonth,
                 topExpenseCategories
             });
 

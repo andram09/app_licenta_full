@@ -1,91 +1,93 @@
-/* ============================
-   ManualObjectiveModal - Design System
-   ============================ */
-
+/* ── Backdrop ─────────────────────────────────────────────── */
 .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 29, 57, 0.4);
+    background: rgba(0, 29, 57, 0.35);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    padding: var(--space-md);
-    backdrop-filter: blur(4px);
+    padding: 1rem;
 }
 
+/* ── Modal box ────────────────────────────────────────────── */
 .modal-box {
-    background: var(--color-white);
+    background: #FFFFFF;
     border-radius: var(--radius-xl);
-    padding: var(--space-xl) var(--space-lg);
+    border: 1px solid var(--color-light);
+    box-shadow: 0 24px 64px rgba(0, 29, 57, 0.14);
+    padding: 36px 40px;
     width: 100%;
     max-width: 480px;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--color-light);
-    animation: fadeUp 0.25s ease both;
 }
 
+/* ── Header ───────────────────────────────────────────────── */
 .modal-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: var(--space-lg);
+    align-items: center;
+    margin-bottom: 1.5rem;
 }
 
 .modal-title {
     font-family: var(--font-display);
-    font-size: 1.2rem;
-    font-weight: 600;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
     color: var(--color-navy);
     margin: 0;
-    letter-spacing: -0.01em;
 }
 
 .modal-subtitle {
     font-family: var(--font-body);
     font-size: 13px;
-    color: var(--color-mid);
-    margin: 4px 0 0;
+    font-weight: 300;
+    color: var(--color-gray);
+    margin: 3px 0 0;
 }
 
 .modal-close-btn {
     background: none;
     border: none;
+    font-size: 16px;
     color: var(--color-gray);
     cursor: pointer;
-    padding: 4px;
+    padding: 4px 6px;
+    border-radius: var(--radius-md);
     line-height: 1;
+    transition: background var(--transition-fast), color var(--transition-fast);
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: var(--radius-sm);
-    transition: color var(--transition-fast), background var(--transition-fast);
 }
 
 .modal-close-btn:hover {
-    color: var(--color-navy);
     background: var(--color-light);
+    color: var(--color-navy);
 }
 
-/* ---- Formular ---- */
+/* ── Form ─────────────────────────────────────────────────── */
 .modal-form {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: 1.1rem;
 }
 
 .modal-field {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xs);
+    gap: 6px;
 }
 
+/* ── Labels ───────────────────────────────────────────────── */
 .modal-label {
     font-family: var(--font-body);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.06em;
     text-transform: uppercase;
+    letter-spacing: 0.06em;
     color: var(--color-mid);
 }
 
@@ -96,35 +98,43 @@
 .modal-optional {
     font-weight: 400;
     color: var(--color-gray);
-    font-size: 11px;
+    font-size: 10px;
     text-transform: none;
     letter-spacing: 0;
 }
 
+/* ── Inputs & textarea ────────────────────────────────────── */
 .modal-input,
 .modal-textarea {
     width: 100%;
-    background: var(--color-light);
-    border: 1.5px solid transparent;
-    border-radius: var(--radius-md);
-    padding: 11px 14px;
-    font-family: var(--font-body);
+    padding: 10px 12px;
+    border: 1px solid #D6E4F0;
+    border-radius: 10px;
+    background: #F7FAFD;
     font-size: 14px;
+    font-family: var(--font-body);
     color: var(--color-navy);
-    transition: border-color var(--transition-fast), background var(--transition-fast);
-    box-sizing: border-box;
     outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.modal-input::placeholder,
+.modal-textarea::placeholder {
+    color: #B0C2D4;
 }
 
 .modal-input:focus,
 .modal-textarea:focus {
     border-color: var(--color-teal);
-    background: var(--color-white);
+    box-shadow: 0 0 0 3px rgba(78, 142, 162, 0.12);
+    background: #FFFFFF;
 }
 
-.modal-input::placeholder,
-.modal-textarea::placeholder {
-    color: var(--color-gray);
+.modal-input:disabled,
+.modal-textarea:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
 }
 
 .modal-input--narrow {
@@ -133,67 +143,83 @@
 
 .modal-textarea {
     resize: vertical;
-    min-height: 70px;
+    min-height: 72px;
 }
 
+/* ── Input selected (from API) ────────────────────────────── */
+.modal-input--selected {
+    border-color: var(--color-teal) !important;
+    background: rgba(78, 142, 162, 0.05) !important;
+}
+
+/* ── Error & hint text ────────────────────────────────────── */
 .modal-error {
-    font-family: var(--font-body);
-    font-size: 13px;
-    color: #c0392b;
+    font-size: 12px;
+    color: #e05454;
     margin: 0;
 }
 
-/* ---- Butoane ---- */
+.modal-hint {
+    font-size: 11px;
+    color: var(--color-gray);
+    margin: 2px 0 0;
+    font-style: italic;
+}
+
+.modal-hint--error {
+    color: #e05454;
+    font-style: normal;
+}
+
+/* ── Actions ──────────────────────────────────────────────── */
 .modal-actions {
     display: flex;
     justify-content: flex-end;
-    gap: var(--space-sm);
-    margin-top: var(--space-xs);
+    gap: 10px;
+    margin-top: 4px;
 }
 
 .modal-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 20px;
+    padding: 10px 22px;
     border-radius: var(--radius-pill);
     font-family: var(--font-body);
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all var(--transition-normal);
+    transition: all var(--transition-fast);
 }
 
 .modal-btn--secondary {
     background: transparent;
-    border: 1.5px solid var(--color-teal-lt);
+    border: 1.5px solid var(--color-navy);
     color: var(--color-navy);
 }
 
 .modal-btn--secondary:hover:not(:disabled) {
-    border-color: var(--color-teal);
-    color: var(--color-teal);
+    background: var(--color-navy);
+    color: #FFFFFF;
 }
 
 .modal-btn--primary {
-    background: var(--color-navy);
-    border: 1.5px solid var(--color-navy);
-    color: var(--color-white);
+    background: linear-gradient(135deg, #4E8EA2 0%, #3a7a8f 100%);
+    border: none;
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(78, 142, 162, 0.28);
 }
 
 .modal-btn--primary:hover:not(:disabled) {
-    background: var(--color-teal);
-    border-color: var(--color-teal);
+    background: linear-gradient(135deg, #3a7a8f 0%, #2d6478 100%);
+    box-shadow: 0 6px 18px rgba(78, 142, 162, 0.38);
     transform: translateY(-1px);
 }
 
 .modal-btn:disabled {
-    opacity: 0.55;
+    opacity: 0.50;
     cursor: not-allowed;
     transform: none;
 }
 
-/* ── Autocomplete ───────────────────────────────────────────────── */
+/* ── Autocomplete search wrap ─────────────────────────────── */
 .modal-search-wrap {
     position: relative;
     display: flex;
@@ -205,43 +231,35 @@
     padding-right: 3rem;
 }
 
-.modal-input--selected {
-    border-color: var(--color-teal) !important;
-    background: var(--color-light) !important;
-}
-
 .modal-search-spinner {
     position: absolute;
-    right: 10px;
-    font-size: 13px;
-    color: var(--color-gray);
+    right: 0.65rem;
+    font-size: 0.85rem;
     pointer-events: none;
+    color: var(--color-teal);
 }
 
 .modal-search-badge {
     position: absolute;
-    right: 8px;
-    font-family: var(--font-body);
+    right: 0.5rem;
     font-size: 10px;
     font-weight: 700;
     color: var(--color-teal);
     background: var(--color-light);
     border: 1px solid var(--color-teal-lt);
-    border-radius: var(--radius-sm);
-    padding: 2px 7px;
+    border-radius: 4px;
+    padding: 2px 6px;
     pointer-events: none;
     white-space: nowrap;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
 }
 
-/* Dropdown lista sugestii */
+/* ── Suggestions dropdown ─────────────────────────────────── */
 .modal-suggestions {
     position: absolute;
-    top: calc(100% + 3px);
+    top: calc(100% + 5px);
     left: 0;
     right: 0;
-    background: var(--color-white);
+    background: #FFFFFF;
     border: 1px solid var(--color-light);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
@@ -254,7 +272,7 @@
 }
 
 .modal-suggestion-item {
-    padding: 9px 14px;
+    padding: 10px 14px;
     display: flex;
     flex-direction: column;
     gap: 2px;
@@ -274,30 +292,16 @@
 }
 
 .modal-suggestion-kinds {
-    font-family: var(--font-body);
     font-size: 11px;
+    font-weight: 300;
     color: var(--color-gray);
     text-transform: capitalize;
 }
 
-/* Hint text */
-.modal-hint {
-    font-family: var(--font-body);
-    font-size: 12px;
-    color: var(--color-gray);
-    margin: 2px 0 0;
-    font-style: italic;
-}
-
-.modal-hint--error {
-    color: #c0392b;
-    font-style: normal;
-}
-
 .modal-suggestion-empty {
     padding: 10px 14px;
-    font-family: var(--font-body);
     font-size: 13px;
+    font-weight: 300;
     color: var(--color-gray);
     list-style: none;
 }

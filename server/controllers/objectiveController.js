@@ -54,7 +54,7 @@ export const objectiveController = {
     createObjectiveManual: async (req, res) => {
         try {
             const { id } = req.params;
-            const { id_category, title, description, coord_lat, coord_lng, address } = req.body;
+            const { id_category, title, description, coord_lat, coord_lng, address, planned_time } = req.body;
 
             if (!title || title.trim().length < 2) {
                 return res.status(400).json({
@@ -100,6 +100,7 @@ export const objectiveController = {
                 source_type: "MANUAL",
                 external_place_id: null,
                 external_provider: null,
+                planned_time: planned_time || null,
                 position_in_day: null
             });
 
@@ -395,6 +396,35 @@ export const objectiveController = {
             await transaction.rollback();
             console.error("Create objective from API error:", error);
             return res.status(500).json({ message: "Something went wrong." });
+        }
+    },
+
+    // GET /trips/:id/objectives
+    getTripObjectives: async (req, res) => {
+        try {
+            const { id } = req.params;
+
+            const trip = await Trip.findOne({
+                where: { id_trip: id, id_user: req.user.id }
+            });
+
+            if (!trip) {
+                return res.status(404).json({ message: 'Trip not found.' });
+            }
+
+            const objectives = await Objective.findAll({
+                where: { id_trip: id },
+                include: [
+                    { model: Category, attributes: ['id_category', 'name'] }
+                ],
+                order: [['createdAt', 'DESC']]
+            });
+
+            return res.status(200).json({ data: objectives });
+
+        } catch (error) {
+            console.error('Get trip objectives error:', error);
+            return res.status(500).json({ message: 'Something went wrong.' });
         }
     }
 

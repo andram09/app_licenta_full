@@ -3,7 +3,7 @@ import { tripController } from "../controllers/tripController.js"
 import { authMiddleware } from "../middleware/authMiddleware.js"
 import { objectiveController } from "../controllers/objectiveController.js";
 
-export const router=express.Router();
+export const router = express.Router();
 
 // pt toate rutele e nevoie ca userul sa fie logat deci folosesc authMiddleware
 router.use(authMiddleware)
@@ -15,6 +15,10 @@ router.put("/:id", tripController.updateTripStartDate)
 router.delete("/:id", tripController.deleteTrip)
 router.put("/:id/duration", tripController.updateTripDuration)
 router.get("/:id/board", tripController.getTripBoard)
+
+router.patch('/:id/hotel', tripController.saveHotel)
+router.delete('/:id/hotel', tripController.removeHotel)
+
 
 
 // //objectives
