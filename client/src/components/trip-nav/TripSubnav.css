@@ -1,18 +1,18 @@
 .trip-subnav {
   margin-bottom: 1rem;
-  padding: 12px 16px;
-
+  padding: 18px 24px;
   position: sticky;
   top: 0;
   z-index: 100;
-
   display: flex;
   flex-direction: column;
   gap: 8px;
-
   background: rgba(78, 142, 162, 0.34);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(189, 216, 233, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .trip-subnav-top {
@@ -23,22 +23,32 @@
   width: 100%;
 }
 
-.trip-subnav-left {
+.trip-subnav-bottom {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+}
+
+.trip-subnav-right {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
 }
 
 .trip-subnav-btn {
-  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 18px;
   border-radius: var(--radius-pill);
   border: 1.5px solid var(--color-navy);
   background: transparent;
   color: var(--color-navy);
   flex-shrink: 0;
-  font-size: 12px;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 .trip-subnav-btn:hover {
@@ -52,7 +62,7 @@
 }
 
 .trip-subnav-btn--primary {
-  margin-left: auto;
+  
   white-space: nowrap;
   background: linear-gradient(135deg, #4E8EA2 0%, #3a7a8f 100%);
   border: none;
@@ -71,10 +81,27 @@
   margin: 0;
   text-align: center;
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 500;
   color: var(--color-teal);
   line-height: 1.3;
+  grid-column: 2;
+}
+
+.trip-subnav-add-btn {
+    grid-column: 3;
+    justify-self: end;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px dashed #6c8fa3;
+    background: white;
+    color: #3c5d6f;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.trip-subnav-add-btn:hover {
+    background: #f4f7f9;
 }
 
 @media (max-width: 768px) {

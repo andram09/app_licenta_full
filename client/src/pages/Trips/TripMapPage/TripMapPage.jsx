@@ -101,11 +101,10 @@ export default function TripMapPage() {
         <div className="map-page">
             {/* Header */}
             <TripSubnav
-                idTrip={id}
+                tripId={id}
                 destinationName={trip?.destination_name}
                 activeTab="map"
                 showMap={false}
-                showBudget={false}
             />
             {/* Tab-uri filtrare zi */}
             <nav className="map-day-tabs">

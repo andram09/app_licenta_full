@@ -138,7 +138,11 @@ export default function ExplorePage() {
                     destinationName={trip?.destination_name || ""}
                     showMap={true}
                     showBudget={false}
+                    showAddObjective={true}
+                    onAddObjective={() => setShowModal(true)}
                 />
+
+                <div className="explore-page-container">
 
                 {!hasCoords && (
                     <div className="explore-no-coords">
@@ -215,6 +219,7 @@ export default function ExplorePage() {
                         )}
                     </>
                 )}
+                </div>
             </div>
 
             {showModal && (

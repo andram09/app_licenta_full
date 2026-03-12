@@ -6,7 +6,10 @@
         radial-gradient(ellipse at 20% 10%, #BDD8E9 0%, transparent 45%),
         radial-gradient(ellipse at 85% 85%, #EEF4FA 0%, transparent 45%),
         #F0F5EB;
-    padding: 0 2rem 3rem;
+}
+
+.explore-page-container {
+    padding: 0 0.5rem 3rem;
 }
 
 /* ── Header — sticky glass bar ──────────────────────────────
@@ -133,9 +136,18 @@
 /* ── Category filters ─────────────────────────────────────── */
 .explore-categories {
     display: flex;
-    gap: 8px;
-    margin-bottom: 1.75rem;
-    flex-wrap: wrap;
+    margin-bottom: 1.5rem; 
+    flex-wrap: nowrap;
+    gap: 10px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 6px;
+    scrollbar-width: none; /* Firefox */
+}
+.explore-categories::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 .explore-cat-btn {
