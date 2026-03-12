@@ -1,97 +1,47 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors, useDroppable, closestCorners, } from "@dnd-kit/core";
-import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove, } from "@dnd-kit/sortable";
+import {
+    DndContext,
+    DragOverlay,
+    PointerSensor,
+    TouchSensor,
+    useSensor,
+    useSensors,
+    useDroppable,
+    closestCorners,
+} from "@dnd-kit/core";
+import {
+    SortableContext,
+    useSortable,
+    verticalListSortingStrategy,
+    arrayMove,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { api } from "../../../api/axios";
 import EditObjectiveModal from "./EditObjectiveModal";
 import { ArrowLeft } from "lucide-react";
 import { useRouteOptimizer } from "../../../hooks/useRouteOptimizer";
+import TripSubnav from "../../../components/trip-nav/TripSubnav";
+import HotelModal from "./HotelModal";
 import "./BoardPage.css";
 
-// ── Modal hotel — punct de plecare pentru optimizare ────────────────────────
-function HotelModal({ onConfirm, onSkip, onClose, isLoading, error, initialValue }) {
-    const [inputValue, setInputValue] = useState(initialValue || "");
-    // mod de editare — false inseamna ca afisam hotelul salvat, true ca userul scrie un hotel nou
-    const [editing, setEditing] = useState(!initialValue);
+// ── Hook detectare mobile ───────────────────────────────────────────────────
+function useIsMobile() {
+    const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 768);
 
-    // submit la tasta Enter doar in modul de editare
-    const handleKeyDown = (e) => {
-        if (editing && e.key === "Enter" && inputValue.trim().length >= 3 && !isLoading) {
-            onConfirm(inputValue.trim());
-        }
-    };
+    useEffect(() => {
+        const handler = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener("resize", handler);
+        return () => window.removeEventListener("resize", handler);
+    }, []);
 
-    return (
-        <div className="hotel-modal-overlay" onClick={onClose}>
-            <div className="hotel-modal" onClick={(e) => e.stopPropagation()}>
-                <h2 className="hotel-modal-title">Punct de plecare</h2>
-                <p className="hotel-modal-desc">
-                    {initialValue && !editing
-                        ? "Ai un hotel salvat pentru această călătorie. Vrei să optimizezi traseul pornind de la el?"
-                        : "Introdu adresa hotelului pentru a calcula traseul optim pornind de acolo. Acest pas este opțional."
-                    }
-                </p>
-
-                {/* afisam inputul doar cand userul editeaza sau nu are hotel salvat */}
-                {editing ? (
-                    <>
-                        <input
-                            className="hotel-modal-input"
-                            type="text"
-                            placeholder="ex: Hotel Marriott, Barcelona"
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            autoFocus
-                        />
-                        {/* afisam eroarea daca exista */}
-                        {error && <p className="hotel-modal-error">{error}</p>}
-                    </>
-                ) : (
-                    /* afisam hotelul salvat ca text, cu optiunea de a-l schimba */
-                    <div className="hotel-modal-saved">
-                        <span className="hotel-modal-saved-name">🛏 {initialValue}</span>
-                        <button
-                            className="hotel-modal-change-btn"
-                            type="button"
-                            onClick={() => setEditing(true)}
-                            disabled={isLoading}
-                        >
-                            Schimbă
-                        </button>
-                    </div>
-                )}
-
-                <div className="hotel-modal-actions">
-                    <button
-                        className="hotel-modal-skip-btn"
-                        type="button"
-                        onClick={() => onConfirm(null, false)}
-                        disabled={isLoading}
-                    >
-                        Fara hotel. Porneste optimizarea de la primul obiectiv din zi.
-                    </button>
-                    <button
-                        className="hotel-modal-confirm-btn"
-                        type="button"
-                        onClick={() => {
-                            const val = editing ? inputValue.trim() : initialValue;
-                            onConfirm(val, true);
-                        }}
-                        disabled={(editing && inputValue.trim().length < 3) || isLoading}
-                    >
-                        {isLoading ? "Se caută..." : initialValue && !editing ? "Folosește hotelul salvat" : "Confirmă hotel"}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
+    return isMobile;
 }
 
-// ── Card sortabil ───────────────────────────────────────────────────────────
+// ── Card sortabil DESKTOP — neschimbat fata de original ─────────────────────
 function SortableCard({ objective, onEdit, onDelete }) {
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: String(objective.id_objective) });
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+        useSortable({ id: String(objective.id_objective) });
 
     return (
         <div
@@ -137,51 +87,17 @@ function SortableCard({ objective, onEdit, onDelete }) {
     );
 }
 
-function Column({ colKey, title, objectives, onEdit, onDelete, onOptimize, isOptimizing, optimizeResult }) {
+// ── Coloana kanban DESKTOP — neschimbata fata de original ───────────────────
+function Column({ colKey, title, objectives, onEdit, onDelete }) {
     const { setNodeRef, isOver } = useDroppable({ id: colKey });
     const ids = objectives.map((o) => String(o.id_objective));
-
-    // numaram doar obiectivele cu coordonate — cele fara nu pot fi optimizate
-    const optimizableCount = objectives.filter(
-        (o) => o.coord_lat != null && o.coord_lng != null
-    ).length;
-
-    const canOptimize = optimizableCount >= 2 && !isOptimizing;
 
     return (
         <div className={`board-column${isOver ? " board-column--over" : ""}`}>
             <div className="board-column-header">
-                <div className="board-column-header-top">
-                    <h2 className="board-column-title">{title}</h2>
-                    <span className="board-column-count">{objectives.length}</span>
-                </div>
-
-                {/* butonul de optimizare — apare doar la coloanele de zile, nu la Neatribuite */}
-                {onOptimize && (
-                    <div className="board-column-optimize">
-                        <button
-                            type="button"
-                            className="board-optimize-btn"
-                            onClick={() => onOptimize(colKey)}
-                            disabled={!canOptimize}
-                            title={
-                                optimizableCount < 2
-                                    ? "Adauga cel putin 2 obiective cu locatie"
-                                    : "Optimizeaza traseul zilei"
-                            }
-                        >
-                            {isOptimizing ? "..." : "Optimizeaza ruta"}
-                        </button>
-
-                        {optimizeResult && (
-                            <span className="board-optimize-result">
-                                {Number(optimizeResult.totalDistanceKm).toFixed(1)} km
-                            </span>
-                        )}
-                    </div>
-                )}
+                <h2 className="board-column-title">{title}</h2>
+                <span className="board-column-count">{objectives.length}</span>
             </div>
-
             <SortableContext items={ids} strategy={verticalListSortingStrategy}>
                 <div ref={setNodeRef} className="board-column-body">
                     {objectives.length === 0 && (
@@ -209,9 +125,249 @@ function CardPreview({ objective }) {
     );
 }
 
+// ── Card sortabil MOBILE cu drag handle explicit ↕ ─────────────────────────
+// listeners sunt aplicati DOAR pe handle — restul cardului ramane scrollabil
+function MobileSortableCard({ objective, columnOrder, columnMeta, activeColKey, onEdit, onDelete, onMove }) {
+    const [moveOpen, setMoveOpen] = useState(false);
+
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        setActivatorNodeRef,   // ref specific pentru handle
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id: String(objective.id_objective) });
+
+    const destinations = columnOrder.filter((k) => k !== activeColKey);
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={{
+                transform: CSS.Transform.toString(transform),
+                transition,
+                opacity: isDragging ? 0.35 : 1,
+            }}
+            className={`board-card board-card--mobile${isDragging ? " board-card--dragging" : ""}`}
+        >
+            {/* Handle drag — singurul element care primeste listeners.
+                setActivatorNodeRef + listeners sunt separate de restul cardului,
+                astfel incat scroll-ul pe continut nu declanseaza drag-ul */}
+            <div
+                ref={setActivatorNodeRef}
+                {...attributes}
+                {...listeners}
+                className="board-card-handle"
+                aria-label="Trage pentru a reordona"
+            >
+                ↕
+            </div>
+
+            {/* Buton stergere */}
+            <button
+                className="board-card-delete-btn"
+                type="button"
+                aria-label="Șterge obiectiv"
+                onPointerDown={(e) => e.stopPropagation()}
+                onClick={(e) => { e.stopPropagation(); onDelete(objective.id_objective); }}
+            >
+                ✕
+            </button>
+
+            {/* Continut card — nu participa la drag */}
+            <div className="board-card-content">
+                <p className="board-card-title">{objective.title}</p>
+                {objective.planned_time && (
+                    <p className="board-card-time">{objective.planned_time.slice(0, 5)}</p>
+                )}
+                {(objective.description || objective.address) && (
+                    <p className="board-card-desc">
+                        {(objective.description || objective.address || "").slice(0, 80)}
+                    </p>
+                )}
+
+                <div className="board-card-actions board-card-actions--mobile">
+                    <button
+                        className="board-card-details-btn"
+                        type="button"
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onClick={(e) => { e.stopPropagation(); onEdit(objective); }}
+                    >
+                        Adaugă detalii
+                    </button>
+
+                    {/* Dropdown mutare intre zile */}
+                    <div className="board-move-wrapper">
+                        <button
+                            className="board-card-move-btn"
+                            type="button"
+                            onPointerDown={(e) => e.stopPropagation()}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setMoveOpen((prev) => !prev);
+                            }}
+                        >
+                            Mută în zi
+                        </button>
+
+                        {moveOpen && (
+                            <div className="board-move-dropdown">
+                                {destinations.map((destKey) => (
+                                    <button
+                                        key={destKey}
+                                        className="board-move-option"
+                                        type="button"
+                                        onPointerDown={(e) => e.stopPropagation()}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setMoveOpen(false);
+                                            onMove(objective, destKey);
+                                        }}
+                                    >
+                                        {columnMeta[destKey].title}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// ── View mobile cu DndContext propriu — izolat de desktop ──────────────────
+function MobileBoard({
+    trip, columns, columnOrder, columnMeta,
+    onEdit, onDelete, onMove, onMobileDragEnd,
+    onOptimize, optimizeResults, isOptimizing,
+    navigate, id,
+}) {
+    const [activeTab, setActiveTab] = useState(columnOrder[0] ?? "unassigned");
+    const [activeMobileObj, setActiveMobileObj] = useState(null);
+
+    // TouchSensor cu delay 200ms pentru a distinge tap simplu de drag intentionat
+    // PointerSensor cu distance 8 pentru mouse/stylus pe tablete
+    const mobileSensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+        useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 6 } })
+    );
+
+    useEffect(() => {
+        if (!columnOrder.includes(activeTab)) {
+            setActiveTab(columnOrder[0] ?? "unassigned");
+        }
+    }, [columnOrder, activeTab]);
+
+    const activeObjectives = columns[activeTab] ?? [];
+    const ids = activeObjectives.map((o) => String(o.id_objective));
+
+    const handleDragStart = ({ active }) => {
+        const obj = activeObjectives.find((o) => String(o.id_objective) === active.id);
+        setActiveMobileObj(obj ?? null);
+    };
+
+    const handleDragEnd = (event) => {
+        setActiveMobileObj(null);
+        onMobileDragEnd(event, activeTab);
+    };
+
+    return (
+        <div className="board-page">
+            {/* Header mobile */}
+            <TripSubnav
+                tripId={id}
+                destinationName={trip?.destination_name || ""}
+                showMap={true}
+                showBudget={false}
+            />
+
+            {/* Tab-uri zile cu scroll orizontal */}
+            <div className="board-mobile-tabs">
+                {columnOrder.map((colKey) => (
+                    <button
+                        key={colKey}
+                        className={`board-mobile-tab${activeTab === colKey ? " board-mobile-tab--active" : ""}`}
+                        type="button"
+                        onClick={() => setActiveTab(colKey)}
+                    >
+                        {columnMeta[colKey].title}
+                        {columns[colKey].length > 0 && (
+                            <span className="board-mobile-tab-count">
+                                {columns[colKey].length}
+                            </span>
+                        )}
+                    </button>
+                ))}
+            </div>
+
+            {/* DndContext izolat pentru lista zilei active */}
+            <DndContext
+                sensors={mobileSensors}
+                collisionDetection={closestCorners}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+            >
+                <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+                    <div className="board-mobile-list">
+                        {activeObjectives.length === 0 && (
+                            <p className="board-column-empty board-mobile-empty">
+                                Niciun obiectiv în listă.
+                            </p>
+                        )}
+                        {/* Buton optimizare ruta — vizibil doar daca exista cel putin un obiectiv in ziua activa */}
+                        {activeObjectives.length > 0 && columnMeta[activeTab].id_day !== null && (
+                            <div className="board-column-optimize">
+                                <button
+                                    className="board-optimize-btn"
+                                    type="button"
+                                    onClick={() => onOptimize(activeTab)}
+                                    disabled={isOptimizing}
+                                >
+                                    {isOptimizing ? "..." : "Optimizează ruta"}
+                                </button>
+
+                                {optimizeResults?.[activeTab] && (
+                                    <span className="board-optimize-result">
+                                        {Number(optimizeResults[activeTab].totalDistanceKm).toFixed(1)} km
+                                    </span>
+                                )}
+                            </div>
+                        )}
+                        {activeObjectives.map((obj) => (
+                            <MobileSortableCard
+                                key={obj.id_objective}
+                                objective={obj}
+                                columnOrder={columnOrder}
+                                columnMeta={columnMeta}
+                                activeColKey={activeTab}
+                                onEdit={onEdit}
+                                onDelete={onDelete}
+                                onMove={onMove}
+                            />
+                        ))}
+                    </div>
+                </SortableContext>
+
+                <DragOverlay dropAnimation={null}>
+                    {activeMobileObj ? (
+                        <div className="board-card board-card--overlay">
+                            <p className="board-card-title">{activeMobileObj.title}</p>
+                        </div>
+                    ) : null}
+                </DragOverlay>
+            </DndContext>
+        </div>
+    );
+}
+
+// ── Componenta principala ───────────────────────────────────────────────────
 export default function BoardPage() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const isMobile = useIsMobile();
 
     const [trip, setTrip] = useState(null);
     const [columns, setColumns] = useState({});
@@ -225,11 +381,11 @@ export default function BoardPage() {
     const [optimizeResults, setOptimizeResults] = useState({});
     const { optimize, isLoading: isOptimizing, error: optimizeError } = useRouteOptimizer(id);
 
-    // stare pentru modalul de hotel
-    const [hotelModal, setHotelModal] = useState(null); // { colKey } sau null
+    const [hotelModal, setHotelModal] = useState(null);
     const [hotelLoading, setHotelLoading] = useState(false);
     const [hotelError, setHotelError] = useState(null);
 
+    // sensors desktop — neschimbati fata de original
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
     );
@@ -318,7 +474,6 @@ export default function BoardPage() {
         if (!window.confirm("Sigur vrei să ștergi acest obiectiv?")) return;
         try {
             await api.delete(`/objectives/${objId}`);
-            // Eliminam obiectivul din toate coloanele fara reload
             setColumns((prev) => {
                 const next = {};
                 for (const [key, objs] of Object.entries(prev)) {
@@ -331,73 +486,69 @@ export default function BoardPage() {
         }
     };
 
-    // ── Handler optimizare ruta — deschide mai intai modalul de hotel ──────
-    const handleOptimize = (colKey) => {
-        setHotelError(null);
-        setHotelModal({ colKey });
-    };
+    // ── Handler mutare intre zile diferite (mobile) ────────────────────────
+    const handleMoveObjective = async (objective, targetKey) => {
+        const sourceKey = findColKey(objective.id_objective);
+        if (!sourceKey || sourceKey === targetKey) return;
 
-    // executa optimizarea efectiva dupa ce userul a ales ce face cu hotelul
-    const runOptimize = async (colKey, hotelName, useHotelAsStart) => {
-        const dayId = columnMeta[colKey]?.id_day;
-        if (!dayId) return;
+        const objId = objective.id_objective;
+        const snap = structuredClone(columns);
 
-        // salvam hotelul pe trip doar daca e un hotel nou (diferit de cel deja salvat) și vrem să-l folosim
-        if (useHotelAsStart && hotelName && hotelName !== trip?.hotel_name) {
-            setHotelLoading(true);
-            setHotelError(null);
-            try {
-                const res = await api.patch(`/trips/${id}/hotel`, { hotel_name: hotelName });
-                // actualizam starea locala cu noul hotel_name returnat
-                setTrip((prev) => ({ ...prev, hotel_name: res.data.hotel_name }));
-            } catch (err) {
-                const msg = err?.response?.data?.message || "Nu am putut salva hotelul.";
-                setHotelError(msg);
-                setHotelLoading(false);
-                return; // ramane deschis modalul
-            }
-            setHotelLoading(false);
-        }
+        const sourceObjs = columns[sourceKey].filter((o) => o.id_objective !== objId);
+        const targetObjs = [...columns[targetKey], objective];
 
-        setHotelModal(null);
-
-        // Pasam datele hotelului curent catre optimizator daca user-ul a ales asta
-        const currentHotel = useHotelAsStart ? (
-            hotelName && hotelName !== trip?.hotel_name
-                ? null // Va fi citit de pe backend din baza de date in optimizeController (sau pasat explicit daca vrem sa fim defensivi, dar optimize route il citeste de pe Trip.findOne)
-                : trip // folosim hotelul din starea locala daca exista
-        ) : null;
-
-        const startPointPayload = useHotelAsStart && trip?.hotel_lat ? {
-            lat: trip.hotel_lat,
-            lng: trip.hotel_lng
-        } : null;
-
-        const result = await optimize(dayId, startPointPayload);
-        if (!result) return;
-
-        // reordonam cardurile in coloana conform ordinii returnate de Held-Karp
-        setColumns((prev) => {
-            const currentObjs = prev[colKey];
-            const reordered = result.orderedObjectives
-                .map((o) => currentObjs.find((c) => c.id_objective === o.id_objective))
-                .filter(Boolean);
-
-            // obiectivele fara coordonate le lasam la sfarsit, neatinse
-            const withoutCoords = currentObjs.filter(
-                (o) => o.coord_lat == null || o.coord_lng == null
-            );
-
-            return { ...prev, [colKey]: [...reordered, ...withoutCoords] };
-        });
-
-        // salvam distanta pentru aceasta coloana
-        setOptimizeResults((prev) => ({
+        setColumns((prev) => ({
             ...prev,
-            [colKey]: { totalDistanceKm: result.totalDistanceKm },
+            [sourceKey]: sourceObjs,
+            [targetKey]: targetObjs,
         }));
+
+        const idDay = columnMeta[targetKey].id_day;
+        const newPosition = idDay !== null ? targetObjs.length : null;
+
+        try {
+            await api.patch(`/objectives/${objId}/move`, {
+                id_trip_day: idDay,
+                position_in_day: newPosition,
+            });
+        } catch {
+            setColumns(snap);
+            alert("Nu am putut muta obiectivul. Încearcă din nou.");
+        }
     };
 
+    // ── Handler drag end MOBILE — reordonare in cadrul zilei active ─────────
+    // primit din MobileBoard impreuna cu cheia coloanei active la momentul drag-ului
+    const handleMobileDragEnd = async ({ active, over }, activeColKey) => {
+        if (!over || active.id === over.id) return;
+
+        const objs = columns[activeColKey];
+        const from = objs.findIndex((o) => String(o.id_objective) === active.id);
+        const to = objs.findIndex((o) => String(o.id_objective) === over.id);
+
+        if (from === -1 || to === -1 || from === to) return;
+
+        const snap = structuredClone(columns);
+        const reordered = arrayMove(objs, from, to);
+
+        // update optimistic — UI se actualizeaza imediat
+        setColumns((prev) => ({ ...prev, [activeColKey]: reordered }));
+
+        const idDay = columnMeta[activeColKey].id_day;
+        if (idDay === null) return;
+
+        try {
+            await api.patch(`/objectives/${Number(active.id)}/move`, {
+                id_trip_day: idDay,
+                position_in_day: to + 1,
+            });
+        } catch {
+            // rollback la starea anterioara daca API-ul esueaza
+            setColumns(snap);
+        }
+    };
+
+    // ── Desktop drag handlers — neschimbati fata de original ───────────────
     const handleDragStart = ({ active }) => {
         setActiveObj(findObjective(active.id));
     };
@@ -471,6 +622,59 @@ export default function BoardPage() {
         }
     };
 
+    const handleOptimize = (colKey) => {
+        setHotelError(null);
+        setHotelModal({ colKey });
+    };
+    const runOptimize = async (colKey, hotelName, useHotelAsStart) => {
+        const dayId = columnMeta[colKey]?.id_day;
+        if (!dayId) return;
+
+        if (useHotelAsStart && hotelName && hotelName !== trip?.hotel_name) {
+            setHotelLoading(true);
+            setHotelError(null);
+
+            try {
+                const res = await api.patch(`/trips/${id}/hotel`, { hotel_name: hotelName });
+                setTrip((prev) => ({ ...prev, hotel_name: res.data.hotel_name }));
+            } catch (err) {
+                const msg = err?.response?.data?.message || "Nu am putut salva hotelul.";
+                setHotelError(msg);
+                setHotelLoading(false);
+                return;
+            }
+
+            setHotelLoading(false);
+        }
+
+        setHotelModal(null);
+
+        const startPointPayload = useHotelAsStart && trip?.hotel_lat
+            ? { lat: trip.hotel_lat, lng: trip.hotel_lng }
+            : null;
+
+        const result = await optimize(dayId, startPointPayload);
+        if (!result) return;
+
+        setColumns((prev) => {
+            const currentObjs = prev[colKey];
+            const reordered = result.orderedObjectives
+                .map((o) => currentObjs.find((c) => c.id_objective === o.id_objective))
+                .filter(Boolean);
+
+            const withoutCoords = currentObjs.filter(
+                (o) => o.coord_lat == null || o.coord_lng == null
+            );
+
+            return { ...prev, [colKey]: [...reordered, ...withoutCoords] };
+        });
+
+        setOptimizeResults((prev) => ({
+            ...prev,
+            [colKey]: { totalDistanceKm: result.totalDistanceKm },
+        }));
+    };
+
     if (loading) {
         return (
             <div className="board-page">
@@ -487,48 +691,61 @@ export default function BoardPage() {
         );
     }
 
+    // ── View mobile — randat complet separat cu DndContext propriu ──────────
+    if (isMobile) {
+        return (
+            <>
+                <MobileBoard
+                    trip={trip}
+                    columns={columns}
+                    columnOrder={columnOrder}
+                    columnMeta={columnMeta}
+                    onEdit={setEditingObj}
+                    onDelete={handleDeleteObjective}
+                    onMove={handleMoveObjective}
+                    onMobileDragEnd={handleMobileDragEnd}
+                    onOptimize={handleOptimize}
+                    optimizeResults={optimizeResults}
+                    isOptimizing={isOptimizing}
+                    navigate={navigate}
+                    id={id}
+                />
+                {hotelModal && (
+                    <HotelModal
+                        isLoading={hotelLoading}
+                        error={hotelError}
+                        initialValue={trip?.hotel_name || null}
+                        onConfirm={(hotelName, useHotelAsStart) =>
+                            runOptimize(hotelModal.colKey, hotelName, useHotelAsStart)
+                        }
+                        onClose={() => {
+                            setHotelModal(null);
+                            setHotelError(null);
+                        }}
+                    />
+                )}
+                {editingObj && (
+                    <EditObjectiveModal
+                        objective={editingObj}
+                        onClose={() => setEditingObj(null)}
+                        onSaved={handleEditSaved}
+                    />
+                )}
+            </>
+        );
+    }
+
+    // ── View desktop — neschimbat fata de original ──────────────────────────
     return (
         <>
             <div className="board-page">
-                <div className="board-header">
-                    <div className="board-header-left">
-                        <button
-                            className="board-back-btn"
-                            type="button"
-                            onClick={() => navigate(`/trips/${id}/explore`)}
-                        >
-                            <ArrowLeft size={16} strokeWidth={2} /> Explorare
-                        </button>
-                        <h1 className="board-title">
-                            Planificare pe zile:{" "}
-                            <span className="board-destination">{trip?.destination_name}</span>
-                        </h1>
-                    </div>
-                    <div className="board-header-right">
-                        <button
-                            className="board-map-btn"
-                            type="button"
-                            onClick={() => navigate(`/trips/${id}/budget`)}
-                        >
-                            Buget
-                        </button>
-                        <button
-                            className="board-map-btn"
-                            type="button"
-                            onClick={() => navigate(`/trips/${id}/map`)}
-                        >
-                            Hartă
-                        </button>
-                        <button
-                            className="board-trips-btn"
-                            type="button"
-                            onClick={() => navigate("/trips")}
-                        >
-                            Călătoriile mele
-                        </button>
-                    </div>
-                </div>
-
+                <TripSubnav
+                    tripId={id}
+                    destinationName={trip?.destination_name || ""}
+                    showMap={true}
+                    showBudget={false}
+                />
+                <div className="board-page-content">    
                 <DndContext
                     sensors={sensors}
                     collisionDetection={collisionDetection}
@@ -544,9 +761,6 @@ export default function BoardPage() {
                                 objectives={columns[colKey]}
                                 onEdit={setEditingObj}
                                 onDelete={handleDeleteObjective}
-                                onOptimize={colKey !== "unassigned" ? handleOptimize : null}
-                                isOptimizing={isOptimizing}
-                                optimizeResult={optimizeResults[colKey] ?? null}
                             />
                         ))}
                     </div>
@@ -555,6 +769,7 @@ export default function BoardPage() {
                         {activeObj ? <CardPreview objective={activeObj} /> : null}
                     </DragOverlay>
                 </DndContext>
+                </div>
             </div>
 
             {editingObj && (
@@ -562,17 +777,6 @@ export default function BoardPage() {
                     objective={editingObj}
                     onClose={() => setEditingObj(null)}
                     onSaved={handleEditSaved}
-                />
-            )}
-
-            {/* modal hotel — apare cand userul apasa Optimizeaza ruta */}
-            {hotelModal && (
-                <HotelModal
-                    isLoading={hotelLoading}
-                    error={hotelError}
-                    initialValue={trip?.hotel_name || null}
-                    onConfirm={(hotelName, useHotelAsStart) => runOptimize(hotelModal.colKey, hotelName, useHotelAsStart)}
-                    onClose={() => { setHotelModal(null); setHotelError(null); }}
                 />
             )}
         </>

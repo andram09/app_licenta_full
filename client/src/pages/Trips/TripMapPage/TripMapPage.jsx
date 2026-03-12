@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../../api/axios";
 import TripMap from "./TripMap";
+import TripSubnav from "../../../components/trip-nav/TripSubnav";
 import "./TripMapPage.css";
 
 export default function TripMapPage() {
@@ -99,36 +100,13 @@ export default function TripMapPage() {
     return (
         <div className="map-page">
             {/* Header */}
-            <header className="map-header">
-                <div className="map-header-left">
-                    <button
-                        className="map-nav-btn"
-                        type="button"
-                        onClick={() => navigate(`/trips/${id}/board`)}
-                    >
-                        Planificare
-                    </button>
-                    <button
-                        className="map-nav-btn"
-                        type="button"
-                        onClick={() => navigate(`/trips/${id}/explore`)}
-                    >
-                        Explorare
-                    </button>
-                </div>
-                <h1 className="map-title">
-                    Harta:
-                    <span className="map-destination"> {trip?.destination_name}</span>
-                </h1>
-                <button
-                    className="map-nav-btn map-nav-btn--right"
-                    type="button"
-                    onClick={() => navigate("/trips")}
-                >
-                    Călătoriile mele
-                </button>
-            </header>
-
+            <TripSubnav
+                idTrip={id}
+                destinationName={trip?.destination_name}
+                activeTab="map"
+                showMap={false}
+                showBudget={false}
+            />
             {/* Tab-uri filtrare zi */}
             <nav className="map-day-tabs">
                 <button

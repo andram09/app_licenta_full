@@ -11,7 +11,7 @@
     border-bottom: 1px solid rgba(189, 216, 233, 0.35);
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 200;
 }
 
 /* ── Brand ────────────────────────────────────────────────── */
@@ -23,13 +23,14 @@
     text-decoration: none;
     letter-spacing: 0.02em;
     transition: color var(--transition-fast);
+    flex-shrink: 0;
 }
 
 .navbar-brand:hover {
     color: var(--color-teal);
 }
 
-/* ── Links list ───────────────────────────────────────────── */
+/* ── Links list (desktop) ─────────────────────────────────── */
 .navbar-links {
     display: flex;
     align-items: center;
@@ -61,7 +62,7 @@
     font-weight: 600;
 }
 
-/* ── Logout button ────────────────────────────────────────── */
+/* ── Logout button (desktop) ──────────────────────────────── */
 .navbar-logout-btn {
     padding: 7px 18px;
     border-radius: var(--radius-pill);
@@ -78,4 +79,142 @@
 .navbar-logout-btn:hover {
     background: var(--color-navy);
     color: #FFFFFF;
+}
+
+/* ── Burger button — ascuns pe desktop ────────────────────── */
+.navbar-burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+    transition: background var(--transition-fast);
+}
+
+.navbar-burger:hover {
+    background: rgba(0, 29, 57, 0.08);
+}
+
+.navbar-burger-bar {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--color-navy);
+    border-radius: 2px;
+    transition: transform 0.25s ease, opacity 0.25s ease, width 0.25s ease;
+    transform-origin: center;
+}
+
+/* Animatie X la deschidere */
+.navbar-burger--open .navbar-burger-bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.navbar-burger--open .navbar-burger-bar:nth-child(2) {
+    opacity: 0;
+    width: 0;
+}
+
+.navbar-burger--open .navbar-burger-bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ── Mobile dropdown menu ─────────────────────────────────── */
+.navbar-mobile-menu {
+    display: none;
+    position: absolute;
+    top: 80px;
+    left: 0;
+    right: 0;
+    background: rgba(240, 245, 235, 0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(189, 216, 233, 0.35);
+    box-shadow: 0 8px 32px rgba(0, 29, 57, 0.12);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+    z-index: 199;
+}
+
+.navbar-mobile-menu--open {
+    max-height: 400px;
+    opacity: 1;
+}
+
+.navbar-mobile-links {
+    list-style: none;
+    margin: 0;
+    padding: 0.75rem 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar-mobile-link {
+    display: block;
+    padding: 14px 1.5rem;
+    color: var(--color-navy);
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(189, 216, 233, 0.20);
+    transition: background var(--transition-fast);
+}
+
+.navbar-mobile-link:hover,
+.navbar-mobile-link:active {
+    background: rgba(78, 142, 162, 0.10);
+}
+
+.navbar-mobile-logout-btn {
+    width: 100%;
+    text-align: left;
+    padding: 14px 1.5rem;
+    border: none;
+    background: transparent;
+    color: var(--color-navy);
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.navbar-mobile-logout-btn:hover,
+.navbar-mobile-logout-btn:active {
+    background: rgba(224, 84, 84, 0.08);
+    color: #c0392b;
+}
+
+/* ── Mobile breakpoint ────────────────────────────────────── */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0 1rem;
+        position: relative;
+    }
+
+    /* Ascundem link-urile normale pe mobile */
+    .navbar-links {
+        display: none;
+    }
+
+    /* Afisam burger button */
+    .navbar-burger {
+        display: flex;
+    }
+
+    /* Afisam meniul vertical */
+    .navbar-mobile-menu {
+        display: block;
+    }
 }

@@ -4,10 +4,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 1.5rem 1rem;
     background:
         radial-gradient(ellipse at 30% 20%, #BDD8E9 0%, transparent 50%),
         radial-gradient(ellipse at 80% 80%, #EEF4FA 0%, transparent 50%),
         #F0F5EB;
+    box-sizing: border-box;
 }
 
 /* ── Card ─────────────────────────────────────────────────── */
@@ -19,6 +21,7 @@
     padding: 40px 44px;
     width: 100%;
     max-width: 460px;
+    box-sizing: border-box;
 }
 
 /* ── Heading ──────────────────────────────────────────────── */
@@ -79,6 +82,8 @@
     font-family: var(--font-body);
     color: #001D39;
     outline: none;
+    width: 100%;
+    box-sizing: border-box;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -114,6 +119,7 @@
     justify-content: center;
     align-items: center;
     padding: 13px;
+    min-height: 48px;
     border-radius: 12px;
     border: none;
     background: linear-gradient(135deg, #4E8EA2 0%, #3a7a8f 100%);
@@ -158,4 +164,37 @@
 
 .register-footer a:hover {
     color: #001D39;
+}
+
+/* ── Mobile ───────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .register-page {
+        align-items: center;
+        padding-top: 2.5rem;
+    }
+
+    .register-card {
+        padding: 28px 20px;
+        border-radius: 18px;
+        max-width: 100%;
+    }
+
+    .register-title {
+        font-size: 26px;
+    }
+
+    /* Rand doua coloane devine coloana unica pe mobile */
+    .register-row {
+        grid-template-columns: 1fr;
+    }
+
+    .register-button {
+        min-height: 52px;
+        font-size: 15px;
+    }
+
+    .register-input {
+        font-size: 16px;
+        padding: 0.75rem 0.9rem;
+    }
 }

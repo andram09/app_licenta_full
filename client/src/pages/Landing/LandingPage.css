@@ -4,6 +4,7 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 }
 
 .landing-hero {
@@ -50,6 +51,7 @@
 
 .landing-cta-primary {
     padding: 13px 32px;
+    min-height: 48px;
     border-radius: var(--radius-pill);
     background: linear-gradient(135deg, #4E8EA2 0%, #3a7a8f 100%);
     color: #FFFFFF;
@@ -71,6 +73,7 @@
 
 .landing-cta-secondary {
     padding: 12px 28px;
+    min-height: 48px;
     border-radius: var(--radius-pill);
     background: transparent;
     color: var(--color-teal);
@@ -248,14 +251,61 @@
     letter-spacing: 0.01em;
 }
 
+/* ── Mobile ───────────────────────────────────────────────── */
 @media (max-width: 768px) {
+    .landing-hero {
+        padding: 3rem 1.25rem 3rem;
+    }
 
-    .landing-steps,
+    .landing-hero-title {
+        font-size: clamp(1.8rem, 7vw, 2.4rem);
+    }
+
+    .landing-hero-subtitle {
+        font-size: 14px;
+        max-width: 100%;
+    }
+
+    .landing-hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        width: 100%;
+        max-width: 320px;
+    }
+
+    .landing-cta-primary,
+    .landing-cta-secondary {
+        width: 100%;
+        justify-content: center;
+        min-height: 52px;
+        font-size: 15px;
+    }
+
+    .landing-how-section {
+        padding: 3rem 1.25rem;
+    }
+
+    .landing-steps {
+        grid-template-columns: 1fr;
+    }
+
+    .landing-features {
+        padding: 3rem 1.25rem;
+    }
+
     .landing-features-grid {
         grid-template-columns: 1fr;
     }
 
-    .landing-hero {
-        padding: 4rem 1.5rem 3.5rem;
+    .landing-how-title,
+    .landing-features-title {
+        font-size: 22px;
+        margin-bottom: 1.75rem;
+    }
+
+    .landing-footer {
+        padding: 1.25rem 1rem;
+        font-size: 11px;
     }
 }

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../../api/axios";
 import ManualObjectiveModal from "./ManualObjectiveModal";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import TripSubnav from "../../../components/trip-nav/TripSubnav";
 import "./ExplorePage.css";
 
 const CATEGORIES = [
@@ -132,39 +133,12 @@ export default function ExplorePage() {
     return (
         <>
             <div className="explore-page">
-                <div className="explore-header">
-                    <div className="explore-header-left">
-                        <button
-                            className="explore-back-btn"
-                            onClick={() => navigate("/trips")}
-                            type="button"
-                        >
-                            <ArrowLeft size={16} strokeWidth={2} /> Călătoriile mele
-                        </button>
-                        <h1 className="explore-title">
-                            Descopera atractii din{" "}
-                            <span className="explore-destination">{trip?.destination_name}</span>
-                        </h1>
-                    </div>
-
-                    <div className="explore-header-actions">
-                        <button
-                            className="explore-manual-btn"
-                            type="button"
-                            onClick={() => setShowModal(true)}
-                        >
-                            + Obiectiv manual
-                        </button>
-
-                        <button
-                            className="explore-board-btn"
-                            type="button"
-                            onClick={() => navigate(`/trips/${id}/board`)}
-                        >
-                            Continuă cu planificarea pe zile <ArrowRight size={16} strokeWidth={2} />
-                        </button>
-                    </div>
-                </div>
+                <TripSubnav
+                    tripId={id}
+                    destinationName={trip?.destination_name || ""}
+                    showMap={true}
+                    showBudget={false}
+                />
 
                 {!hasCoords && (
                     <div className="explore-no-coords">

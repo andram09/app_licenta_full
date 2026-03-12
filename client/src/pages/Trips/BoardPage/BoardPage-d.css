@@ -6,14 +6,11 @@
         radial-gradient(ellipse at 20% 10%, #BDD8E9 0%, transparent 45%),
         radial-gradient(ellipse at 85% 85%, #EEF4FA 0%, transparent 45%),
         #F0F5EB;
-}
-
-.board-page-content {
-    padding: 0 1rem 1.5rem;
+    padding: 0 2rem 3rem;
 }
 
 /* ── Header — sticky glass bar ────────────────────────────── */
-/* .board-header {
+.board-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -36,10 +33,10 @@
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
-} */
+}
 
 /* ── Back button ──────────────────────────────────────────── */
-/* .board-back-btn {
+.board-back-btn {
     background: none;
     border: none;
     color: var(--color-navy);
@@ -56,7 +53,7 @@
 
 .board-back-btn:hover {
     color: var(--color-teal);
-} */
+}
 
 /* ── Board title ──────────────────────────────────────────── */
 .board-title {
@@ -73,7 +70,7 @@
 }
 
 /* ── Header right actions ─────────────────────────────────── */
-/* .board-header-right {
+.board-header-right {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -115,7 +112,7 @@
 .board-trips-btn:hover {
     background: var(--color-navy);
     color: #FFFFFF;
-} */
+}
 
 /* ── State messages ───────────────────────────────────────── */
 .board-state-msg {
@@ -289,7 +286,7 @@
     border-color: var(--color-teal);
 }
 
-/* ── Card action row ──────────────────────────────────────── */
+/* ── Card action row (details + delete) ───────────────────── */
 .board-card-actions {
     display: flex;
     align-items: center;
@@ -316,8 +313,7 @@
     justify-content: center;
     flex-shrink: 0;
     opacity: 0;
-    transition: opacity var(--transition-fast), background var(--transition-fast),
-        border-color var(--transition-fast), color var(--transition-fast);
+    transition: opacity var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
 
 .board-card:hover .board-card-delete-btn {
@@ -328,250 +324,6 @@
     background: rgba(224, 84, 84, 0.10);
     border-color: #c0392b;
     color: #c0392b;
-}
-
-/* ════════════════════════════════════════════════════════════
-   STILURI EXCLUSIVE MOBILE
-   Nu suprascriu nicio clasa desktop de mai sus.
-   ════════════════════════════════════════════════════════════ */
-
-/* ── Header mobile ────────────────────────────────────────── */
-.board-header--mobile {
-    height: auto;
-    padding:1rem 2rem;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-}
-
-.board-header-left--mobile {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-    width: 100%;
-    flex-wrap: nowrap;
-}
-
-.board-header-right--mobile {
-    width: 100%;
-    gap: 8px;
-}
-
-.board-header-right--mobile .board-map-btn,
-.board-header-right--mobile .board-trips-btn {
-    flex: 1;
-    text-align: center;
-    font-size: 13px;
-    padding: 9px 10px;
-    min-height: 42px;
-    white-space: nowrap;
-}
-
-/* ── Tab-uri zile ─────────────────────────────────────────── */
-.board-mobile-tabs {
-    display: flex;
-    gap: 6px;
-    overflow-x: auto;
-    padding: 0 1rem 0.75rem;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-
-.board-mobile-tabs::-webkit-scrollbar {
-    display: none;
-}
-
-.board-mobile-tab {
-    flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 14px;
-    border-radius: var(--radius-pill);
-    border: 1.5px solid rgba(189, 216, 233, 0.8);
-    background: rgba(255, 255, 255, 0.70);
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--color-mid);
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all var(--transition-fast);
-}
-
-.board-mobile-tab--active {
-    background: var(--color-teal);
-    border-color: var(--color-teal);
-    color: #FFFFFF;
-    font-weight: 600;
-    box-shadow: 0 3px 10px rgba(78, 142, 162, 0.30);
-}
-
-.board-mobile-tab-count {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 18px;
-    height: 18px;
-    padding: 0 5px;
-    border-radius: 9px;
-    background: rgba(0, 0, 0, 0.10);
-    font-size: 11px;
-    font-weight: 700;
-    line-height: 1;
-}
-
-.board-mobile-tab--active .board-mobile-tab-count {
-    background: rgba(255, 255, 255, 0.30);
-}
-
-/* ── Lista carduri mobile ─────────────────────────────────── */
-.board-mobile-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 0 1rem 2rem;
-}
-
-.board-mobile-empty {
-    padding: 3rem 0;
-}
-
-/* ── Card mobile — layout diferit fata de desktop ─────────── */
-/* Pe mobile cardul are handle pe stanga + continut in dreapta */
-.board-card--mobile {
-    /* dezactivam cursor grab de pe tot cardul —
-       doar handle-ul va fi draggable */
-    cursor: default;
-    flex-direction: row;
-    align-items: stretch;
-    padding: 0;
-    gap: 0;
-    overflow: visible;
-}
-
-/* Stare activa in timpul drag-ului pe mobile */
-.board-card--dragging {
-    box-shadow: 0 8px 24px rgba(0, 29, 57, 0.18);
-    border-color: var(--color-teal-lt);
-}
-
-/* ── Handle drag ↕ ────────────────────────────────────────── */
-.board-card-handle {
-    /* zona de prindere — stanga cardului */
-    flex-shrink: 0;
-    width: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    color: var(--color-gray);
-    cursor: grab;
-    /* touch-action none permite dnd-kit sa preia evenimentele touch */
-    touch-action: none;
-    border-right: 1px solid var(--color-light);
-    border-radius: 14px 0 0 14px;
-    background: var(--color-beige);
-    user-select: none;
-    transition: background var(--transition-fast), color var(--transition-fast);
-}
-
-.board-card-handle:active {
-    cursor: grabbing;
-    background: rgba(78, 142, 162, 0.10);
-    color: var(--color-teal);
-}
-
-/* ── Continut card mobile ─────────────────────────────────── */
-.board-card-content {
-    flex: 1;
-    min-width: 0;
-    padding: 10px 36px 10px 12px; /* padding-right pt butonul de delete */
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-/* butonul de delete e vizibil permanent pe mobile */
-.board-card--mobile .board-card-delete-btn {
-    opacity: 1;
-    top: 8px;
-    right: 8px;
-    width: 28px;
-    height: 28px;
-}
-
-/* ── Actiuni card mobile ──────────────────────────────────── */
-.board-card-actions--mobile {
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 6px;
-}
-
-/* ── Buton Muta in zi ─────────────────────────────────────── */
-.board-card-move-btn {
-    font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 600;
-    padding: 4px 10px;
-    border: 1px solid rgba(189, 216, 233, 0.9);
-    border-radius: var(--radius-pill);
-    background: transparent;
-    color: var(--color-mid);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    white-space: nowrap;
-}
-
-.board-card-move-btn:hover,
-.board-card-move-btn:active {
-    background: var(--color-light);
-    border-color: var(--color-teal-lt);
-    color: var(--color-navy);
-}
-
-/* ── Dropdown destinatie ──────────────────────────────────── */
-.board-move-wrapper {
-    position: relative;
-}
-
-.board-move-dropdown {
-    position: absolute;
-    bottom: calc(100% + 6px);
-    left: 0;
-    min-width: 180px;
-    background: #FFFFFF;
-    border: 1px solid var(--color-light);
-    border-radius: var(--radius-md);
-    box-shadow: 0 8px 24px rgba(0, 29, 57, 0.14);
-    z-index: 50;
-    overflow: hidden;
-}
-
-.board-move-option {
-    display: block;
-    width: 100%;
-    padding: 11px 14px;
-    text-align: left;
-    border: none;
-    background: transparent;
-    font-family: var(--font-body);
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--color-navy);
-    cursor: pointer;
-    border-bottom: 1px solid rgba(189, 216, 233, 0.20);
-    transition: background var(--transition-fast);
-}
-
-.board-move-option:last-child {
-    border-bottom: none;
-}
-
-.board-move-option:hover,
-.board-move-option:active {
-    background: var(--color-light);
-    color: var(--color-teal);
 }
 
 /* ── Optimize button ──────────────────────────────────────── */
@@ -587,7 +339,7 @@
     font-weight: 600;
     padding: 4px 10px;
     border-radius: var(--radius-pill);
-    border: 2px solid var(--color-teal-lt);
+    border: 3px solid var(--color-teal-lt);
     background: var(--color-teal-lt);
     color: var(--color-teal);
     cursor: pointer;
@@ -609,4 +361,171 @@
     font-size: 11px;
     font-weight: 500;
     color: var(--color-mid);
+}
+
+/* ── Hotel modal ──────────────────────────────────────────── */
+.hotel-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 29, 57, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    backdrop-filter: blur(4px);
+}
+
+.hotel-modal {
+    background: #FFFFFF;
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 24px 60px rgba(0, 29, 57, 0.18);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.hotel-modal-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--color-navy);
+    margin: 0;
+}
+
+.hotel-modal-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--color-gray);
+    margin: 0;
+    line-height: 1.55;
+}
+
+.hotel-modal-input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--color-light);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-navy);
+    outline: none;
+    transition: border-color var(--transition-fast);
+    box-sizing: border-box;
+}
+
+.hotel-modal-input:focus {
+    border-color: var(--color-teal);
+}
+
+.hotel-modal-error {
+    font-size: 12px;
+    color: #e05454;
+    background: rgba(224, 84, 84, 0.06);
+    border: 1px solid rgba(224, 84, 84, 0.20);
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    margin: 0;
+}
+
+.hotel-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 0.25rem;
+}
+
+.hotel-modal-skip-btn {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--color-gray);
+    background: transparent;
+    border: 1px solid var(--color-light);
+    border-radius: var(--radius-pill);
+    padding: 8px 16px;
+    cursor: pointer;
+    text-align: center;
+    transition: all var(--transition-fast);
+}
+
+.hotel-modal-skip-btn:hover:not(:disabled) {
+    background: var(--color-light);
+    color: var(--color-navy);
+}
+
+.hotel-modal-skip-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.hotel-modal-confirm-btn {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #4E8EA2 0%, #3a7a8f 100%);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+    box-shadow: 0 4px 14px rgba(78, 142, 162, 0.30);
+}
+
+.hotel-modal-confirm-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #3a7a8f 0%, #2d6478 100%);
+    box-shadow: 0 6px 18px rgba(78, 142, 162, 0.40);
+    transform: translateY(-1px);
+}
+
+.hotel-modal-confirm-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ── Hotel salvat (afisaj read-only) ──────────────────────── */
+.hotel-modal-saved {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--color-beige, #F0F5EB);
+    border: 1px solid var(--color-light, #e0e8f0);
+    border-radius: var(--radius-md, 10px);
+    padding: 10px 14px;
+}
+
+.hotel-modal-saved-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-navy);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hotel-modal-change-btn {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-teal);
+    background: transparent;
+    border: 1px solid var(--color-teal-lt, #bdd8e9);
+    border-radius: var(--radius-pill);
+    padding: 4px 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all var(--transition-fast);
+}
+
+.hotel-modal-change-btn:hover:not(:disabled) {
+    background: var(--color-teal);
+    color: #FFFFFF;
+    border-color: var(--color-teal);
 }

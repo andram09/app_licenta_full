@@ -9,6 +9,7 @@ import {
     Legend,
     ResponsiveContainer
 } from "recharts";
+import TripSubnav from "../../../components/trip-nav/TripSubnav";
 import "./BudgetPage.css";
 
 // culori pentru pie chart
@@ -285,44 +286,13 @@ export default function BudgetPage() {
 
     return (
         <div className="budget-page">
-
             {/* Header */}
-            <header className="budget-header">
-                <div className="budget-header-left">
-                    <button
-                        className="budget-nav-btn"
-                        type="button"
-                        onClick={() => navigate(`/trips/${id}/board`)}
-                    >
-                        Planificare
-                    </button>
-                    <button
-                        className="budget-nav-btn"
-                        type="button"
-                        onClick={() => navigate(`/trips/${id}/explore`)}
-                    >
-                        Explorare
-                    </button>
-                    <button
-                        className="budget-nav-btn"
-                        type="button"
-                        onClick={() => navigate(`/trips/${id}/map`)}
-                    >
-                        Hartă
-                    </button>
-                </div>
-                <h1 className="budget-title">
-                    Buget:
-                    <span className="budget-destination"> {trip?.destination_name}</span>
-                </h1>
-                <button
-                    className="budget-nav-btn budget-nav-btn--right"
-                    type="button"
-                    onClick={() => navigate("/trips")}
-                >
-                    Călătoriile mele
-                </button>
-            </header>
+            <TripSubnav
+                tripId={id}
+                destinationName={trip?.destination_name || ""}
+                showMap={true}
+                showBudget={false}
+            />
 
             <div className="budget-content">
 

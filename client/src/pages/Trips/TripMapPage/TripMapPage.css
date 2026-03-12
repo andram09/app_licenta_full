@@ -242,3 +242,86 @@
 .map-state-msg--error {
     color: #e05454;
 }
+
+/* ───────────────── MOBILE LAYOUT ───────────────── */
+@media (max-width: 768px) {
+.map-header {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 10px 14px;
+    gap: 8px;
+  }
+
+  /* stânga: Planificare | Explorare */
+  .map-header-left {
+    order: 1;
+    display: flex;
+    gap: 8px;
+  }
+
+  /* dreapta: Călătoriile mele */
+  .map-nav-btn--right {
+    order: 2;
+    margin-left: auto;
+  }
+
+  /* titlul sub butoane */
+  .map-title {
+    order: 3;
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+    margin-top: 4px;
+  }
+
+  /* butoane puțin mai mici pe mobil */
+  .map-nav-btn {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  .map-page {
+    height: auto;
+    overflow: auto;
+  }
+
+  .map-layout {
+    flex-direction: column;
+    height: auto;
+  }
+
+  /* container hartă */
+  .map-main {
+    order: 1;
+    width: 100%;
+    height: 45vh;
+    min-height: 260px;
+    padding: 10px 14px;
+    flex: none;
+  }
+
+  /* container leaflet */
+  .trip-map-container {
+    width: 100%;
+    height: 100%;
+    min-height: 260px;
+  }
+
+  /* lista obiective */
+  .map-sidebar {
+    order: 2;
+    width: 100%;
+    max-width: none;
+    flex: none;
+
+    border-right: none;
+    border-top: 1px solid rgba(189, 216, 233, 0.35);
+
+    padding: 12px 14px;
+    gap: 10px;
+
+    max-height: 40vh;
+    overflow-y: auto;
+  }
+
+}

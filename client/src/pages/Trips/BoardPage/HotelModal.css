@@ -1,0 +1,166 @@
+.hotel-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 29, 57, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    backdrop-filter: blur(4px);
+}
+
+.hotel-modal {
+    background: #FFFFFF;
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    margin: 1.5rem;
+    /* width: 100%; */
+    max-width: 440px;
+    box-shadow: 0 24px 60px rgba(0, 29, 57, 0.18);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.hotel-modal-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--color-navy);
+    margin: 0;
+}
+
+.hotel-modal-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--color-gray);
+    margin: 0;
+    line-height: 1.55;
+}
+
+.hotel-modal-input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--color-light);
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--color-navy);
+    outline: none;
+    transition: border-color var(--transition-fast);
+    box-sizing: border-box;
+}
+
+.hotel-modal-input:focus {
+    border-color: var(--color-teal);
+}
+
+.hotel-modal-error {
+    font-size: 12px;
+    color: #e05454;
+    background: rgba(224, 84, 84, 0.06);
+    border: 1px solid rgba(224, 84, 84, 0.20);
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    margin: 0;
+}
+
+.hotel-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 0.25rem;
+}
+
+.hotel-modal-skip-btn {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--color-gray);
+    background: transparent;
+    border: 1px solid var(--color-light);
+    border-radius: var(--radius-pill);
+    padding: 8px 16px;
+    cursor: pointer;
+    text-align: center;
+    transition: all var(--transition-fast);
+}
+
+.hotel-modal-skip-btn:hover:not(:disabled) {
+    background: var(--color-light);
+    color: var(--color-navy);
+}
+
+.hotel-modal-skip-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.hotel-modal-confirm-btn {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #4E8EA2 0%, #3a7a8f 100%);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+    box-shadow: 0 4px 14px rgba(78, 142, 162, 0.30);
+}
+
+.hotel-modal-confirm-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #3a7a8f 0%, #2d6478 100%);
+    box-shadow: 0 6px 18px rgba(78, 142, 162, 0.40);
+    transform: translateY(-1px);
+}
+
+.hotel-modal-confirm-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ── Hotel salvat (afisaj read-only) ──────────────────────── */
+.hotel-modal-saved {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--color-beige, #F0F5EB);
+    border: 1px solid var(--color-light, #e0e8f0);
+    border-radius: var(--radius-md, 10px);
+    padding: 10px 14px;
+}
+
+.hotel-modal-saved-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-navy);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hotel-modal-change-btn {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-teal);
+    background: transparent;
+    border: 1px solid var(--color-teal-lt, #bdd8e9);
+    border-radius: var(--radius-pill);
+    padding: 4px 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all var(--transition-fast);
+}
+
+.hotel-modal-change-btn:hover:not(:disabled) {
+    background: var(--color-teal);
+    color: #FFFFFF;
+    border-color: var(--color-teal);
+}

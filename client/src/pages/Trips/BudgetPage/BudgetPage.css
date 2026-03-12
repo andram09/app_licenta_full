@@ -10,7 +10,7 @@
 }
 
 /* ── Header ───────────────────────────────────────────────── */
-.budget-header {
+/* .budget-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -30,10 +30,10 @@
 .budget-header-left {
     display: flex;
     gap: 8px;
-}
+} */
 
 /* ── Nav buttons ──────────────────────────────────────────── */
-.budget-nav-btn {
+/* .budget-nav-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -67,7 +67,7 @@
     background: linear-gradient(135deg, #3a7a8f 0%, #2d6478 100%);
     box-shadow: 0 6px 18px rgba(78, 142, 162, 0.38);
     transform: translateY(-1px);
-}
+} */
 
 /* ── Page title ───────────────────────────────────────────── */
 .budget-title {
