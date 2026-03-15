@@ -13,6 +13,7 @@ import AdminPage from "./pages/Admin/AdminPage";
 import BoardPage from "./pages/Trips/BoardPage/BoardPage";
 import TripMapPage from "./pages/Trips/TripMapPage/TripMapPage";
 import BudgetPage from "./pages/Trips/BudgetPage/BudgetPage";
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
         <Route path="/trips/:id/board" element={<BoardPage />} />
         <Route path="/trips/:id/map" element={<TripMapPage />} />
         <Route path="/trips/:id/budget" element={<BudgetPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Route>
 
       {/* Rute protejate - doar ADMIN */}

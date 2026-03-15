@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../store/authContext";
 import { api } from "../../../api/axios";
+import Navbar from "../../../components/layout/Navbar";
 import "./TripsPage.css";
 
 export default function TripsPage() {
-    const { user, logout } = useAuth();
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     const [trips, setTrips] = useState([]);
@@ -25,18 +26,15 @@ export default function TripsPage() {
                 setLoading(false);
             }
         };
-
         fetchTrips();
-    }, []);
 
-    const handleLogout = async () => {
-        await logout();
-        navigate("/login", { replace: true });
-    };
+        // setam titlul tab-ului browserului
+        document.title = "Călătoriile mele";
+    }, []);
 
     // sterge o calatorie dupa id, cu confirmare
     const handleDeleteTrip = async (e, tripId) => {
-        e.stopPropagation(); // nu activa click-ul cardului
+        e.stopPropagation();
         if (!window.confirm("Sigur vrei să ștergi această călătorie?")) return;
         try {
             await api.delete(`/trips/${tripId}`);
@@ -58,18 +56,8 @@ export default function TripsPage() {
     };
 
     return (
-        <main className="trips-page">
-            <header className="trips-header">
-                <h1 className="trips-header-title">Călătoriile mele</h1>
-                <div className="trips-header-right">
-                    <span className="trips-username">
-                        Bun venit, {user?.first_name} {user?.last_name}
-                    </span>
-                    <button onClick={handleLogout} className="trips-logout-btn">
-                        Deconectare
-                    </button>
-                </div>
-            </header>
+        <div className="trips-page">
+            <Navbar pageTitle="Călătoriile mele" hideNavLinks hideBrand/>
 
             <div className="trips-actions-bar">
                 <button
@@ -82,13 +70,10 @@ export default function TripsPage() {
 
             <section className="trips-content">
                 {loading && <p className="trips-state-msg">Se încarcă călătoriile...</p>}
-
                 {!loading && error && <p className="trips-error-msg">{error}</p>}
-
                 {!loading && !error && trips.length === 0 && (
                     <p className="trips-state-msg">Nu ai nicio călătorie încă.</p>
                 )}
-
                 {!loading && !error && trips.length > 0 && (
                     <div className="trips-grid">
                         {trips.map((trip) => (
@@ -102,7 +87,6 @@ export default function TripsPage() {
                                     e.key === "Enter" && navigate(`/trips/${trip.id_trip}/explore`)
                                 }
                             >
-                                {/* Buton stergere — pozitionat in coltul din dreapta sus al cardului */}
                                 <button
                                     className="trip-card-delete-btn"
                                     type="button"
@@ -111,7 +95,6 @@ export default function TripsPage() {
                                 >
                                     ✕
                                 </button>
-
                                 <h2 className="trip-card-destination">
                                     {trip.destination_name}
                                 </h2>
@@ -126,7 +109,6 @@ export default function TripsPage() {
                                         </span>
                                     )}
                                 </div>
-                                {/* afisam hotelul salvat, doar daca exista */}
                                 {trip.hotel_name && (
                                     <span className="trip-card-hotel">
                                         🛏 {trip.hotel_name}
@@ -161,6 +143,6 @@ export default function TripsPage() {
                     </div>
                 )}
             </section>
-        </main>
+        </div>
     );
 }

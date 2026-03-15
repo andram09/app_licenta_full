@@ -246,5 +246,83 @@ export const authController = {
         message: "Something went wrong."
       });
     }
+  },
+
+  // UPDATE PROFILE - actualizeaza prenume si nume
+  updateProfile: async (req, res) => {
+    try {
+      const { first_name, last_name } = req.body;
+
+      const user = await User.findByPk(req.user.id);
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found." });
+      }
+      await user.update({ first_name, last_name });
+
+      return res.status(200).json({
+        message: "Profile updated successfully.",
+        data: {
+          id: user.id_user,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          email: user.email,
+          role: user.role
+        }
+      });
+
+    } catch (error) {
+      console.error("UpdateProfile error:", error);
+      return res.status(500).json({ message: "Something went wrong." });
+    }
+  },
+
+  // CHANGE PASSWORD - schimba parola utilizatorului autentificat
+  // Necesita parola curenta pentru confirmare inainte de schimbare
+  changePassword: async (req, res) => {
+    try {
+      const { current_password, new_password } = req.body;
+
+      const user = await User.findByPk(req.user.id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found." });
+      }
+
+      // verificam ca parola curenta introdusa este corecta
+      const isCurrentPasswordValid = await bcrypt.compare(
+        current_password,
+        user.password_hash
+      );
+
+      if (!isCurrentPasswordValid) {
+        return res.status(400).json({
+          message: "Current password is incorrect."
+        });
+      }
+
+      // prevenim reutilizarea aceleiasi parole
+      const isSamePassword = await bcrypt.compare(
+        new_password,
+        user.password_hash
+      );
+
+      if (isSamePassword) {
+        return res.status(400).json({
+          message: "New password must be different from the current one."
+        });
+      }
+
+      const password_hash = await bcrypt.hash(new_password, 10);
+
+      await user.update({ password_hash });
+
+      return res.status(200).json({
+        message: "Password changed successfully."
+      });
+
+    } catch (error) {
+      console.error("ChangePassword error:", error);
+      return res.status(500).json({ message: "Something went wrong." });
+    }
   }
 };

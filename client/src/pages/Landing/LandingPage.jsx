@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../store/authContext";
 import Navbar from "../../components/layout/Navbar";
@@ -7,6 +8,11 @@ import "./LandingPage.css";
 export default function LandingPage() {
     const { user, loading } = useAuth();
     const navigate = useNavigate();
+
+    // setam titlul tab-ului browserului
+    useEffect(() => {
+        document.title = "TripPlanner";
+    }, []);
 
     const handlePrimaryAction = () => {
         if (!user) {
@@ -22,7 +28,7 @@ export default function LandingPage() {
 
     return (
         <div className="landing">
-            <Navbar />
+            <Navbar pageTitle="TripPlanner" />
 
             <section className="landing-hero">
                 <h1 className="landing-hero-title">

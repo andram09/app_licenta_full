@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../store/authContext";
+import { User } from "lucide-react";
 import "./Navbar.css";
 
 // Navbar adaptiv: burger menu pe mobile, links normale pe desktop
-export default function Navbar() {
+export default function Navbar({pageTitle=null, hideNavLinks=false}) {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
@@ -44,11 +45,16 @@ export default function Navbar() {
 
     const handleLinkClick = () => setMenuOpen(false);
 
+    // extragem initialele pentru avatar
+    const initials = user ? `${user.first_name?.[0] ?? ""}${user.last_name?.[0] ?? ""}`.toUpperCase() : "";
+
     return (
         <nav className="navbar" ref={menuRef}>
-            <Link to="/" className="navbar-brand" onClick={handleLinkClick}>
-                TripPlanner
-            </Link>
+            <div className="navbar-brand-group">
+                <span className="navbar-brand">
+                    {pageTitle ?? "TripPlanner"}
+                </span>
+            </div>
 
             {/* Link-uri desktop — ascunse pe mobile */}
             <ul className="navbar-links">
@@ -60,41 +66,109 @@ export default function Navbar() {
 
                 {!user ? (
                     <>
-                        <li>
-                            <Link to="/login" className="navbar-link">
-                                Autentificare
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/register" className="navbar-link">
-                                Înregistrare
-                            </Link>
-                        </li>
+                        {!hideNavLinks && (
+                            <>
+                                <li>
+                                    <Link to="/login" className="navbar-link">
+                                        Autentificare
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/register" className="navbar-link">
+                                        Înregistrare
+                                    </Link>
+                                </li>
+                            </>
+                        )}
                     </>
                 ) : user.role === "ADMIN" ? (
                     <>
-                        <li>
-                            <Link to="/admin" className="navbar-link">
-                                Dashboard
-                            </Link>
-                        </li>
-                        <li>
-                            <button onClick={handleLogout} className="navbar-logout-btn">
-                                Deconectare
+                        {!hideNavLinks && (
+                            <li>
+                                <Link to="/admin" className="navbar-link">
+                                    Dashboard
+                                </Link>
+                            </li>
+                        )}
+                        <li className="navbar-profile-wrapper">
+                            <button
+                                className="navbar-avatar-btn"
+                                onClick={() => setMenuOpen((prev) => !prev)}
+                                aria-label="Meniu profil"
+                            >
+                                {initials || <User size={16} />}
                             </button>
+                            {menuOpen && (
+                                <div className="navbar-profile-dropdown">
+                                    <div className="navbar-profile-dropdown-header">
+                                        <span className="navbar-profile-dropdown-name">
+                                            {user.first_name} {user.last_name}
+                                        </span>
+                                        <span className="navbar-profile-dropdown-email">
+                                            {user.email}
+                                        </span>
+                                    </div>
+                                    <hr className="navbar-profile-dropdown-divider" />
+                                    <Link
+                                        to="/profile"
+                                        className="navbar-profile-dropdown-item"
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        Profilul meu
+                                    </Link>
+                                    <button
+                                        className="navbar-profile-dropdown-item navbar-profile-dropdown-logout"
+                                        onClick={handleLogout}
+                                    >
+                                        Deconectare
+                                    </button>
+                                </div>
+                            )}
                         </li>
                     </>
                 ) : (
                     <>
-                        <li>
-                            <Link to="/trips" className="navbar-link">
-                                Călătoriile mele
-                            </Link>
-                        </li>
-                        <li>
-                            <button onClick={handleLogout} className="navbar-logout-btn">
-                                Deconectare
+                        {!hideNavLinks && (
+                            <li>
+                                <Link to="/trips" className="navbar-link">
+                                    Călătoriile mele
+                                </Link>
+                            </li>
+                        )}
+                        <li className="navbar-profile-wrapper">
+                            <button
+                                className="navbar-avatar-btn"
+                                onClick={() => setMenuOpen((prev) => !prev)}
+                                aria-label="Meniu profil"
+                            >
+                                {initials || <User size={16} />}
                             </button>
+                            {menuOpen && (
+                                <div className="navbar-profile-dropdown">
+                                    <div className="navbar-profile-dropdown-header">
+                                        <span className="navbar-profile-dropdown-name">
+                                            {user.first_name} {user.last_name}
+                                        </span>
+                                        <span className="navbar-profile-dropdown-email">
+                                            {user.email}
+                                        </span>
+                                    </div>
+                                    <hr className="navbar-profile-dropdown-divider" />
+                                    <Link
+                                        to="/profile"
+                                        className="navbar-profile-dropdown-item"
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        Profilul meu
+                                    </Link>
+                                    <button
+                                        className="navbar-profile-dropdown-item navbar-profile-dropdown-logout"
+                                        onClick={handleLogout}
+                                    >
+                                        Deconectare
+                                    </button>
+                                </div>
+                            )}
                         </li>
                     </>
                 )}
@@ -123,22 +197,33 @@ export default function Navbar() {
 
                     {!user ? (
                         <>
-                            <li>
-                                <Link to="/login" className="navbar-mobile-link" onClick={handleLinkClick}>
-                                    Autentificare
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/register" className="navbar-mobile-link" onClick={handleLinkClick}>
-                                    Înregistrare
-                                </Link>
-                            </li>
+                            {!hideNavLinks && (
+                                <>
+                                    <li>
+                                        <Link to="/login" className="navbar-mobile-link" onClick={handleLinkClick}>
+                                            Autentificare
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/register" className="navbar-mobile-link" onClick={handleLinkClick}>
+                                            Înregistrare
+                                        </Link>
+                                    </li>
+                                </>
+                            )}
                         </>
                     ) : user.role === "ADMIN" ? (
                         <>
+                            {!hideNavLinks && (
+                                <li>
+                                    <Link to="/admin" className="navbar-mobile-link" onClick={handleLinkClick}>
+                                        Dashboard
+                                    </Link>
+                                </li>
+                            )}
                             <li>
-                                <Link to="/admin" className="navbar-mobile-link" onClick={handleLinkClick}>
-                                    Dashboard
+                                <Link to="/profile" className="navbar-mobile-link" onClick={handleLinkClick}>
+                                    Profilul meu
                                 </Link>
                             </li>
                             <li>
@@ -149,9 +234,16 @@ export default function Navbar() {
                         </>
                     ) : (
                         <>
+                            {!hideNavLinks && (
+                                <li>
+                                    <Link to="/trips" className="navbar-mobile-link" onClick={handleLinkClick}>
+                                        Călătoriile mele
+                                    </Link>
+                                </li>
+                            )}
                             <li>
-                                <Link to="/trips" className="navbar-mobile-link" onClick={handleLinkClick}>
-                                    Călătoriile mele
+                                <Link to="/profile" className="navbar-mobile-link" onClick={handleLinkClick}>
+                                    Profilul meu
                                 </Link>
                             </li>
                             <li>

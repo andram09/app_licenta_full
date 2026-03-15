@@ -1,0 +1,156 @@
+/* ── Layout pagina ────────────────────────────────────────── */
+.profile-page {
+    min-height: 100vh;
+    background: var(--color-bg, #f8fafc);
+}
+
+.profile-main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.profile-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--color-navy);
+    margin: 0;
+}
+
+/* ── Card sectiune ────────────────────────────────────────── */
+.profile-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.profile-card-title {
+    font-family: var(--font-body);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-navy);
+    margin: 0 0 6px;
+}
+
+.profile-card-subtitle {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0 0 28px;
+}
+
+/* ── Formular ─────────────────────────────────────────────── */
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.profile-label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-navy);
+}
+
+.profile-input {
+    padding: 10px 14px;
+    border: 1.5px solid rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--color-navy);
+    background: #ffffff;
+    transition: border-color 0.15s ease;
+    outline: none;
+}
+
+.profile-input:focus {
+    border-color: var(--color-teal, #4e8ea2);
+    box-shadow: 0 0 0 3px rgba(78, 142, 162, 0.15);
+}
+
+.profile-input--readonly {
+    background: #f3f4f6;
+    color: #9ca3af;
+    cursor: not-allowed;
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+.profile-input-hint {
+    font-size: 12px;
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+/* ── Feedback mesaje ──────────────────────────────────────── */
+.profile-feedback {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin: 0;
+}
+
+.profile-feedback--success {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.profile-feedback--error {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+/* ── Buton submit ─────────────────────────────────────────── */
+.profile-btn {
+    align-self: flex-start;
+    padding: 10px 24px;
+    border-radius: var(--radius-pill, 999px);
+    background: var(--color-navy);
+    color: #ffffff;
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.profile-btn:hover:not(:disabled) {
+    opacity: 0.85;
+}
+
+.profile-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 520px) {
+    .profile-form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-card {
+        padding: 24px 20px;
+    }
+}

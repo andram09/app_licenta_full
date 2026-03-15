@@ -42,6 +42,7 @@
   justify-content: center;
   gap: 6px;
   padding: 8px 18px;
+  margin: 5px;
   border-radius: var(--radius-pill);
   border: 1.5px solid var(--color-navy);
   background: transparent;
@@ -104,25 +105,64 @@
     background: #f4f7f9;
 }
 
+.trip-subnav-add-btn-text {
+    display: inline;
+}
+
 @media (max-width: 768px) {
-  .trip-subnav-top {
-    flex-wrap: wrap;
-  }
+    .trip-subnav {
+        padding: 12px 16px;
+    }
 
-  .trip-subnav-left {
-    flex-wrap: wrap;
-  }
+    /* top ramane row, nu wrap — stanga/dreapta ca pe desktop */
+    .trip-subnav-top {
+        flex-wrap: nowrap;
+        align-items: flex-start;
+    }
 
-  .trip-subnav-btn {
-    font-size: 12px;
-    padding: 6px 12px;
-  }
+    .trip-subnav-btn {
+        font-size: 12px;
+        padding: 6px 12px;
+        margin: 2px;
+    }
 
-  .trip-subnav-btn--primary {
-    order: 2;
-  }
+    /* scoatem order: 2 — nu mai e nevoie */
+    .trip-subnav-btn--primary {
+        order: unset;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
 
-  .trip-subnav-destination {
-    font-size: 16px;
-  }
+    /* right se aliniaza la capatul din dreapta, butoanele se pot wrapa intre ele */
+    .trip-subnav-right {
+        align-items: flex-end;
+        gap: 4px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .trip-subnav-navbuttons {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 0;
+    }
+
+    .trip-subnav-destination {
+        font-size: 16px;
+    }
+
+    .trip-subnav-bottom {
+        grid-template-columns: 1fr auto 1fr;
+    }
+
+    .trip-subnav-add-btn{
+      font-size: 18px;
+    }
+
+    .trip-subnav-add-btn-text {
+        display: none;
+    }
 }

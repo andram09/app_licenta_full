@@ -26,10 +26,6 @@
     flex-shrink: 0;
 }
 
-.navbar-brand:hover {
-    color: var(--color-teal);
-}
-
 /* ── Links list (desktop) ─────────────────────────────────── */
 .navbar-links {
     display: flex;
@@ -217,4 +213,130 @@
     .navbar-mobile-menu {
         display: block;
     }
+}
+
+/* ── Avatar buton profil (desktop) ───────────────────────── */
+.navbar-profile-wrapper {
+    position: relative;
+}
+
+.navbar-avatar-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-teal, #4e8ea2);
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.03em;
+    transition: opacity var(--transition-fast);
+}
+
+.navbar-avatar-btn:hover {
+    opacity: 0.85;
+}
+
+/* ── Dropdown profil (desktop) ────────────────────────────── */
+.navbar-profile-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 220px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    z-index: 300;
+    overflow: hidden;
+    animation: profileDropdownFadeIn 0.15s ease;
+}
+
+@keyframes profileDropdownFadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.navbar-profile-dropdown-header {
+    padding: 14px 16px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.navbar-profile-dropdown-name {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-navy);
+}
+
+.navbar-profile-dropdown-email {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: #6b7280;
+    word-break: break-all;
+}
+
+.navbar-profile-dropdown-divider {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin: 0;
+}
+
+.navbar-profile-dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 11px 16px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-navy);
+    text-decoration: none;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+.navbar-profile-dropdown-item:hover {
+    background: rgba(0, 29, 57, 0.06);
+}
+
+.navbar-profile-dropdown-logout {
+    color: #dc2626;
+}
+
+.navbar-profile-dropdown-logout:hover {
+    background: rgba(220, 38, 38, 0.06);
+}
+
+/* ── Brand group cu titlu pagina optional ─────────────────── */
+.navbar-brand-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+}
+
+.navbar-brand-separator {
+    font-size: 18px;
+    color: rgba(0, 29, 57, 0.35);
+    flex-shrink: 0;
+}
+
+.navbar-brand-page {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--color-navy);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

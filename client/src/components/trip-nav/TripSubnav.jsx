@@ -60,7 +60,7 @@ export default function TripSubnav({
 
                     {/* PLANIFICARE */}
                     {path.includes("/board") && (
-                        <>
+                        <div className="trip-subnav-navbuttons">
                             <button
                                 className="trip-subnav-btn"
                                 onClick={() => navigate(`/trips/${tripId}/explore`)}
@@ -78,12 +78,12 @@ export default function TripSubnav({
                                     <ArrowRight size={16} />
                                 </button>
                             )}
-                        </>
+                        </div>
                     )}
 
                     {/* MAP */}
                     {path.includes("/map") && (
-                        <>
+                        <div className="trip-subnav-navbuttons">
                             <button
                                 className="trip-subnav-btn"
                                 onClick={() => navigate(`/trips/${tripId}/board`)}
@@ -109,12 +109,12 @@ export default function TripSubnav({
                                     <ArrowRight size={16} />
                                 </button>
                             )}
-                        </>
+                        </div>
                     )}
 
                     {/* BUDGET */}
                     {path.includes("/budget") && (
-                        <>
+                        <div className="trip-subnav-navbuttons">
                             <button
                                 className="trip-subnav-btn"
                                 onClick={() => navigate(`/trips/${tripId}/map`)}
@@ -138,7 +138,7 @@ export default function TripSubnav({
                                 <ArrowLeft size={16} />
                                 Explore
                             </button>
-                        </>
+                        </div>
                     )}
 
                 </div>
@@ -151,11 +151,8 @@ export default function TripSubnav({
                 </h1>
 
                 {showAddObjective && (
-                    <button
-                        className="trip-subnav-add-btn"
-                        onClick={onAddObjective}
-                    >
-                        + Adaugă obiectiv
+                    <button className="trip-subnav-add-btn" onClick={onAddObjective}>
+                        +<span className="trip-subnav-add-btn-text"> Adaugă obiectiv</span>
                     </button>
                 )}
             </div>

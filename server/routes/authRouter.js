@@ -5,7 +5,7 @@ import { validate } from "../middleware/validationMiddleware.js"
 import { authLimiter } from "../middleware/rateLimiter.js"
 import { authMiddleware } from "../middleware/authMiddleware.js"
 
-import {registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema} from "../validations/authValidation.js"
+import {registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema, updateProfileSchema, changePasswordSchema} from "../validations/authValidation.js"
 
 export const router=express.Router()
 
@@ -15,3 +15,5 @@ router.post("/forgot-password", authLimiter, validate(forgotPasswordSchema), con
 router.post("/reset-password", validate(resetPasswordSchema), controllers.authController.resetPassword)
 router.get("/profile", authMiddleware, controllers.authController.getMe)
 router.post("/logout", controllers.authController.logout)
+router.post("/profile", authMiddleware, validate(updateProfileSchema), controllers.authController.updateProfile)
+router.post("/profile/password", authMiddleware, validate(changePasswordSchema), controllers.authController.changePassword)

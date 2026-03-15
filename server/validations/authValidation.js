@@ -103,3 +103,47 @@ export const resetPasswordSchema = Joi.object({
       'any.required': 'Password confirmation is required'
     })
 });
+
+// Schema pentru actualizarea datelor personale (prenume, nume)
+export const updateProfileSchema = Joi.object({
+  first_name: Joi.string()
+    .min(2)
+    .max(50)
+    .required()
+    .messages({
+      'string.min': 'First name must be at least 2 characters long',
+      'string.max': 'First name cannot exceed 50 characters',
+      'any.required': 'First name is required'
+    }),
+
+  last_name: Joi.string()
+    .min(2)
+    .max(50)
+    .required()
+    .messages({
+      'string.min': 'Last name must be at least 2 characters long',
+      'string.max': 'Last name cannot exceed 50 characters',
+      'any.required': 'Last name is required'
+    })
+});
+
+// Schema pentru schimbarea parolei din interiorul aplicatiei (utilizator autentificat)
+// Necesita parola curenta pentru verificare
+export const changePasswordSchema = Joi.object({
+  current_password: Joi.string()
+    .required()
+    .messages({
+      'any.required': 'Current password is required'
+    }),
+
+  new_password: passwordSchema,
+
+  // Joi.ref('new_password') compara automat cu valoarea campului new_password
+  confirm_new_password: Joi.string()
+    .valid(Joi.ref('new_password'))
+    .required()
+    .messages({
+      'any.only': 'Passwords do not match',
+      'any.required': 'Password confirmation is required'
+    })
+});

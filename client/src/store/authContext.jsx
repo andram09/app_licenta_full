@@ -51,6 +51,12 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Actualizeaza datele userului in context dupa editare profil
+  // Evita un re-fetch complet catre server
+  const updateUser = (updatedData) => {
+    setUser((prev) => ({ ...prev, ...updatedData }));
+  };
+
   // La montarea aplicatiei, verifica daca exista un cookie valid
   useEffect(() => {
     fetchMe();
@@ -58,7 +64,7 @@ export function AuthProvider({ children }) {
 
   // Memoizare pentru a evita re-render-uri inutile
   const value = useMemo(
-    () => ({ user, loading, login, register, logout, fetchMe }),
+    () => ({ user, loading, login, register, logout, fetchMe, updateUser }),
     [user, loading]
   );
 

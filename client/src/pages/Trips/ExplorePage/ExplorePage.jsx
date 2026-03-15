@@ -7,10 +7,10 @@ import TripSubnav from "../../../components/trip-nav/TripSubnav";
 import "./ExplorePage.css";
 
 const CATEGORIES = [
-    { key: "museums", label: "Muzee & Cultura" },
-    { key: "historic", label: "Monumente si Locuri Istorice" },
-    { key: "architecture", label: "Arhitectura" },
-    { key: "parks", label: "Parcuri & Natura" },
+    { key: "museums", label: "Muzee & Cultură" },
+    { key: "historic", label: "Monumente și Locuri Istorice" },
+    { key: "architecture", label: "Arhitectură" },
+    { key: "parks", label: "Parcuri și Natura" },
     { key: "restaurants", label: "Restaurante" },
     { key: "cafes", label: "Cafenele" },
 ];
@@ -147,8 +147,8 @@ export default function ExplorePage() {
                 {!hasCoords && (
                     <div className="explore-no-coords">
                         <p>
-                            Aceasta calatorie nu are coordonate salvate. Locurile nu pot fi incarcate.
-                            Recreeaza calatoria selectand un oras din sugestii.
+                            Această călătorie nu are coordonate salvate. Locurile nu pot fi încărcate.
+                            Recreează călătoria selectând un oras din sugestii.
                         </p>
                     </div>
                 )}
@@ -169,7 +169,7 @@ export default function ExplorePage() {
                         </div>
 
                         {placesLoading && (
-                            <p className="explore-state-msg">Se incarca locurile...</p>
+                            <p className="explore-state-msg">Se încarcă locurile...</p>
                         )}
 
                         {!placesLoading && placesError && (
@@ -179,14 +179,14 @@ export default function ExplorePage() {
                                     className="explore-retry-btn"
                                     onClick={() => setActiveCategory({ ...activeCategory })}
                                 >
-                                    Reincearca
+                                    Reîncearcă
                                 </button>
                             </div>
                         )}
 
                         {!placesLoading && !placesError && places.length === 0 && (
                             <p className="explore-state-msg">
-                                Nu am gasit locuri pentru aceasta categorie.
+                                Nu am găsit locuri pentru această categorie.
                             </p>
                         )}
 
