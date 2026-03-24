@@ -172,8 +172,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
     padding: 12px 14px 10px;
     border-bottom: 1px solid var(--color-light);
+}
+
+.board-column-header-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .board-column-title {

@@ -15,5 +15,5 @@ router.post("/forgot-password", authLimiter, validate(forgotPasswordSchema), con
 router.post("/reset-password", validate(resetPasswordSchema), controllers.authController.resetPassword)
 router.get("/profile", authMiddleware, controllers.authController.getMe)
 router.post("/logout", controllers.authController.logout)
-router.post("/profile", authMiddleware, validate(updateProfileSchema), controllers.authController.updateProfile)
-router.post("/profile/password", authMiddleware, validate(changePasswordSchema), controllers.authController.changePassword)
+router.put("/profile", authMiddleware, validate(updateProfileSchema), controllers.authController.updateProfile)
+router.put("/profile/password", authMiddleware, validate(changePasswordSchema), controllers.authController.changePassword)

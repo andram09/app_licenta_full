@@ -88,15 +88,49 @@ function SortableCard({ objective, onEdit, onDelete }) {
 }
 
 // ── Coloana kanban DESKTOP — neschimbata fata de original ───────────────────
-function Column({ colKey, title, objectives, onEdit, onDelete }) {
+function Column({ colKey, title, objectives, onEdit, onDelete, onOptimize, isOptimizing, optimizeResults, columnMeta }) {
     const { setNodeRef, isOver } = useDroppable({ id: colKey });
     const ids = objectives.map((o) => String(o.id_objective));
+
+    // numaram doar obiectivele cu coordonate — cele fara nu pot fi optimizate
+    const optimizableCount = objectives.filter(
+        (o) => o.coord_lat != null && o.coord_lng != null
+    ).length;
+
+    const canOptimize = optimizableCount >= 2 && !isOptimizing;
 
     return (
         <div className={`board-column${isOver ? " board-column--over" : ""}`}>
             <div className="board-column-header">
-                <h2 className="board-column-title">{title}</h2>
-                <span className="board-column-count">{objectives.length}</span>
+                <div className="board-column-header-top">
+                    <h2 className="board-column-title">{title}</h2>
+                    <span className="board-column-count">{objectives.length}</span>
+                </div>
+
+                {/* butonul de optimizare — apare doar la coloanele de zile, nu la Neatribuite */}
+                {onOptimize && columnMeta?.[colKey]?.id_day !== null && (
+                    <div className="board-column-optimize">
+                        <button
+                            type="button"
+                            className="board-optimize-btn"
+                            onClick={() => onOptimize(colKey)}
+                            disabled={!canOptimize}
+                            title={
+                                optimizableCount < 2
+                                    ? "Adauga cel putin 2 obiective cu locatie"
+                                    : "Optimizeaza traseul zilei"
+                            }
+                        >
+                            {isOptimizing ? "..." : "Optimizeaza ruta"}
+                        </button>
+
+                        {optimizeResults?.[colKey] && (
+                            <span className="board-optimize-result">
+                                {Number(optimizeResults[colKey].totalDistanceKm).toFixed(1)} km
+                            </span>
+                        )}
+                    </div>
+                )}
             </div>
             <SortableContext items={ids} strategy={verticalListSortingStrategy}>
                 <div ref={setNodeRef} className="board-column-body">
@@ -710,27 +744,6 @@ export default function BoardPage() {
                     navigate={navigate}
                     id={id}
                 />
-                {hotelModal && (
-                    <HotelModal
-                        isLoading={hotelLoading}
-                        error={hotelError}
-                        initialValue={trip?.hotel_name || null}
-                        onConfirm={(hotelName, useHotelAsStart) =>
-                            runOptimize(hotelModal.colKey, hotelName, useHotelAsStart)
-                        }
-                        onClose={() => {
-                            setHotelModal(null);
-                            setHotelError(null);
-                        }}
-                    />
-                )}
-                {editingObj && (
-                    <EditObjectiveModal
-                        objective={editingObj}
-                        onClose={() => setEditingObj(null)}
-                        onSaved={handleEditSaved}
-                    />
-                )}
             </>
         );
     }
@@ -761,6 +774,10 @@ export default function BoardPage() {
                                 objectives={columns[colKey]}
                                 onEdit={setEditingObj}
                                 onDelete={handleDeleteObjective}
+                                onOptimize={colKey !== "unassigned" ? handleOptimize : null}
+                                isOptimizing={isOptimizing}
+                                optimizeResults={optimizeResults}
+                                columnMeta={columnMeta}
                             />
                         ))}
                     </div>
@@ -771,6 +788,21 @@ export default function BoardPage() {
                 </DndContext>
                 </div>
             </div>
+
+            {hotelModal && (
+                <HotelModal
+                    isLoading={hotelLoading}
+                    error={hotelError}
+                    initialValue={trip?.hotel_name || null}
+                    onConfirm={(hotelName, useHotelAsStart) =>
+                        runOptimize(hotelModal.colKey, hotelName, useHotelAsStart)
+                    }
+                    onClose={() => {
+                        setHotelModal(null);
+                        setHotelError(null);
+                    }}
+                />
+            )}
 
             {editingObj && (
                 <EditObjectiveModal
