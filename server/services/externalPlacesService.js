@@ -181,12 +181,9 @@ export const fetchCitySuggestions = async (query, lang = "ro") => {
 // reverse geocoding batch pentru o lista de coordonate
 // Nominatim: max 1 request/secunda, deci procesam secvential cu delay
 export const reverseGeocodeCoords = async (coordsList) => {
-  // coordsList: [{ external_place_id, lat, lng }, ...]
-  // returneaza un Map: external_place_id -> address string sau null
-
   const results = new Map();
 
-  for (const item of coordsList) {
+  const promises = coordsList.map(async (item) => {
     try {
       const response = await axios.get(
         "https://nominatim.openstreetmap.org/reverse",
@@ -200,7 +197,7 @@ export const reverseGeocodeCoords = async (coordsList) => {
             addressdetails: 1
           },
           headers: {
-            "User-Agent": "TripPlannerApp_Licenta/1.0 (moiseandra23@stud.ase.ro)"
+            "User-Agent": "TripPlannerApp_Licenta/1.0"
           },
           timeout: 8000
         }
@@ -231,10 +228,9 @@ export const reverseGeocodeCoords = async (coordsList) => {
       );
       results.set(item.external_place_id, null);
     }
+  });
 
-    // respect rate limit-ul Nominatim: 1 request/secunda
-    await delay(1100);
-  }
+  await Promise.all(promises);
 
   return results;
 };

@@ -50,19 +50,36 @@ export default function ExplorePage() {
     }, [id]);
 
     const fetchUnassigned = async () => {
+        const res = await api.get(`/trips/${id}/objectives/unassigned`);
+        const ids = (res.data.data || [])
+            .filter(o => o.external_place_id)
+            .map(o => o.external_place_id);
+        setAddedIds(ids);
+    };
+
+    const fetchAddedObjectives = async () => {
         try {
-            const res = await api.get(`/trips/${id}/objectives/unassigned`);
-            const ids = (res.data.data || [])
+            const res = await api.get(`/trips/${id}/board`);
+            const { days, unassigned } = res.data.data;
+
+            // toate obiectivele din trip
+            const allObjectives = [
+                ...unassigned,
+                ...days.flatMap(d => d.objectives || [])
+            ];
+
+            const ids = allObjectives
                 .filter(o => o.external_place_id)
                 .map(o => o.external_place_id);
+
             setAddedIds(ids);
         } catch {
-            // eroare silentioasa
+            // silent fail
         }
     };
 
     useEffect(() => {
-        fetchUnassigned();
+        fetchAddedObjectives();
     }, [id]);
 
     useEffect(() => {
@@ -191,86 +208,86 @@ export default function ExplorePage() {
 
                 <div className="explore-page-container">
 
-                {!hasCoords && (
-                    <div className="explore-no-coords">
-                        <p>
-                            Această călătorie nu are coordonate salvate. Locurile nu pot fi încărcate.
-                            Recreează călătoria selectând un oras din sugestii.
-                        </p>
-                    </div>
-                )}
-
-                {hasCoords && (
-                    <>
-                        <div className="explore-categories">
-                            {CATEGORIES.map(cat => (
-                                <button
-                                    key={cat.key}
-                                    className={`explore-cat-btn ${activeCategory.key === cat.key ? "explore-cat-btn--active" : ""}`}
-                                    onClick={() => setActiveCategory(cat)}
-                                    type="button"
-                                >
-                                    {cat.label}
-                                </button>
-                            ))}
+                    {!hasCoords && (
+                        <div className="explore-no-coords">
+                            <p>
+                                Această călătorie nu are coordonate salvate. Locurile nu pot fi încărcate.
+                                Recreează călătoria selectând un oras din sugestii.
+                            </p>
                         </div>
+                    )}
 
-                        {placesLoading && (
-                            <p className="explore-state-msg">Se încarcă locurile...</p>
-                        )}
-                        {/* {!placesLoading && geocodingLoading && (
+                    {hasCoords && (
+                        <>
+                            <div className="explore-categories">
+                                {CATEGORIES.map(cat => (
+                                    <button
+                                        key={cat.key}
+                                        className={`explore-cat-btn ${activeCategory.key === cat.key ? "explore-cat-btn--active" : ""}`}
+                                        onClick={() => setActiveCategory(cat)}
+                                        type="button"
+                                    >
+                                        {cat.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {placesLoading && (
+                                <p className="explore-state-msg">Se încarcă locurile...</p>
+                            )}
+                            {/* {!placesLoading && geocodingLoading && (
                             <p className="explore-state-msg" style={{ padding: "0.5rem 0", fontSize: "12px" }}>
                                 Se încarcă adresele...
                             </p>
                         )} */}
 
-                        {!placesLoading && placesError && (
-                            <div className="explore-error-box">
-                                <p>{placesError}</p>
-                                <button
-                                    className="explore-retry-btn"
-                                    onClick={() => setActiveCategory({ ...activeCategory })}
-                                >
-                                    Reîncearcă
-                                </button>
-                            </div>
-                        )}
+                            {!placesLoading && placesError && (
+                                <div className="explore-error-box">
+                                    <p>{placesError}</p>
+                                    <button
+                                        className="explore-retry-btn"
+                                        onClick={() => setActiveCategory({ ...activeCategory })}
+                                    >
+                                        Reîncearcă
+                                    </button>
+                                </div>
+                            )}
 
-                        {!placesLoading && !placesError && places.length === 0 && (
-                            <p className="explore-state-msg">
-                                Nu am găsit locuri pentru această categorie.
-                            </p>
-                        )}
+                            {!placesLoading && !placesError && places.length === 0 && (
+                                <p className="explore-state-msg">
+                                    Nu am găsit locuri pentru această categorie.
+                                </p>
+                            )}
 
-                        {!placesLoading && !placesError && places.length > 0 && (
-                            <div className="explore-grid">
-                                {places.map((place) => {
-                                    const isAdded = addedIds.includes(place.external_place_id);
-                                    const isAdding = addingIds.includes(place.external_place_id);
+                            {!placesLoading && !placesError && places.length > 0 && (
+                                <div className="explore-grid">
+                                    {places.map((place) => {
+                                        const isAdded = addedIds.includes(place.external_place_id);
+                                        const isAdding = addingIds.includes(place.external_place_id);
 
-                                    return (
-                                        <div key={place.external_place_id} className="explore-card">
-                                            <div className="explore-card-body">
-                                                <h3 className="explore-card-title">{place.title}</h3>
-                                                {place.address && (
-                                                    <p className="explore-card-address">{place.address}</p>
-                                                )}
+                                        return (
+                                            <div key={place.external_place_id} className="explore-card">
+                                                <div className="explore-card-body">
+                                                    <h3 className="explore-card-title">{place.title}</h3>
+                                                    {place.address && (
+                                                        <p className="explore-card-address">{place.address}</p>
+                                                    )}
+                                                </div>
+                                                <button
+                                                    className={`explore-card-btn ${isAdded ? "explore-card-btn--added" : ""}`}
+                                                    onClick={() => handleAddPlace(place)}
+                                                    disabled={isAdded || isAdding}
+                                                    type="button"
+                                                >
+                                                    {isAdded ? "Adaugat ✓" : isAdding ? "Se adauga..." : "Viziteaza"}
+                                                </button>
                                             </div>
-                                            <button
-                                                className={`explore-card-btn ${isAdded ? "explore-card-btn--added" : ""}`}
-                                                onClick={() => handleAddPlace(place)}
-                                                disabled={isAdded || isAdding}
-                                                type="button"
-                                            >
-                                                {isAdded ? "Adaugat ✓" : isAdding ? "Se adauga..." : "Viziteaza"}
-                                            </button>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </>
-                )}
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
             </div>
 
