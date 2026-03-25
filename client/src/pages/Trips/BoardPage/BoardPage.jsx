@@ -1,20 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-    DndContext,
-    DragOverlay,
-    PointerSensor,
-    TouchSensor,
-    useSensor,
-    useSensors,
-    useDroppable,
-    closestCorners,
+    DndContext, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors, useDroppable, closestCorners,
 } from "@dnd-kit/core";
 import {
-    SortableContext,
-    useSortable,
-    verticalListSortingStrategy,
-    arrayMove,
+    SortableContext, useSortable, verticalListSortingStrategy, arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { api } from "../../../api/axios";
@@ -69,10 +59,20 @@ function SortableCard({ objective, onEdit, onDelete }) {
             {objective.planned_time && (
                 <p className="board-card-time">{objective.planned_time.slice(0, 5)}</p>
             )}
-            {(objective.description || objective.address) && (
-                <p className="board-card-desc">
-                    {(objective.description || objective.address || "").slice(0, 80)}
-                </p>
+            {objective.address && objective.coord_lat && objective.coord_lng && (
+                <a
+                    href={`https://www.google.com/maps?q=${objective.coord_lat},${objective.coord_lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="board-card-address"
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {objective.address}
+                </a>
+            )}
+            {objective.description && (
+                <p className="board-card-desc">{objective.description.slice(0, 80)}</p>
             )}
             <div className="board-card-actions">
                 <button
@@ -87,12 +87,10 @@ function SortableCard({ objective, onEdit, onDelete }) {
     );
 }
 
-// ── Coloana kanban DESKTOP — neschimbata fata de original ───────────────────
 function Column({ colKey, title, objectives, onEdit, onDelete, onOptimize, isOptimizing, optimizeResults, columnMeta }) {
     const { setNodeRef, isOver } = useDroppable({ id: colKey });
     const ids = objectives.map((o) => String(o.id_objective));
 
-    // numaram doar obiectivele cu coordonate — cele fara nu pot fi optimizate
     const optimizableCount = objectives.filter(
         (o) => o.coord_lat != null && o.coord_lng != null
     ).length;
@@ -159,7 +157,7 @@ function CardPreview({ objective }) {
     );
 }
 
-// ── Card sortabil MOBILE cu drag handle explicit ↕ ─────────────────────────
+// ── Card sortabil MOBILE cu drag handle ─────────────────────────
 // listeners sunt aplicati DOAR pe handle — restul cardului ramane scrollabil
 function MobileSortableCard({ objective, columnOrder, columnMeta, activeColKey, onEdit, onDelete, onMove }) {
     const [moveOpen, setMoveOpen] = useState(false);
@@ -216,10 +214,20 @@ function MobileSortableCard({ objective, columnOrder, columnMeta, activeColKey, 
                 {objective.planned_time && (
                     <p className="board-card-time">{objective.planned_time.slice(0, 5)}</p>
                 )}
-                {(objective.description || objective.address) && (
-                    <p className="board-card-desc">
-                        {(objective.description || objective.address || "").slice(0, 80)}
-                    </p>
+                {objective.address && objective.coord_lat && objective.coord_lng && (
+                    <a
+                        href={`https://www.google.com/maps?q=${objective.coord_lat},${objective.coord_lng}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="board-card-address"
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {objective.address}
+                    </a>
+                )}
+                {objective.description && (
+                    <p className="board-card-desc">{objective.description.slice(0, 80)}</p>
                 )}
 
                 <div className="board-card-actions board-card-actions--mobile">
@@ -473,6 +481,48 @@ export default function BoardPage() {
         };
         fetchBoard();
     }, [id]);
+
+    // reverse geocoding in background pentru obiectivele fara adresa
+    useEffect(() => {
+        if (!Object.keys(columns).length) return;
+
+        // colectam toate obiectivele din toate coloanele care au coordonate dar nu au adresa
+        const toGeocode = Object.values(columns)
+            .flat()
+            .filter(o => !o.address && o.coord_lat != null && o.coord_lng != null)
+            .map(o => ({
+                external_place_id: String(o.id_objective),
+                lat: o.coord_lat,
+                lng: o.coord_lng
+            }));
+
+        if (toGeocode.length === 0) return;
+
+        const fetchAddresses = async () => {
+            try {
+                const res = await api.post("/external/reverse-geocode", { coords: toGeocode });
+                const addressMap = res.data.data;
+
+                // actualizam fiecare coloana cu adresele primite
+                // cheia din addressMap e String(id_objective) nu external_place_id
+                setColumns(prev => {
+                    const next = {};
+                    for (const [key, objs] of Object.entries(prev)) {
+                        next[key] = objs.map(o => ({
+                            ...o,
+                            address: addressMap[String(o.id_objective)] ?? o.address ?? null
+                        }));
+                    }
+                    return next;
+                });
+            } catch (err) {
+                // eroare silentioasa - cardurile raman fara adresa
+                console.error("Board reverse geocode failed:", err.message);
+            }
+        };
+
+        fetchAddresses();
+    }, [Object.keys(columns).length]);
 
     function findColKey(objId) {
         for (const [key, objs] of Object.entries(columns)) {
@@ -758,34 +808,34 @@ export default function BoardPage() {
                     showMap={true}
                     showBudget={false}
                 />
-                <div className="board-page-content">    
-                <DndContext
-                    sensors={sensors}
-                    collisionDetection={collisionDetection}
-                    onDragStart={handleDragStart}
-                    onDragEnd={handleDragEnd}
-                >
-                    <div className="board-columns">
-                        {columnOrder.map((colKey) => (
-                            <Column
-                                key={colKey}
-                                colKey={colKey}
-                                title={columnMeta[colKey].title}
-                                objectives={columns[colKey]}
-                                onEdit={setEditingObj}
-                                onDelete={handleDeleteObjective}
-                                onOptimize={colKey !== "unassigned" ? handleOptimize : null}
-                                isOptimizing={isOptimizing}
-                                optimizeResults={optimizeResults}
-                                columnMeta={columnMeta}
-                            />
-                        ))}
-                    </div>
+                <div className="board-page-content">
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={collisionDetection}
+                        onDragStart={handleDragStart}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <div className="board-columns">
+                            {columnOrder.map((colKey) => (
+                                <Column
+                                    key={colKey}
+                                    colKey={colKey}
+                                    title={columnMeta[colKey].title}
+                                    objectives={columns[colKey]}
+                                    onEdit={setEditingObj}
+                                    onDelete={handleDeleteObjective}
+                                    onOptimize={colKey !== "unassigned" ? handleOptimize : null}
+                                    isOptimizing={isOptimizing}
+                                    optimizeResults={optimizeResults}
+                                    columnMeta={columnMeta}
+                                />
+                            ))}
+                        </div>
 
-                    <DragOverlay>
-                        {activeObj ? <CardPreview objective={activeObj} /> : null}
-                    </DragOverlay>
-                </DndContext>
+                        <DragOverlay>
+                            {activeObj ? <CardPreview objective={activeObj} /> : null}
+                        </DragOverlay>
+                    </DndContext>
                 </div>
             </div>
 

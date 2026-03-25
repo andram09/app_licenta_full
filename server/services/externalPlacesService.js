@@ -6,6 +6,9 @@ if (!OPENTRIPMAP_API_KEY) {
   console.warn("Missing OPENTRIPMAP_API_KEY in .env");
 }
 
+// delay helper pentru rate limiting la reverse geocoding
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 // fetch locuri de interes din OpenTripMap cu filtrare imbunatatita
 // returneaza doar campurile necesare frontend-ului (nu modelul Objective complet)
 export const fetchOpenTripMapByKinds = async (lat, lng, kinds, rate = 2) => {
@@ -49,19 +52,18 @@ export const fetchOpenTripMapByKinds = async (lat, lng, kinds, rate = 2) => {
     })
     // returnez doar campurile necesare frontend-ului
     .map(place => ({
-      external_place_id: place.xid,
-      title: place.name.trim(),
-      address: place.address?.road
-        ? [place.address.road, place.address.city].filter(Boolean).join(", ")
-        : null,
-      kinds: place.kinds || null,
-      // campuri necesare pentru POST /objectives/from-api
-      coord_lat: place.point.lat,
-      coord_lng: place.point.lon,
-      external_provider: "OPENTRIPMAP",
-      description: null,
-      source_type: "API"
-    }));
+        external_place_id: place.xid,
+        title: place.name.trim(),
+        address: null,
+        kinds: place.kinds || null,
+        // campuri necesare pentru POST /objectives/from-api
+        coord_lat: place.point.lat,
+        coord_lng: place.point.lon,
+        external_provider: "OPENTRIPMAP",
+        description: null,
+        source_type: "API"
+      })
+    );
 };
 
 // Cauta locuri turistice dupa nume (autosuggest) in jurul unor coordonate.
@@ -100,18 +102,17 @@ export const fetchOpenTripMapByName = async (name, lat, lng, radius = 5000) => {
       .filter(p => p.name && p.name.trim().length > 0)
       .filter(p => p.point && p.point.lat && p.point.lon)
       .map(p => ({
-        external_place_id: p.xid,
-        title: p.name.trim(),
-        kinds: p.kinds || null,
-        coord_lat: p.point.lat,
-        coord_lng: p.point.lon,
-        address: p.address?.road
-          ? [p.address.road, p.address.city].filter(Boolean).join(", ")
-          : null,
-        external_provider: "OPENTRIPMAP",
-        description: null,
-        source_type: "API"
-      }));
+          external_place_id: p.xid,
+          title: p.name.trim(),
+          kinds: p.kinds || null,
+          coord_lat: p.point.lat,
+          coord_lng: p.point.lon,
+          address: null,
+          external_provider: "OPENTRIPMAP",
+          description: null,
+          source_type: "API"
+        })
+      );
   } else if (raw?.features && Array.isArray(raw.features)) {
     places = raw.features
       .filter(f => f.properties?.name && f.properties.name.trim().length > 0)
@@ -176,6 +177,67 @@ export const fetchCitySuggestions = async (query, lang = "ro") => {
   }));
 };
 
+
+// reverse geocoding batch pentru o lista de coordonate
+// Nominatim: max 1 request/secunda, deci procesam secvential cu delay
+export const reverseGeocodeCoords = async (coordsList) => {
+  // coordsList: [{ external_place_id, lat, lng }, ...]
+  // returneaza un Map: external_place_id -> address string sau null
+
+  const results = new Map();
+
+  for (const item of coordsList) {
+    try {
+      const response = await axios.get(
+        "https://nominatim.openstreetmap.org/reverse",
+        {
+          params: {
+            lat: item.lat,
+            lon: item.lng,
+            format: "json",
+            "accept-language": "ro",
+            zoom: 18,
+            addressdetails: 1
+          },
+          headers: {
+            "User-Agent": "TripPlannerApp_Licenta/1.0 (moiseandra23@stud.ase.ro)"
+          },
+          timeout: 8000
+        }
+      );
+
+      const addr = response.data?.address;
+
+      if (!addr) {
+        results.set(item.external_place_id, null);
+      } else {
+        const parts = [
+          addr.road && addr.house_number
+            ? `${addr.road} ${addr.house_number}`
+            : addr.road || null,
+          addr.city || addr.town || addr.village || addr.municipality || null,
+          addr.country || null
+        ].filter(Boolean);
+
+        results.set(
+          item.external_place_id,
+          parts.length > 0 ? parts.join(", ") : null
+        );
+      }
+    } catch (err) {
+      console.error(
+        `Nominatim reverse geocode failed for ${item.external_place_id}:`,
+        err.message
+      );
+      results.set(item.external_place_id, null);
+    }
+
+    // respect rate limit-ul Nominatim: 1 request/secunda
+    await delay(1100);
+  }
+
+  return results;
+};
 
 
 

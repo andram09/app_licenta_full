@@ -10,7 +10,7 @@ const CATEGORIES = [
     { key: "museums", label: "Muzee & Cultură" },
     { key: "historic", label: "Monumente și Locuri Istorice" },
     { key: "architecture", label: "Arhitectură" },
-    { key: "parks", label: "Parcuri și Natura" },
+    { key: "parks", label: "Parcuri și Natură" },
     { key: "restaurants", label: "Restaurante" },
     { key: "cafes", label: "Cafenele" },
 ];
@@ -28,6 +28,7 @@ export default function ExplorePage() {
     const [places, setPlaces] = useState([]);
     const [placesLoading, setPlacesLoading] = useState(false);
     const [placesError, setPlacesError] = useState(null);
+    // const [geocodingLoading, setGeocodingLoading] = useState(false);
 
     const [addedIds, setAddedIds] = useState([]);
     const [addingIds, setAddingIds] = useState([]);
@@ -92,6 +93,52 @@ export default function ExplorePage() {
 
         fetchPlaces();
     }, [trip, activeCategory]);
+
+    // // reverse geocoding in background dupa ce places e populat
+    // // cardurile se afiseaza imediat, adresele se actualizeaza pe masura ce vin
+    // useEffect(() => {
+    //     if (!places || places.length === 0) return;
+
+    //     const needsGeocode = places.some(p => !p.address);
+    //     if (!needsGeocode) return;
+
+    //     const fetchAddresses = async () => {
+    //         setGeocodingLoading(true);
+
+    //         const coords = places
+    //             .filter(p => !p.address && p.coord_lat && p.coord_lng)
+    //             .map(p => ({
+    //                 external_place_id: p.external_place_id,
+    //                 lat: p.coord_lat,
+    //                 lng: p.coord_lng
+    //             }));
+
+    //         if (coords.length === 0) {
+    //             setGeocodingLoading(false);
+    //             return;
+    //         }
+
+    //         try {
+    //             const res = await api.post("/external/reverse-geocode", { coords });
+    //             const addressMap = res.data.data;
+
+    //             // actualizam places cu adresele primite fara sa refacem fetch-ul
+    //             setPlaces(prev =>
+    //                 prev.map(place => ({
+    //                     ...place,
+    //                     address: addressMap[place.external_place_id] ?? place.address ?? null
+    //                 }))
+    //             );
+    //         } catch (err) {
+    //             // eroare silentioasa - cardurile raman fara adresa, nu blocam UX-ul
+    //             console.error("Reverse geocode failed:", err.message);
+    //         } finally {
+    //             setGeocodingLoading(false);
+    //         }
+    //     };
+
+    //     fetchAddresses();
+    // }, [places.length]);
 
     const handleAddPlace = async (place) => {
         if (addedIds.includes(place.external_place_id)) return;
@@ -171,6 +218,11 @@ export default function ExplorePage() {
                         {placesLoading && (
                             <p className="explore-state-msg">Se încarcă locurile...</p>
                         )}
+                        {/* {!placesLoading && geocodingLoading && (
+                            <p className="explore-state-msg" style={{ padding: "0.5rem 0", fontSize: "12px" }}>
+                                Se încarcă adresele...
+                            </p>
+                        )} */}
 
                         {!placesLoading && placesError && (
                             <div className="explore-error-box">

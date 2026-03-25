@@ -13,3 +13,6 @@ router.get("/search", externalController.searchPlacesByName);
 // /external/cities?query=...
 router.get("/cities", externalController.getCities);
 
+// /external/reverse-geocode
+router.post("/reverse-geocode", authMiddleware, externalController.reverseGeocode);
+

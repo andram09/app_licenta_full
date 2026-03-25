@@ -1,4 +1,5 @@
-import { fetchOpenTripMapByKinds, fetchOpenTripMapByName, fetchCitySuggestions } from "../services/externalPlacesService.js";
+import { fetchOpenTripMapByKinds, fetchOpenTripMapByName, fetchCitySuggestions, reverseGeocodeCoords 
+} from "../services/externalPlacesService.js";
 
 export const externalController = {
 
@@ -107,6 +108,59 @@ export const externalController = {
     } catch (error) {
       console.error("Nominatim geocoding error:", error.message);
       return res.status(500).json({ message: "Failed to fetch city suggestions." });
+    }
+  },
+
+  // POST /external/reverse-geocode
+  // primeste un array de { external_place_id, lat, lng }
+  // returneaza un obiect { external_place_id: address }
+  // fol POST pentru ca trimit un body, nu query params
+  reverseGeocode: async (req, res) => {
+    try {
+      const { coords } = req.body;
+
+      if (!Array.isArray(coords) || coords.length === 0) {
+        return res.status(400).json({ message: "coords must be a non-empty array." });
+      }
+
+      if (coords.length > 20) {
+        return res.status(400).json({ message: "Maximum 20 coordinates per request." });
+      }
+
+      for (const item of coords) {
+        if (!item.external_place_id || item.lat === undefined || item.lng === undefined) {
+          return res.status(400).json({
+            message: "Each item must have external_place_id, lat and lng."
+          });
+        }
+
+        const lat = Number(item.lat);
+        const lng = Number(item.lng);
+
+        if (
+          isNaN(lat) || isNaN(lng) ||
+          lat < -90 || lat > 90 ||
+          lng < -180 || lng > 180
+        ) {
+          return res.status(400).json({
+            message: `Invalid coordinates for place ${item.external_place_id}.`
+          });
+        }
+      }
+
+      const addressMap = await reverseGeocodeCoords(coords);
+
+      // convertesc Map in obiect JSON simplu pentru raspuns
+      const result = {};
+      for (const [id, address] of addressMap.entries()) {
+        result[id] = address;
+      }
+
+      return res.status(200).json({ data: result });
+
+    } catch (error) {
+      console.error("Reverse geocode error:", error.message);
+      return res.status(500).json({ message: "Failed to reverse geocode coordinates." });
     }
   }
 

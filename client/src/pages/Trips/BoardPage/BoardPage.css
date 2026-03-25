@@ -268,11 +268,20 @@
     letter-spacing: 0.02em;
 }
 
+.board-card-address {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--color-mid);
+    margin: 2px 0 0 0;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
 .board-card-desc {
     font-size: 12px;
     font-weight: 300;
     color: var(--color-gray);
-    margin: 0;
+    margin: 2px 0 0 0;
     line-height: 1.45;
 }
 
