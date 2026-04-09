@@ -3,10 +3,25 @@
     min-height: 100vh;
     font-family: var(--font-body);
     background:
-        radial-gradient(ellipse at 20% 10%, #BDD8E9 0%, transparent 45%),
-        radial-gradient(ellipse at 85% 85%, #EEF4FA 0%, transparent 45%),
-        #F0F5EB;
+        radial-gradient(ellipse at 20% 10%, var(--color-page-gradient-1) 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 85%, var(--color-page-gradient-2) 0%, transparent 45%),
+        var(--color-beige);
     padding: 0;
+    position: relative;
+    isolation: isolate;
+}
+
+.admin-page::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url('../../assets/world_Map.png');
+    background-repeat: no-repeat;
+    background-size: 90% auto;
+    background-position: 95% 45%;
+    opacity: 0.22;
+    pointer-events: none;
+    z-index: -1;
 }
 
 /* ── Header — sticky glass bar ────────────────────────────── */
@@ -19,17 +34,17 @@
     z-index: 100;
     padding: 0 2.5rem;
     height: 80px;
-    background: rgba(78, 142, 162, 0.342);
+    background: var(--color-glass);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(189, 216, 233, 0.35);
+    border-bottom: 1px solid var(--color-border-strong);
 }
 
 /* ── Header title ─────────────────────────────────────────── */
 .admin-header-title {
     font-family: var(--font-display);
     font-size: 22px;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.02em;
     color: var(--color-navy);
     margin: 0;
@@ -50,7 +65,7 @@
 
 .admin-badge {
     padding: 4px 12px;
-    background: var(--color-teal);
+    background: var(--gradient-primary);
     color: #FFFFFF;
     border-radius: var(--radius-pill);
     font-family: var(--font-body);
@@ -63,8 +78,8 @@
 .admin-logout-btn {
     padding: 7px 18px;
     border-radius: var(--radius-pill);
-    border: 1.5px solid var(--color-navy);
-    background: transparent;
+    border: 1.5px solid var(--color-border-strong);
+    background: var(--color-glass);
     color: var(--color-navy);
     font-family: var(--font-body);
     font-size: 16px;
@@ -75,6 +90,7 @@
 
 .admin-logout-btn:hover {
     background: var(--color-navy);
+    border-color: var(--color-navy);
     color: #FFFFFF;
 }
 
@@ -94,7 +110,7 @@
 }
 
 .admin-error {
-    color: #e53e3e;
+    color: var(--color-danger);
 }
 
 /* ── Grid 4 carduri (Statistici) ──────────────────────────── */
@@ -106,8 +122,9 @@
 }
 
 .admin-stat-card {
-    background: #FFFFFF;
+    background: var(--color-surface);
     border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
     padding: 1.5rem;
     box-shadow: var(--shadow-sm);
     display: flex;
@@ -154,8 +171,9 @@
 }
 
 .admin-chart-card {
-    background: #FFFFFF;
+    background: var(--color-surface);
     border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
     padding: 1.5rem;
     box-shadow: var(--shadow-sm);
     display: flex;

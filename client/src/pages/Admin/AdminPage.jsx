@@ -8,7 +8,23 @@ import {
 } from "recharts";
 import "./AdminPage.css";
 
-const PIE_COLORS = ["#4E8EA2", "#3a7a8f", "#7BBDE8", "#FFC64F", "#49769F"];
+const PIE_COLORS = [
+    "var(--chart-1)",
+    "var(--chart-2)",
+    "var(--chart-3)",
+    "var(--chart-4)",
+    "var(--chart-5)"
+];
+
+const TOOLTIP_STYLE = {
+    borderRadius: "8px",
+    border: "1px solid var(--color-border)",
+    backgroundColor: "var(--color-surface-elevated)",
+    boxShadow: "var(--shadow-sm)"
+};
+
+const TOOLTIP_LABEL_STYLE = { color: "var(--color-text-primary)" };
+const TOOLTIP_ITEM_STYLE = { color: "var(--color-text-secondary)" };
 
 export default function AdminPage() {
     const { user, logout } = useAuth();
@@ -86,10 +102,29 @@ export default function AdminPage() {
                                     {stats.tripsPerMonth && stats.tripsPerMonth.length > 0 ? (
                                         <ResponsiveContainer width="100%" height="100%">
                                             <BarChart data={stats.tripsPerMonth}>
-                                                <XAxis dataKey="month" stroke="var(--color-navy)" fontSize={12} tickLine={false} axisLine={false} />
-                                                <YAxis allowDecimals={false} stroke="var(--color-navy)" fontSize={12} tickLine={false} axisLine={false} />
-                                                <Tooltip cursor={{ fill: 'rgba(78, 142, 162, 0.1)' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: 'var(--shadow-sm)' }} />
-                                                <Bar dataKey="count" fill="#4E8EA2" radius={[4, 4, 0, 0]} />
+                                                <XAxis
+                                                    dataKey="month"
+                                                    stroke="var(--color-text-secondary)"
+                                                    tick={{ fill: "var(--color-text-secondary)" }}
+                                                    fontSize={12}
+                                                    tickLine={false}
+                                                    axisLine={false}
+                                                />
+                                                <YAxis
+                                                    allowDecimals={false}
+                                                    stroke="var(--color-text-secondary)"
+                                                    tick={{ fill: "var(--color-text-secondary)" }}
+                                                    fontSize={12}
+                                                    tickLine={false}
+                                                    axisLine={false}
+                                                />
+                                                <Tooltip
+                                                    cursor={{ fill: "var(--color-interactive-hover)" }}
+                                                    contentStyle={TOOLTIP_STYLE}
+                                                    labelStyle={TOOLTIP_LABEL_STYLE}
+                                                    itemStyle={TOOLTIP_ITEM_STYLE}
+                                                />
+                                                <Bar dataKey="count" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
                                             </BarChart>
                                         </ResponsiveContainer>
                                     ) : (
@@ -118,8 +153,18 @@ export default function AdminPage() {
                                                         <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                                                     ))}
                                                 </Pie>
-                                                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: 'var(--shadow-sm)' }} />
-                                                <Legend wrapperStyle={{ fontSize: '13px', paddingTop: '10px' }} />
+                                                <Tooltip
+                                                    contentStyle={TOOLTIP_STYLE}
+                                                    labelStyle={TOOLTIP_LABEL_STYLE}
+                                                    itemStyle={TOOLTIP_ITEM_STYLE}
+                                                />
+                                                <Legend
+                                                    wrapperStyle={{
+                                                        fontSize: "13px",
+                                                        paddingTop: "10px",
+                                                        color: "var(--color-text-secondary)"
+                                                    }}
+                                                />
                                             </PieChart>
                                         </ResponsiveContainer>
                                     ) : (

@@ -3,9 +3,24 @@
     min-height: 100vh;
     font-family: var(--font-body);
     background:
-        radial-gradient(ellipse at 20% 10%, #BDD8E9 0%, transparent 45%),
-        radial-gradient(ellipse at 85% 85%, #EEF4FA 0%, transparent 45%),
-        #F0F5EB;
+        radial-gradient(ellipse at 20% 10%, var(--color-page-gradient-1) 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 85%, var(--color-page-gradient-2) 0%, transparent 45%),
+        var(--color-beige);
+    position: relative;
+    isolation: isolate;
+}
+
+.board-page::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url('../../../assets/world_Map.png');
+    background-repeat: no-repeat;
+    background-size: 90% auto;
+    background-position: 95% 45%;
+    opacity: 0.22;
+    pointer-events: none;
+    z-index: -1;
 }
 
 .board-page-content {
@@ -127,7 +142,7 @@
 }
 
 .board-state-msg--error {
-    color: #e05454;
+    color: var(--color-danger);
 }
 
 /* ── Kanban columns container ─────────────────────────────── */
@@ -138,16 +153,16 @@
     overflow-x: auto;
     padding-bottom: 1rem;
     scrollbar-width: thin;
-    scrollbar-color: rgba(78, 142, 162, 0.25) transparent;
+    scrollbar-color: rgba(250, 170, 141, 0.25) transparent;
 }
 
 /* ── Column ───────────────────────────────────────────────── */
 .board-column {
     flex: 1 1 220px;
     min-width: 220px;
-    background: #FFFFFF;
+    background: var(--color-surface);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--color-light);
+    border: 1px solid var(--color-border);
     box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
@@ -157,14 +172,14 @@
 /* Unassigned column — dashed + beige tint */
 .board-column:first-child {
     border-style: dashed;
-    border-color: rgba(189, 216, 233, 0.7);
-    background: var(--color-beige);
+    border-color: rgba(250, 170, 141, 0.28);
+    background: var(--color-surface-soft);
 }
 
 .board-column--over {
     border-color: var(--color-teal);
     border-style: solid;
-    box-shadow: 0 0 0 3px rgba(78, 142, 162, 0.18);
+    box-shadow: 0 0 0 3px rgba(250, 170, 141, 0.18);
 }
 
 /* ── Column header ────────────────────────────────────────── */
@@ -175,7 +190,7 @@
     flex-wrap: wrap;
     gap: 8px;
     padding: 12px 14px 10px;
-    border-bottom: 1px solid var(--color-light);
+    border-bottom: 1px solid var(--color-border);
 }
 
 .board-column-header-top {
@@ -195,7 +210,7 @@
 }
 
 .board-column-count {
-    background: var(--color-light);
+    background: var(--color-surface-tint);
     color: var(--color-gray);
     font-size: 11px;
     font-weight: 600;
@@ -225,13 +240,13 @@
 
 /* ── Drag card ────────────────────────────────────────────── */
 .board-card {
-    background: #FFFFFF;
-    border: 1px solid var(--color-light);
+    background: var(--color-surface-soft);
+    border: 1px solid rgba(255, 64, 0, 0.26);
     border-radius: 14px;
     padding: 10px 12px;
     cursor: grab;
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow var(--transition-fast);
+    box-shadow: 0 0 0 1px rgba(255, 64, 0, 0.06), 0 8px 20px rgba(255, 64, 0, 0.10);
+    transition: box-shadow var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast);
     user-select: none;
     position: relative;
     display: flex;
@@ -240,12 +255,14 @@
 }
 
 .board-card:hover {
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 0 0 1px rgba(255, 64, 0, 0.10), 0 12px 26px rgba(255, 64, 0, 0.14);
+    border-color: rgba(255, 64, 0, 0.36);
+    transform: translateY(-2px);
 }
 
 .board-card--overlay {
-    box-shadow: 0 12px 32px rgba(0, 29, 57, 0.18);
-    border-color: var(--color-teal-lt);
+    box-shadow: 0 0 0 1px rgba(255, 64, 0, 0.12), 0 16px 36px rgba(255, 64, 0, 0.16);
+    border-color: rgba(255, 64, 0, 0.38);
     cursor: grabbing;
     rotate: 1.5deg;
     z-index: 999;
@@ -292,17 +309,17 @@
     font-size: 11px;
     font-weight: 600;
     padding: 4px 10px;
-    border: 1px solid var(--color-teal-lt);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-pill);
-    background: transparent;
+    background: var(--color-glass);
     color: var(--color-teal);
     cursor: pointer;
     transition: all var(--transition-fast);
 }
 
 .board-card-details-btn:hover {
-    background: var(--color-teal);
-    color: #FFFFFF;
+    background: var(--color-glass-strong);
+    color: var(--color-navy);
     border-color: var(--color-teal);
 }
 
@@ -329,7 +346,7 @@
     border-radius: 50%;
     border: 1px solid rgba(140, 150, 160, 0.4);
     background: transparent;
-    color: #8c96a0;
+    color: var(--color-gray);
     font-size: 13px;
     line-height: 1;
     cursor: pointer;
@@ -347,9 +364,9 @@
 }
 
 .board-card-delete-btn:hover {
-    background: rgba(224, 84, 84, 0.10);
-    border-color: #c0392b;
-    color: #c0392b;
+    background: var(--color-danger-bg);
+    border-color: var(--color-danger);
+    color: var(--color-danger);
 }
 
 .board-card-delete-btn:focus-visible {
@@ -416,8 +433,8 @@
     gap: 6px;
     padding: 7px 14px;
     border-radius: var(--radius-pill);
-    border: 1.5px solid rgba(189, 216, 233, 0.8);
-    background: rgba(255, 255, 255, 0.70);
+    border: 1.5px solid var(--color-border);
+    background: var(--color-glass-strong);
     font-family: var(--font-body);
     font-size: 13px;
     font-weight: 500;
@@ -428,11 +445,11 @@
 }
 
 .board-mobile-tab--active {
-    background: var(--color-teal);
-    border-color: var(--color-teal);
-    color: #FFFFFF;
+    background: var(--gradient-accent);
+    border-color: transparent;
+    color: var(--color-navy);
     font-weight: 600;
-    box-shadow: 0 3px 10px rgba(78, 142, 162, 0.30);
+    box-shadow: 0 3px 10px rgba(255, 64, 0, 0.22);
 }
 
 .board-mobile-tab-count {
@@ -497,16 +514,16 @@
     cursor: grab;
     /* touch-action none permite dnd-kit sa preia evenimentele touch */
     touch-action: none;
-    border-right: 1px solid var(--color-light);
+    border-right: 1px solid var(--color-border);
     border-radius: 14px 0 0 14px;
-    background: var(--color-beige);
+    background: var(--color-surface-tint);
     user-select: none;
     transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .board-card-handle:active {
     cursor: grabbing;
-    background: rgba(78, 142, 162, 0.10);
+    background: var(--color-interactive-hover);
     color: var(--color-teal);
 }
 
@@ -598,7 +615,7 @@
 
 .board-move-option:hover,
 .board-move-option:active {
-    background: var(--color-light);
+    background: var(--color-surface-tint);
     color: var(--color-teal);
 }
 
@@ -620,15 +637,15 @@
     font-weight: 600;
     padding: 4px 10px;
     border-radius: var(--radius-pill);
-    border: 2px solid var(--color-teal-lt);
-    background: var(--color-teal-lt);
+    border: 2px solid rgba(250, 170, 141, 0.24);
+    background: var(--color-surface-tint);
     color: var(--color-teal);
     cursor: pointer;
     transition: all var(--transition-fast);
 }
 
 .board-optimize-btn:hover:not(:disabled) {
-    background: var(--color-teal);
+    background: var(--gradient-primary);
     color: #FFFFFF;
     border-color: var(--color-teal);
 }

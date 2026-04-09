@@ -14,9 +14,25 @@ import "./BudgetPage.css";
 
 // culori pentru pie chart
 const PIE_COLORS = [
-    "#4E8EA2", "#3a7a8f", "#7BBDE8", "#FFC64F",
-    "#49769F", "#BDD8E9", "#001D39", "#8A9BB0"
+    "var(--chart-1)",
+    "var(--chart-2)",
+    "var(--chart-3)",
+    "var(--chart-4)",
+    "var(--chart-5)",
+    "var(--chart-6)",
+    "var(--chart-7)",
+    "var(--chart-8)"
 ];
+
+const TOOLTIP_STYLE = {
+    borderRadius: "8px",
+    border: "1px solid var(--color-border)",
+    backgroundColor: "var(--color-surface-elevated)",
+    boxShadow: "var(--shadow-sm)"
+};
+
+const TOOLTIP_LABEL_STYLE = { color: "var(--color-text-primary)" };
+const TOOLTIP_ITEM_STYLE = { color: "var(--color-text-secondary)" };
 
 // formateaza suma cu 2 zecimale si moneda
 const formatAmount = (amount, currency = "EUR") => {
@@ -665,8 +681,15 @@ export default function BudgetPage() {
                                         </Pie>
                                         <Tooltip
                                             formatter={(value) => formatAmount(value)}
+                                            contentStyle={TOOLTIP_STYLE}
+                                            labelStyle={TOOLTIP_LABEL_STYLE}
+                                            itemStyle={TOOLTIP_ITEM_STYLE}
                                         />
-                                        <Legend />
+                                        <Legend
+                                            wrapperStyle={{
+                                                color: "var(--color-text-secondary)"
+                                            }}
+                                        />
                                     </PieChart>
                                 </ResponsiveContainer>
                             </div>

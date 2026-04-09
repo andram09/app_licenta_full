@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -16,36 +17,43 @@ import BudgetPage from "./pages/Trips/BudgetPage/BudgetPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
 
 function App() {
+  useEffect(() => {
+    delete document.documentElement.dataset.theme;
+    window.localStorage.removeItem("tripplanner-theme");
+  }, []);
+
   return (
-    <Routes>
-      {/* Landing Page - accesibila pentru toti */}
-      <Route path="/" element={<LandingPage />} />
+    <>
+      <Routes>
+        {/* Landing Page - accesibila pentru toti */}
+        <Route path="/" element={<LandingPage />} />
 
-      {/* Rute publice */}
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-      <Route path="/reset-password" element={<ResetPasswordPage />} />
+        {/* Rute publice */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-      {/* Rute protejate - doar USER */}
-      <Route element={<ProtectedRoute requiredRole="USER" />}>
-        <Route path="/trips" element={<TripsPage />} />
-        <Route path="/trips/create" element={<CreateTripPage />} />
-        <Route path="/trips/:id/explore" element={<ExplorePage />} />
-        <Route path="/trips/:id/board" element={<BoardPage />} />
-        <Route path="/trips/:id/map" element={<TripMapPage />} />
-        <Route path="/trips/:id/budget" element={<BudgetPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-      </Route>
+        {/* Rute protejate - doar USER */}
+        <Route element={<ProtectedRoute requiredRole="USER" />}>
+          <Route path="/trips" element={<TripsPage />} />
+          <Route path="/trips/create" element={<CreateTripPage />} />
+          <Route path="/trips/:id/explore" element={<ExplorePage />} />
+          <Route path="/trips/:id/board" element={<BoardPage />} />
+          <Route path="/trips/:id/map" element={<TripMapPage />} />
+          <Route path="/trips/:id/budget" element={<BudgetPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+        </Route>
 
-      {/* Rute protejate - doar ADMIN */}
-      <Route element={<ProtectedRoute requiredRole="ADMIN" />}>
-        <Route path="/admin" element={<AdminPage />} />
-      </Route>
+        {/* Rute protejate - doar ADMIN */}
+        <Route element={<ProtectedRoute requiredRole="ADMIN" />}>
+          <Route path="/admin" element={<AdminPage />} />
+        </Route>
 
-      {/* Orice ruta necunoscuta => landing */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        {/* Orice ruta necunoscuta => landing */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   );
 }
 

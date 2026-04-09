@@ -1,7 +1,25 @@
 /* ── Layout pagina ────────────────────────────────────────── */
 .profile-page {
     min-height: 100vh;
-    background: var(--color-bg, #f8fafc);
+    background:
+        radial-gradient(ellipse at 20% 10%, var(--color-page-gradient-1) 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 85%, var(--color-page-gradient-2) 0%, transparent 45%),
+        var(--color-beige);
+    position: relative;
+    isolation: isolate;
+}
+
+.profile-page::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url('../../assets/world_Map.png');
+    background-repeat: no-repeat;
+    background-size: 90% auto;
+    background-position: 95% 45%;
+    opacity: 0.22;
+    pointer-events: none;
+    z-index: -1;
 }
 
 .profile-main {
@@ -23,11 +41,13 @@
 
 /* ── Card sectiune ────────────────────────────────────────── */
 .profile-card {
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(255, 249, 246, 0.82);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--color-border);
     border-radius: 16px;
     padding: 32px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-md);
 }
 
 .profile-card-title {
@@ -41,7 +61,7 @@
 .profile-card-subtitle {
     font-family: var(--font-body);
     font-size: 14px;
-    color: #6b7280;
+    color: var(--color-gray);
     margin: 0 0 28px;
 }
 
@@ -70,31 +90,31 @@
 
 .profile-input {
     padding: 10px 14px;
-    border: 1.5px solid rgba(0, 0, 0, 0.15);
+    border: 1.5px solid var(--color-border);
     border-radius: 8px;
     font-family: var(--font-body);
     font-size: 15px;
     color: var(--color-navy);
-    background: #ffffff;
+    background: var(--color-white);
     transition: border-color 0.15s ease;
     outline: none;
 }
 
 .profile-input:focus {
     border-color: var(--color-teal, #4e8ea2);
-    box-shadow: 0 0 0 3px rgba(78, 142, 162, 0.15);
+    box-shadow: 0 0 0 3px rgba(250, 170, 141, 0.18);
 }
 
 .profile-input--readonly {
-    background: #f3f4f6;
-    color: #9ca3af;
+    background: var(--color-surface-soft);
+    color: var(--color-gray);
     cursor: not-allowed;
-    border-color: rgba(0, 0, 0, 0.08);
+    border-color: var(--color-border);
 }
 
 .profile-input-hint {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--color-gray);
     font-weight: 400;
 }
 
@@ -109,15 +129,15 @@
 }
 
 .profile-feedback--success {
-    background: #f0fdf4;
-    color: #16a34a;
-    border: 1px solid #bbf7d0;
+    background: var(--color-success-bg);
+    color: var(--color-success);
+    border: 1px solid var(--color-success-border);
 }
 
 .profile-feedback--error {
-    background: #fef2f2;
-    color: #dc2626;
-    border: 1px solid #fecaca;
+    background: var(--color-danger-bg);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger-border);
 }
 
 /* ── Buton submit ─────────────────────────────────────────── */
@@ -125,18 +145,21 @@
     align-self: flex-start;
     padding: 10px 24px;
     border-radius: var(--radius-pill, 999px);
-    background: var(--color-navy);
+    background: var(--gradient-primary);
     color: #ffffff;
     font-family: var(--font-body);
     font-size: 15px;
     font-weight: 600;
     border: none;
     cursor: pointer;
-    transition: opacity 0.15s ease;
+    box-shadow: var(--shadow-sm);
+    transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .profile-btn:hover:not(:disabled) {
-    opacity: 0.85;
+    background: var(--gradient-primary-hover);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
 }
 
 .profile-btn:disabled {

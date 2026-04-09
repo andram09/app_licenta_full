@@ -5,7 +5,7 @@
     height: 100vh;
     overflow: hidden;
     font-family: var(--font-body);
-    background: #F0F5EB;
+    background: var(--color-beige);
 }
 
 /* ── Header ───────────────────────────────────────────────── */
@@ -15,10 +15,10 @@
     justify-content: space-between;
     padding: 0 1.5rem;
     height: 80px;
-    background: rgba(78, 142, 162, 0.342);
+    background: var(--color-glass);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(189, 216, 233, 0.35);
+    border-bottom: 1px solid var(--color-border-strong);
     gap: 1rem;
     flex-shrink: 0;
 }
@@ -32,7 +32,7 @@
 .map-nav-btn {
     padding: 8px 18px;
     border-radius: var(--radius-pill);
-    border: 1.5px solid var(--color-navy);
+    border: 1.5px solid var(--color-border-strong);
     background: transparent;
     color: var(--color-navy);
     font-family: var(--font-body);
@@ -44,22 +44,24 @@
 }
 
 .map-nav-btn:hover {
-    background: var(--color-navy);
-    color: #FFFFFF;
+    background: var(--color-interactive-hover);
+    border-color: var(--color-teal);
+    color: var(--color-teal);
 }
 
 /* Primary nav btn (Călătoriile mele) */
 .map-nav-btn--right {
-    background: linear-gradient(135deg, #4E8EA2 0%, #3a7a8f 100%);
+    background: var(--gradient-primary);
     border: none;
     color: #FFFFFF;
     font-weight: 600;
-    box-shadow: 0 4px 14px rgba(78, 142, 162, 0.28);
+    box-shadow: var(--shadow-sm);
 }
 
 .map-nav-btn--right:hover {
-    background: linear-gradient(135deg, #3a7a8f 0%, #2d6478 100%);
-    box-shadow: 0 6px 18px rgba(78, 142, 162, 0.38);
+    background: var(--gradient-primary-hover);
+    color: #FFFFFF;
+    box-shadow: var(--shadow-md);
     transform: translateY(-1px);
 }
 
@@ -85,9 +87,7 @@
     display: flex;
     gap: 7px;
     padding: 10px 1.5rem;
-    background: rgba(240, 245, 235, 0.85);
     backdrop-filter: blur(8px);
-    border-bottom: 1px solid rgba(189, 216, 233, 0.35);
     overflow-x: auto;
     flex-shrink: 0;
     scrollbar-width: none;
@@ -100,9 +100,9 @@
 .map-day-tab {
     padding: 6px 16px;
     border-radius: var(--radius-pill);
-    border: 1.5px solid rgba(189, 216, 233, 0.8);
-    background: rgba(255, 255, 255, 0.70);
-    color: var(--color-mid);
+    border: 1.5px solid var(--color-teal);
+    background: var(--color-white);
+    color: var(--color-navy);
     font-family: var(--font-body);
     font-size: 12px;
     font-weight: 500;
@@ -114,15 +114,15 @@
 .map-day-tab:hover {
     border-color: var(--color-teal);
     color: var(--color-navy);
-    background: rgba(255, 255, 255, 0.90);
+    background: var(--color-white);
 }
 
 .map-day-tab--active {
-    background: var(--color-teal);
-    border-color: var(--color-teal);
-    color: #FFFFFF;
+    background: var(--gradient-accent);
+    border-color: transparent;
+    color: var(--color-navy);
     font-weight: 600;
-    box-shadow: 0 3px 10px rgba(78, 142, 162, 0.28);
+    box-shadow: 0 3px 10px rgba(255, 64, 0, 0.22);
 }
 
 /* ── Main layout ──────────────────────────────────────────── */
@@ -142,12 +142,10 @@
     gap: 15px;
     padding: 20px 25px;
     overflow-y: auto;
-    background: rgba(240, 245, 235, 0.80);
     backdrop-filter: blur(8px);
-    border-right: 1px solid rgba(189, 216, 233, 0.40);
     flex-shrink: 0;
     scrollbar-width: thin;
-    scrollbar-color: rgba(78, 142, 162, 0.25) transparent;
+    scrollbar-color: rgba(250 170 141 / 46%) transparent;
 }
 
 .map-sidebar-empty {
@@ -164,8 +162,8 @@
     text-align: left;
     padding: 10px 12px;
     border-radius: 14px;
-    border: 1px solid var(--color-light);
-    background: #FFFFFF;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
     cursor: pointer;
     transition: all var(--transition-fast);
     display: flex;
@@ -182,8 +180,8 @@
 }
 
 .map-obj-item--active {
-    border-left: 3px solid var(--color-teal);
-    background: rgba(78, 142, 162, 0.06);
+    border-left: 3px solid var(--color-saffron);
+    background: var(--color-saffron-bg);
     padding-left: calc(12px - 2px);
 }
 
@@ -226,7 +224,7 @@
     height: 100%;
     border-radius: var(--radius-xl);
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 29, 57, 0.14);
+    box-shadow: 0 10px 30px rgba(25, 50, 70, 0.14);
     z-index: 0;
 }
 
@@ -240,7 +238,7 @@
 }
 
 .map-state-msg--error {
-    color: #e05454;
+    color: var(--color-danger);
 }
 
 /* ───────────────── MOBILE LAYOUT ───────────────── */
@@ -308,14 +306,14 @@
   }
 
   /* lista obiective */
-  .map-sidebar {
+    .map-sidebar {
     order: 2;
     width: 100%;
     max-width: none;
     flex: none;
 
     border-right: none;
-    border-top: 1px solid rgba(189, 216, 233, 0.35);
+    border-top: 1px solid var(--color-border-strong);
 
     padding: 12px 14px;
     gap: 10px;

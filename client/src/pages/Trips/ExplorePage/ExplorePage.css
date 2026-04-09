@@ -2,27 +2,23 @@
 .explore-page {
     min-height: 100vh;
     font-family: var(--font-body);
-    background: linear-gradient(155deg,
-    var(--color-blue)0%,
-        var(--color-teal)40%,
-        var(--color-teal-lt) 70%,
-        var(--color-teal-lt) 100%
-    );
+    background:
+        radial-gradient(ellipse at 20% 10%, var(--color-page-gradient-1) 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 85%, var(--color-page-gradient-2) 0%, transparent 45%),
+        var(--color-beige);
     position: relative;
     isolation: isolate;
 }
 
-/* World map — screen blend works on dark background */
 .explore-page::before {
     content: '';
     position: fixed;
     inset: 0;
     background-image: url('../../../assets/world_Map.png');
     background-repeat: no-repeat;
-    background-size: 68% auto;
-    background-position: 98% 40%;
-    opacity: 0.3;
-    mix-blend-mode: screen;
+    background-size: 90% auto;
+    background-position: 95% 45%;
+    opacity: 0.22;
     pointer-events: none;
     z-index: -1;
 }
@@ -37,7 +33,7 @@
     font-size: 22px;
     font-weight: 500;
     letter-spacing: 0.01em;
-    color: #fff;
+    color: var(--color-navy);
     margin: 0;
 }
 
@@ -56,9 +52,9 @@
 .explore-manual-btn {
     padding: 9px 20px;
     border-radius: var(--radius-pill);
-    border: 1.5px solid rgba(255,255,255,0.35);
-    background: transparent;
-    color: rgba(255,255,255,0.9);
+    border: 1.5px solid var(--color-border-strong);
+    background: var(--color-glass);
+    color: var(--color-navy);
     font-family: var(--font-body);
     font-size: 16px;
     font-weight: 500;
@@ -67,17 +63,17 @@
 }
 
 .explore-manual-btn:hover {
-    background: rgba(255,255,255,0.12);
-    border-color: rgba(255,255,255,0.6);
-    color: #fff;
+    background: var(--color-glass-strong);
+    border-color: var(--color-teal);
+    color: var(--color-teal);
 }
 
 .explore-board-btn {
     padding: 9px 20px;
     border-radius: var(--radius-pill);
     border: none;
-    background: linear-gradient(135deg, #FFC64F 0%, #f0a500 100%);
-    color: #001D39;
+    background: var(--gradient-accent);
+    color: var(--color-navy);
     font-family: var(--font-body);
     font-size: 16px;
     font-weight: 700;
@@ -87,21 +83,22 @@
     align-items: center;
     gap: 6px;
     transition: box-shadow 0.2s, transform 0.15s;
-    box-shadow: 0 4px 16px rgba(255, 198, 79, 0.35);
+    box-shadow: 0 4px 16px rgba(255, 64, 0, 0.22);
 }
 
 .explore-board-btn:hover {
+    background: var(--gradient-accent-hover);
     transform: translateY(-1px);
-    box-shadow: 0 6px 22px rgba(255, 198, 79, 0.50);
+    box-shadow: 0 6px 22px rgba(255, 64, 0, 0.28);
 }
 
 /* ── No coords warning ────────────────────────────────────── */
 .explore-no-coords {
-    background: rgba(252, 211, 77, 0.15);
-    border: 1px solid rgba(252, 211, 77, 0.45);
+    background: var(--color-saffron-bg);
+    border: 1px solid rgba(255, 64, 0, 0.24);
     border-radius: var(--radius-md);
     padding: 0.75rem 1rem;
-    color: #ffe4a0;
+    color: #A64A2A;
     font-size: 15px;
     margin-bottom: 1.5rem;
 }
@@ -144,13 +141,13 @@
     white-space: nowrap;
     padding: 8px 20px;
     border-radius: var(--radius-pill);
-    border: 1.5px solid rgba(255, 255, 255, 0.22);
-    background: #ffffff;
+    border: 1.5px solid rgba(250, 170, 141, 0.26);
+    background: var(--color-glass-strong);
     font-family: var(--font-body);
     font-size: 13px;
     font-weight: 500;
     line-height: 1;
-    color: #3c5d6f;
+    color: var(--color-navy);
     cursor: pointer;
     transition: all 0.18s ease;
     letter-spacing: 0.02em;
@@ -158,15 +155,15 @@
 }
 
 .explore-add-objective-btn:hover {
-    border-color: rgba(255, 255, 255, 0.55);
+    border-color: rgba(250, 170, 141, 0.42);
     color: var(--color-teal);
-    background: #f4fbfd;
-    box-shadow: 0 4px 14px rgba(78, 142, 162, 0.18);
+    background: var(--color-white);
+    box-shadow: 0 4px 14px rgba(250, 170, 141, 0.20);
     transform: translateY(-1px);
 }
 
 .explore-add-objective-btn:focus-visible {
-    outline: 2px solid rgba(255, 198, 79, 0.9);
+    outline: 2px solid rgba(255, 64, 0, 0.8);
     outline-offset: 2px;
 }
 
@@ -177,12 +174,12 @@
 .explore-cat-btn {
     padding: 8px 20px;
     border-radius: var(--radius-pill);
-    border: 1.5px solid rgba(255, 255, 255, 0.22);
-    background: rgba(255, 255, 255, 0.08);
+    border: 1.5px solid rgba(250, 170, 141, 0.26);
+    background: var(--color-glass);
     font-family: var(--font-body);
     font-size: 13px;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.80);
+    color: var(--color-mid);
     cursor: pointer;
     transition: all 0.18s ease;
     white-space: nowrap;
@@ -190,23 +187,23 @@
 }
 
 .explore-cat-btn:hover {
-    border-color: rgba(255, 255, 255, 0.55);
-    color: #fff;
-    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(250, 170, 141, 0.42);
+    color: var(--color-navy);
+    background: var(--color-glass-strong);
 }
 
 .explore-cat-btn--active {
-    background: linear-gradient(135deg, #FFC64F 0%, #f0a500 100%);
+    background: var(--gradient-accent);
     border-color: transparent;
-    color: #001D39;
+    color: var(--color-navy);
     font-weight: 700;
-    box-shadow: 0 4px 14px rgba(255, 198, 79, 0.40);
+    box-shadow: 0 4px 14px rgba(255, 64, 0, 0.24);
 }
 
 /* ── State messages ───────────────────────────────────────── */
 .explore-state-msg {
     text-align: center;
-    color: rgba(255, 255, 255, 0.55);
+    color: var(--color-gray);
     font-size: 14px;
     font-weight: 300;
     padding: 4rem 0;
@@ -221,7 +218,7 @@
 .explore-error-msg {
     text-align: center;
     font-size: 14px;
-    color: #ff8a8a;
+    color: var(--color-danger);
     padding: 3rem 0;
 }
 
@@ -231,10 +228,10 @@
     align-items: center;
     gap: 0.75rem;
     padding: 2rem;
-    background: rgba(224, 84, 84, 0.10);
-    border: 1px solid rgba(224, 84, 84, 0.30);
+    background: var(--color-danger-bg);
+    border: 1px solid var(--color-danger-border);
     border-radius: var(--radius-md);
-    color: #ff9a9a;
+    color: var(--color-danger);
     font-size: 14px;
     text-align: center;
 }
@@ -242,9 +239,9 @@
 .explore-retry-btn {
     padding: 7px 18px;
     border-radius: var(--radius-pill);
-    border: 1px solid rgba(224, 84, 84, 0.45);
+    border: 1px solid var(--color-danger-border);
     background: transparent;
-    color: #ff9a9a;
+    color: var(--color-danger);
     font-family: var(--font-body);
     font-size: 13px;
     cursor: pointer;
@@ -252,7 +249,7 @@
 }
 
 .explore-retry-btn:hover {
-    background: rgba(224, 84, 84, 0.12);
+    background: var(--color-danger-bg);
 }
 
 /* ── Cards grid ───────────────────────────────────────────── */
@@ -288,11 +285,11 @@
 
 /* ── Explore card ─────────────────────────────────────────── */
 .explore-card {
-    background: rgba(255, 255, 255, 0.97);
+    background: rgba(255, 249, 246, 0.80);
     border-radius: var(--radius-xl);
-    border: none;
+    border: 1px solid rgba(250, 170, 141, 0.18);
     padding: 1.1rem 1rem 0.9rem;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 6px 24px rgba(25, 50, 70, 0.12);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -311,7 +308,7 @@
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 3px;
-    background: var(--color-teal-lt);
+    background: linear-gradient(90deg, var(--color-saffron), var(--color-teal));
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 0.25s ease;
@@ -323,7 +320,7 @@
 
 .explore-card:hover {
     transform: translateY(-6px);
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.32);
+    box-shadow: 0 16px 40px rgba(25, 50, 70, 0.16);
 }
 
 @keyframes ep-card-in {
@@ -381,27 +378,29 @@
     width: 100%;
     padding: 8px 0;
     border-radius: var(--radius-pill);
-    border: none;
-    background: linear-gradient(135deg, #FFC64F 0%, #f0a500 100%);
-    color: #001D39;
+    border: 1.5px solid var(--color-beige);
+    background: #5b93a3b8;
+    color: var(--color-white);
     font-family: var(--font-body);
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.03em;
     cursor: pointer;
     transition: box-shadow 0.18s ease, transform 0.15s ease;
-    box-shadow: 0 3px 10px rgba(255, 198, 79, 0.30);
+    box-shadow: 0 3px 10px rgba(250, 170, 141, 0.18);
 }
 
 .explore-card-btn:hover:not(:disabled) {
-    box-shadow: 0 5px 16px rgba(255, 198, 79, 0.50);
+    background: var(--gradient-primary-hover);
+    box-shadow: 0 5px 16px rgba(255, 64, 0, 0.18);
     transform: translateY(-1px);
 }
 
 .explore-card-btn--added {
-    background: rgba(78, 142, 162, 0.10);
+    background: var(--color-interactive-hover);
     box-shadow: none;
     color: var(--color-teal);
+    border-color: rgba(250, 170, 141, 0.32);
     cursor: default;
     transform: none;
 }
@@ -462,8 +461,8 @@
         height: 40px;
         padding: 0;
         border-radius: 50%;
-        background: #ffffff;
-        border-color: rgba(255, 255, 255, 0.22);
+        background: var(--color-white);
+        border-color: rgba(250, 170, 141, 0.26);
         transform: none;
         z-index: 1;
     }
@@ -482,9 +481,9 @@
         border-radius: 999px;
         background: linear-gradient(
             90deg,
-            rgba(106, 198, 209, 0) 0%,
-            rgba(106, 198, 209, 0.18) 45%,
-            rgba(106, 198, 209, 0.34) 100%
+            rgba(250, 170, 141, 0) 0%,
+            rgba(250, 170, 141, 0.12) 45%,
+            rgba(250, 170, 141, 0.24) 100%
         );
         pointer-events: none;
         z-index: -1;

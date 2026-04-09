@@ -3,10 +3,25 @@
     min-height: 100vh;
     font-family: var(--font-body);
     background:
-        radial-gradient(ellipse at 20% 10%, #BDD8E9 0%, transparent 45%),
-        radial-gradient(ellipse at 85% 85%, #EEF4FA 0%, transparent 45%),
-        #F0F5EB;
+        radial-gradient(ellipse at 20% 10%, var(--color-page-gradient-1) 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 85%, var(--color-page-gradient-2) 0%, transparent 45%),
+        var(--color-beige);
     padding: 0 0 3rem;
+    position: relative;
+    isolation: isolate;
+}
+
+.budget-page::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url('../../../assets/world_Map.png');
+    background-repeat: no-repeat;
+    background-size: 90% auto;
+    background-position: 95% 45%;
+    opacity: 0.22;
+    pointer-events: none;
+    z-index: -1;
 }
 
 /* ── Header ───────────────────────────────────────────────── */
@@ -128,9 +143,9 @@
 
 /* ── Card persoane ────────────────────────────────────────── */
 .budget-people-card {
-    background: #FFFFFF;
+    background: var(--color-surface);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--color-light);
+    border: 1px solid var(--color-border);
     box-shadow: var(--shadow-sm);
     padding: 1.25rem 1.5rem;
     display: flex;
@@ -151,8 +166,8 @@
     width: 80px;
     padding: 8px 12px;
     border-radius: var(--radius-md);
-    border: 1px solid #D6E4F0;
-    background: #F7FAFD;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-soft);
     font-family: var(--font-body);
     font-size: 18px;
     font-weight: 600;
@@ -168,9 +183,9 @@
 
 /* ── Carduri statistici ───────────────────────────────────── */
 .budget-stat-card {
-    background: #FFFFFF;
+    background: var(--color-surface);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--color-light);
+    border: 1px solid var(--color-border);
     box-shadow: var(--shadow-sm);
     padding: 1.25rem 1.5rem;
     display: flex;
@@ -181,13 +196,13 @@
 }
 
 .budget-stat-card--positive {
-    border-color: rgba(78, 142, 162, 0.3);
-    background: rgba(78, 142, 162, 0.04);
+    border-color: rgba(250, 170, 141, 0.26);
+    background: rgba(53 17 5 / 28%);
 }
 
 .budget-stat-card--negative {
-    border-color: rgba(224, 84, 84, 0.25);
-    background: rgba(224, 84, 84, 0.04);
+    border-color: var(--color-danger-border);
+    background: var(--color-danger-bg);
 }
 
 .budget-stat-label {
@@ -210,7 +225,7 @@
 }
 
 .budget-stat-card--negative .budget-stat-value {
-    color: #e05454;
+    color: var(--color-danger);
 }
 
 .budget-stat-sub {
@@ -227,7 +242,7 @@
     padding: 11px 24px;
     border-radius: var(--radius-pill);
     border: none;
-    background: linear-gradient(135deg, #4E8EA2 0%, #3a7a8f 100%);
+    background: var(--gradient-accent);
     color: #FFFFFF;
     font-family: var(--font-body);
     font-size: 13px;
@@ -235,13 +250,13 @@
     letter-spacing: 0.02em;
     cursor: pointer;
     transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
-    box-shadow: 0 4px 14px rgba(78, 142, 162, 0.30);
+    box-shadow: var(--shadow-sm);
     white-space: nowrap;
 }
 
 .budget-ai-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, #3a7a8f 0%, #2d6478 100%);
-    box-shadow: 0 6px 20px rgba(78, 142, 162, 0.40);
+    background: var(--gradient-primary-hover);
+    box-shadow: var(--shadow-md);
     transform: translateY(-1px);
 }
 
@@ -252,9 +267,9 @@
 
 /* ── Card obiective ───────────────────────────────────────── */
 .budget-objectives-card {
-    background: #FFFFFF;
+    background: var(--color-surface);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--color-light);
+    border: 1px solid var(--color-border);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
 }
@@ -279,7 +294,7 @@
 }
 
 .budget-objective-row:hover {
-    background: #F7FAFD;
+    background: var(--color-surface-tint);
 }
 
 .budget-objective-title {
@@ -299,8 +314,8 @@
     width: 90px;
     padding: 6px 10px;
     border-radius: var(--radius-md);
-    border: 1px solid #D6E4F0;
-    background: #F7FAFD;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-soft);
     font-family: var(--font-body);
     font-size: 14px;
     color: var(--color-navy);
@@ -325,8 +340,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 1rem 1.5rem;
-    background: #F7FAFD;
-    border-top: 1.5px solid var(--color-light);
+    background: var(--color-surface-tint);
+    border-top: 1.5px solid var(--color-border);
     font-size: 14px;
     font-weight: 600;
     color: var(--color-navy);
@@ -339,9 +354,9 @@
 
 /* ── Formular adaugare cheltuiala ─────────────────────────── */
 .budget-add-form {
-    background: #FFFFFF;
+    background: var(--color-surface);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--color-light);
+    border: 1px solid var(--color-border);
     box-shadow: var(--shadow-sm);
     padding: 1.5rem;
     display: flex;
@@ -358,8 +373,8 @@
 .budget-input {
     padding: 9px 12px;
     border-radius: var(--radius-md);
-    border: 1px solid #D6E4F0;
-    background: #F7FAFD;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-soft);
     font-family: var(--font-body);
     font-size: 13px;
     color: var(--color-navy);
@@ -381,8 +396,8 @@
 .budget-select {
     padding: 9px 12px;
     border-radius: var(--radius-md);
-    border: 1px solid #D6E4F0;
-    background: #F7FAFD;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-soft);
     font-family: var(--font-body);
     font-size: 13px;
     color: var(--color-navy);
@@ -401,7 +416,7 @@
     padding: 10px 22px;
     border-radius: var(--radius-pill);
     border: none;
-    background: var(--color-navy);
+    background: var(--gradient-primary);
     color: #FFFFFF;
     font-family: var(--font-body);
     font-size: 13px;
@@ -411,7 +426,7 @@
 }
 
 .budget-add-btn:hover:not(:disabled) {
-    background: var(--color-teal);
+    background: var(--gradient-primary-hover);
     transform: translateY(-1px);
 }
 
@@ -422,9 +437,9 @@
 
 /* ── Lista cheltuieli ─────────────────────────────────────── */
 .budget-expenses-card {
-    background: #FFFFFF;
+    background: var(--color-surface);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--color-light);
+    border: 1px solid var(--color-border);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
 }
@@ -449,7 +464,7 @@
 }
 
 .budget-expense-row:hover {
-    background: #F7FAFD;
+    background: var(--color-surface-tint);
 }
 
 .budget-expense-info {
@@ -470,7 +485,7 @@
     font-size: 12px;
     font-weight: 500;
     color: var(--color-teal);
-    background: var(--color-light);
+    background: var(--color-surface-tint);
     padding: 3px 10px;
     border-radius: var(--radius-pill);
 }
@@ -513,9 +528,9 @@
 .budget-delete-btn {
     padding: 5px 14px;
     border-radius: var(--radius-pill);
-    border: 1.5px solid rgba(224, 84, 84, 0.3);
+    border: 1.5px solid var(--color-danger-border);
     background: transparent;
-    color: #e05454;
+    color: var(--color-danger);
     font-family: var(--font-body);
     font-size: 12px;
     font-weight: 500;
@@ -524,8 +539,8 @@
 }
 
 .budget-delete-btn:hover {
-    background: rgba(224, 84, 84, 0.08);
-    border-color: #e05454;
+    background: var(--color-danger-bg);
+    border-color: var(--color-danger);
 }
 
 /* ── Form editare inline ──────────────────────────────────── */
@@ -546,7 +561,7 @@
     padding: 6px 16px;
     border-radius: var(--radius-pill);
     border: none;
-    background: var(--color-navy);
+    background: var(--gradient-primary);
     color: #FFFFFF;
     font-family: var(--font-body);
     font-size: 12px;
@@ -556,7 +571,7 @@
 }
 
 .budget-save-btn:hover:not(:disabled) {
-    background: var(--color-teal);
+    background: var(--gradient-primary-hover);
 }
 
 .budget-cancel-btn {
@@ -583,8 +598,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 1rem 1.5rem;
-    background: #F7FAFD;
-    border-top: 1.5px solid var(--color-light);
+    background: var(--color-surface-tint);
+    border-top: 1.5px solid var(--color-border);
     font-size: 14px;
     font-weight: 600;
     color: var(--color-navy);
@@ -611,9 +626,9 @@
 
 /* ── Lista categorii ──────────────────────────────────────── */
 .budget-categories-list {
-    background: #FFFFFF;
+    background: var(--color-surface);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--color-light);
+    border: 1px solid var(--color-border);
     box-shadow: var(--shadow-sm);
     padding: 1.25rem 1.5rem;
     display: flex;
@@ -655,9 +670,9 @@
 
 /* ── Pie chart wrapper ────────────────────────────────────── */
 .budget-pie-wrap {
-    background: #FFFFFF;
+    background: var(--color-surface);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--color-light);
+    border: 1px solid var(--color-border);
     box-shadow: var(--shadow-sm);
     padding: 1.25rem;
 }
@@ -672,9 +687,9 @@
 
 .budget-inline-error {
     font-size: 12px;
-    color: #e05454;
-    background: rgba(224, 84, 84, 0.06);
-    border: 1px solid rgba(224, 84, 84, 0.20);
+    color: var(--color-danger);
+    background: var(--color-danger-bg);
+    border: 1px solid var(--color-danger-border);
     border-radius: var(--radius-md);
     padding: 0.6rem 1rem;
 }
@@ -687,5 +702,5 @@
 }
 
 .budget-state-msg--error {
-    color: #e05454;
+    color: var(--color-danger);
 }

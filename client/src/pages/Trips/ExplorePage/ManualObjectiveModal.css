@@ -2,7 +2,7 @@
 .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 29, 57, 0.35);
+    background: var(--color-overlay);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     display: flex;
@@ -14,10 +14,10 @@
 
 /* ── Modal box ────────────────────────────────────────────── */
 .modal-box {
-    background: #FFFFFF;
+    background: var(--color-surface);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--color-light);
-    box-shadow: 0 24px 64px rgba(0, 29, 57, 0.14);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 24px 64px rgba(25, 50, 70, 0.14);
     padding: 36px 40px;
     width: 100%;
     max-width: 480px;
@@ -64,7 +64,7 @@
 }
 
 .modal-close-btn:hover {
-    background: var(--color-light);
+    background: var(--color-surface-tint);
     color: var(--color-navy);
 }
 
@@ -108,9 +108,9 @@
 .modal-textarea {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #D6E4F0;
+    border: 1px solid var(--color-border);
     border-radius: 10px;
-    background: #F7FAFD;
+    background: var(--color-surface-soft);
     font-size: 14px;
     font-family: var(--font-body);
     color: var(--color-navy);
@@ -121,14 +121,14 @@
 
 .modal-input::placeholder,
 .modal-textarea::placeholder {
-    color: #B0C2D4;
+    color: var(--color-sky);
 }
 
 .modal-input:focus,
 .modal-textarea:focus {
     border-color: var(--color-teal);
-    box-shadow: 0 0 0 3px rgba(78, 142, 162, 0.12);
-    background: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(250, 170, 141, 0.18);
+    background: var(--color-white);
 }
 
 .modal-input:disabled,
@@ -149,13 +149,13 @@
 /* ── Input selected (from API) ────────────────────────────── */
 .modal-input--selected {
     border-color: var(--color-teal) !important;
-    background: rgba(78, 142, 162, 0.05) !important;
+    background: rgba(250, 170, 141, 0.10) !important;
 }
 
 /* ── Error & hint text ────────────────────────────────────── */
 .modal-error {
     font-size: 12px;
-    color: #e05454;
+    color: var(--color-danger);
     margin: 0;
 }
 
@@ -167,7 +167,7 @@
 }
 
 .modal-hint--error {
-    color: #e05454;
+    color: var(--color-danger);
     font-style: normal;
 }
 
@@ -190,26 +190,27 @@
 }
 
 .modal-btn--secondary {
-    background: transparent;
-    border: 1.5px solid var(--color-navy);
+    background: var(--color-glass);
+    border: 1.5px solid var(--color-border-strong);
     color: var(--color-navy);
 }
 
 .modal-btn--secondary:hover:not(:disabled) {
-    background: var(--color-navy);
-    color: #FFFFFF;
+    background: var(--color-glass-strong);
+    border-color: var(--color-teal);
+    color: var(--color-teal);
 }
 
 .modal-btn--primary {
-    background: linear-gradient(135deg, #4E8EA2 0%, #3a7a8f 100%);
+    background: var(--gradient-primary);
     border: none;
     color: #FFFFFF;
-    box-shadow: 0 4px 14px rgba(78, 142, 162, 0.28);
+    box-shadow: var(--shadow-sm);
 }
 
 .modal-btn--primary:hover:not(:disabled) {
-    background: linear-gradient(135deg, #3a7a8f 0%, #2d6478 100%);
-    box-shadow: 0 6px 18px rgba(78, 142, 162, 0.38);
+    background: var(--gradient-primary-hover);
+    box-shadow: var(--shadow-md);
     transform: translateY(-1px);
 }
 
@@ -245,8 +246,8 @@
     font-size: 10px;
     font-weight: 700;
     color: var(--color-teal);
-    background: var(--color-light);
-    border: 1px solid var(--color-teal-lt);
+    background: var(--color-surface-tint);
+    border: 1px solid var(--color-border);
     border-radius: 4px;
     padding: 2px 6px;
     pointer-events: none;
@@ -259,8 +260,8 @@
     top: calc(100% + 5px);
     left: 0;
     right: 0;
-    background: #FFFFFF;
-    border: 1px solid var(--color-light);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
     list-style: none;
@@ -281,7 +282,7 @@
 }
 
 .modal-suggestion-item:hover {
-    background: var(--color-light);
+    background: var(--color-surface-tint);
 }
 
 .modal-suggestion-title {
