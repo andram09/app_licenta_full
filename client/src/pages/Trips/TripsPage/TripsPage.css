@@ -7,6 +7,21 @@
         radial-gradient(ellipse at 85% 85%, #EEF4FA 0%, transparent 45%),
         #F0F5EB;
     overflow-x: hidden;
+    position: relative;
+    isolation: isolate;
+}
+
+.trips-page::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url('../../../assets/world_Map.png');
+    background-repeat: no-repeat;
+    background-size: 90% auto;
+    background-position: 95% 45%;
+    opacity: 0.25;
+    pointer-events: none;
+    z-index: -1;
 }
 
 /* ── Actions bar ──────────────────────────────────────────── */

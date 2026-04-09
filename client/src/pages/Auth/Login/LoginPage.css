@@ -129,6 +129,11 @@
   transform: translateY(0);
 }
 
+.login-button:focus-visible {
+  outline: 3px solid var(--color-sky, #7BBDE8);
+  outline-offset: 2px;
+}
+
 .login-button:disabled {
   opacity: 0.65;
   cursor: not-allowed;

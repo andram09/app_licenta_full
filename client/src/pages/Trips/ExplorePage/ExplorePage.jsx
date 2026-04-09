@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { api } from "../../../api/axios";
 import ManualObjectiveModal from "./ManualObjectiveModal";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import TripSubnav from "../../../components/trip-nav/TripSubnav";
 import "./ExplorePage.css";
 
@@ -17,7 +16,6 @@ const CATEGORIES = [
 
 export default function ExplorePage() {
     const { id } = useParams();
-    const navigate = useNavigate();
 
     const [trip, setTrip] = useState(null);
     const [tripLoading, setTripLoading] = useState(true);
@@ -202,8 +200,6 @@ export default function ExplorePage() {
                     destinationName={trip?.destination_name || ""}
                     showMap={true}
                     showBudget={false}
-                    showAddObjective={true}
-                    onAddObjective={() => setShowModal(true)}
                 />
 
                 <div className="explore-page-container">
@@ -219,17 +215,27 @@ export default function ExplorePage() {
 
                     {hasCoords && (
                         <>
-                            <div className="explore-categories">
-                                {CATEGORIES.map(cat => (
-                                    <button
-                                        key={cat.key}
-                                        className={`explore-cat-btn ${activeCategory.key === cat.key ? "explore-cat-btn--active" : ""}`}
-                                        onClick={() => setActiveCategory(cat)}
-                                        type="button"
-                                    >
-                                        {cat.label}
-                                    </button>
-                                ))}
+                            <div className="explore-categories-bar">
+                                <div className="explore-categories">
+                                    {CATEGORIES.map(cat => (
+                                        <button
+                                            key={cat.key}
+                                            className={`explore-cat-btn ${activeCategory.key === cat.key ? "explore-cat-btn--active" : ""}`}
+                                            onClick={() => setActiveCategory(cat)}
+                                            type="button"
+                                        >
+                                            {cat.label}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                <button
+                                    className="explore-add-objective-btn"
+                                    onClick={() => setShowModal(true)}
+                                    type="button"
+                                >
+                                    +<span className="explore-add-objective-btn-text"> Adaugă obiectiv</span>
+                                </button>
                             </div>
 
                             {placesLoading && (

@@ -306,6 +306,11 @@
     border-color: var(--color-teal);
 }
 
+.board-card-details-btn:focus-visible {
+    outline: 3px solid var(--color-sky);
+    outline-offset: 2px;
+}
+
 /* ── Card action row ──────────────────────────────────────── */
 .board-card-actions {
     display: flex;
@@ -345,6 +350,12 @@
     background: rgba(224, 84, 84, 0.10);
     border-color: #c0392b;
     color: #c0392b;
+}
+
+.board-card-delete-btn:focus-visible {
+    outline: 3px solid var(--color-sky);
+    outline-offset: 2px;
+    opacity: 1;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -591,6 +602,11 @@
     color: var(--color-teal);
 }
 
+.board-move-option:focus-visible {
+    outline: 3px solid var(--color-sky);
+    outline-offset: -3px;
+}
+
 /* ── Optimize button ──────────────────────────────────────── */
 .board-column-optimize {
     display: flex;
@@ -620,6 +636,11 @@
 .board-optimize-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.board-optimize-btn:focus-visible {
+    outline: 3px solid var(--color-sky);
+    outline-offset: 2px;
 }
 
 .board-optimize-result {

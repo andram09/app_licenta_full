@@ -5,10 +5,11 @@
     justify-content: space-between;
     padding: 0 2rem;
     height: 80px;
-    background: rgba(78, 142, 162, 0.342);
+    width: 100%;
+    /* background: rgba(78, 142, 162, 0.342); */
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(189, 216, 233, 0.35);
+    /* border-bottom: 1px solid rgba(189, 216, 233, 0.35); */
     position: sticky;
     top: 0;
     z-index: 200;
@@ -49,13 +50,14 @@
 }
 
 .navbar-link:hover {
-    background: rgba(0, 29, 57, 0.10);
-    color: var(--color-navy);
+    background: rgba(78, 142, 162, 0.10);
+    color: var(--color-teal);
 }
 
 .navbar-link--active {
-    color: var(--color-navy);
+    color: var(--color-teal);
     font-weight: 600;
+    background: rgba(78, 142, 162, 0.10);
 }
 
 /* ── Logout button (desktop) ──────────────────────────────── */
@@ -75,6 +77,11 @@
 .navbar-logout-btn:hover {
     background: var(--color-navy);
     color: #FFFFFF;
+}
+
+.navbar-logout-btn:focus-visible {
+    outline: 3px solid var(--color-sky);
+    outline-offset: 2px;
 }
 
 /* ── Burger button — ascuns pe desktop ────────────────────── */
@@ -97,6 +104,11 @@
 
 .navbar-burger:hover {
     background: rgba(0, 29, 57, 0.08);
+}
+
+.navbar-burger:focus-visible {
+    outline: 3px solid var(--color-sky);
+    outline-offset: 2px;
 }
 
 .navbar-burger-bar {
@@ -240,6 +252,11 @@
 
 .navbar-avatar-btn:hover {
     opacity: 0.85;
+}
+
+.navbar-avatar-btn:focus-visible {
+    outline: 3px solid var(--color-sky);
+    outline-offset: 2px;
 }
 
 /* ── Dropdown profil (desktop) ────────────────────────────── */
