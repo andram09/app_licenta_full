@@ -51,7 +51,7 @@
 }
 
 .trips-create-btn:hover {
-    background: var(--gradient-primary-hover);
+    background: var(--gradient-accent-hover);
     box-shadow: var(--shadow-md);
     transform: translateY(-1px);
 }
@@ -91,11 +91,11 @@
 
 /* ── Trip card ────────────────────────────────────────────── */
 .trip-card {
-    background: rgba(255, 249, 246, 0.80);
+    background: var(--color-glass-surface);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-saffron-lt);
     padding: 1.5rem;
     box-shadow: var(--shadow-sm);
     cursor: pointer;
@@ -113,7 +113,7 @@
 }
 
 .trip-card:focus-visible {
-    box-shadow: 0 0 0 3px rgba(250, 170, 141, 0.28);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
 /* ── Card destination title ───────────────────────────────── */

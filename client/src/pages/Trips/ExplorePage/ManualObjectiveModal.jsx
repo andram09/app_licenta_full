@@ -202,7 +202,7 @@ export default function ManualObjectiveModal({ tripId, tripLat, tripLng, onClose
 
                         {!tripLat && (
                             <p className="modal-hint">
-                                Coordonatele destinatiei lipsesc, autocomplete-ul nu este disponibil.
+                                Coordonatele destinației lipsesc, autocomplete-ul nu este disponibil.
                                 Poți adăuga manual un titlu.
                             </p>
                         )}

@@ -41,7 +41,7 @@ export default function AdminPage() {
                 setStats(res.data);
             } catch (err) {
                 console.error("Failed to load admin stats", err);
-                setError("Nu am putut incărca datele pentru dashboard.");
+                setError("Nu am putut încărca datele pentru dashboard.");
             } finally {
                 setLoading(false);
             }

@@ -41,10 +41,10 @@
 
 /* ── Card sectiune ────────────────────────────────────────── */
 .profile-card {
-    background: rgba(255, 249, 246, 0.82);
+    background: var(--color-glass-surface);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-saffron-lt);
     border-radius: 16px;
     padding: 32px;
     box-shadow: var(--shadow-md);
@@ -102,7 +102,7 @@
 
 .profile-input:focus {
     border-color: var(--color-teal, #4e8ea2);
-    box-shadow: 0 0 0 3px rgba(250, 170, 141, 0.18);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
 .profile-input--readonly {
@@ -145,20 +145,20 @@
     align-self: flex-start;
     padding: 10px 24px;
     border-radius: var(--radius-pill, 999px);
-    background: var(--gradient-primary);
+    background: var(--gradient-accent);
     color: #ffffff;
     font-family: var(--font-body);
     font-size: 15px;
     font-weight: 600;
     border: none;
     cursor: pointer;
-    box-shadow: var(--shadow-sm);
+    box-shadow: 0 4px 16px var(--color-saffron-glow);
     transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .profile-btn:hover:not(:disabled) {
-    background: var(--gradient-primary-hover);
-    box-shadow: var(--shadow-md);
+    background: var(--gradient-accent-hover);
+    box-shadow: 0 8px 24px var(--color-saffron-glow);
     transform: translateY(-1px);
 }
 

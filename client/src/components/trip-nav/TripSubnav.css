@@ -52,12 +52,12 @@
 .trip-subnav-btn:hover {
   background: var(--color-interactive-hover);
   border-color: var(--color-teal);
-  color: var(--color-saffron);
+  color: var(--color-blue);
 }
 
 .trip-subnav-btn--active {
   background: var(--color-saffron-bg);
-  border-color: rgba(255, 64, 0, 0.22);
+  border-color: var(--color-accent-border);
   font-weight: 600;
 }
 

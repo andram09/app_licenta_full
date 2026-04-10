@@ -5,7 +5,10 @@
     height: 100vh;
     overflow: hidden;
     font-family: var(--font-body);
-    background: var(--color-beige);
+    background:
+        radial-gradient(ellipse at 20% 10%, var(--color-page-gradient-1) 0%, transparent 45%),
+        radial-gradient(ellipse at 85% 85%, var(--color-page-gradient-2) 0%, transparent 45%),
+        var(--color-beige);
 }
 
 /* ── Header ───────────────────────────────────────────────── */
@@ -112,17 +115,17 @@
 }
 
 .map-day-tab:hover {
-    border-color: var(--color-teal);
-    color: var(--color-navy);
-    background: var(--color-white);
+    border: 1.5px solid var(--gradient-accent-hover);
+    color: var(--color-white);
+    background: var(--gradient-accent-hover);
 }
 
 .map-day-tab--active {
     background: var(--gradient-accent);
     border-color: transparent;
-    color: var(--color-navy);
+    color: var(--color-white);
     font-weight: 600;
-    box-shadow: 0 3px 10px rgba(255, 64, 0, 0.22);
+    box-shadow: 0 3px 10px var(--color-accent-border);
 }
 
 /* ── Main layout ──────────────────────────────────────────── */
@@ -145,7 +148,7 @@
     backdrop-filter: blur(8px);
     flex-shrink: 0;
     scrollbar-width: thin;
-    scrollbar-color: rgba(250 170 141 / 46%) transparent;
+    scrollbar-color: var(--color-teal-border) transparent;
 }
 
 .map-sidebar-empty {
@@ -224,7 +227,7 @@
     height: 100%;
     border-radius: var(--radius-xl);
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(25, 50, 70, 0.14);
+    box-shadow: 0 10px 30px rgba(23, 55, 74, 0.14);
     z-index: 0;
 }
 

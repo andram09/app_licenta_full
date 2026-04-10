@@ -115,11 +115,11 @@ function Column({ colKey, title, objectives, onEdit, onDelete, onOptimize, isOpt
                             disabled={!canOptimize}
                             title={
                                 optimizableCount < 2
-                                    ? "Adauga cel putin 2 obiective cu locatie"
-                                    : "Optimizeaza traseul zilei"
+                                    ? "Adaugă cel puțin 2 obiective cu locație"
+                                    : "Optimizează traseul zilei"
                             }
                         >
-                            {isOptimizing ? "..." : "Optimizeaza ruta"}
+                            {isOptimizing ? "..." : "Optimizează ruta"}
                         </button>
 
                         {optimizeResults?.[colKey] && (
@@ -474,7 +474,7 @@ export default function BoardPage() {
                 setColumnOrder(order);
                 setColumnMeta(meta);
             } catch (err) {
-                setError(err?.response?.data?.message || "Nu am putut incarca planificarea.");
+                setError(err?.response?.data?.message || "Nu am putut încărca planificarea.");
             } finally {
                 setLoading(false);
             }
@@ -762,7 +762,7 @@ export default function BoardPage() {
     if (loading) {
         return (
             <div className="board-page">
-                <p className="board-state-msg">Se incarca planificarea...</p>
+                <p className="board-state-msg">Se încarcă planificarea...</p>
             </div>
         );
     }

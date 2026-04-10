@@ -113,7 +113,7 @@ export default function BudgetPage() {
                     fetchCategories()
                 ]);
             } catch (err) {
-                setError(err?.response?.data?.message || "Nu am putut incarca datele.");
+                setError(err?.response?.data?.message || "Nu am putut încărca datele.");
             } finally {
                 setLoading(false);
             }
@@ -158,7 +158,7 @@ export default function BudgetPage() {
             const res = await api.post(`/trips/${id}/budget/estimate-ai`);
             setObjectives(res.data.data || []);
         } catch (err) {
-            setAiError(err?.response?.data?.message || "Estimarea AI a esuat. Incearca din nou.");
+            setAiError(err?.response?.data?.message || "Estimarea AI a eșuat. Încearcă din nou.");
         } finally {
             setAiLoading(false);
         }
@@ -200,7 +200,7 @@ export default function BudgetPage() {
     const handleAddExpense = async () => {
         setAddError(null);
         if (!addForm.amount || !addForm.currency) {
-            setAddError("Suma si moneda sunt obligatorii.");
+            setAddError("Suma și moneda sunt obligatorii.");
             return;
         }
         setAddLoading(true);
@@ -223,7 +223,7 @@ export default function BudgetPage() {
             // reincarcam cheltuielile si sumarul
             await Promise.all([fetchExpenses(), fetchSummary()]);
         } catch (err) {
-            setAddError(err?.response?.data?.message || "Nu am putut adauga cheltuiala.");
+            setAddError(err?.response?.data?.message || "Nu am putut adăuga cheltuiala.");
         } finally {
             setAddLoading(false);
         }
@@ -231,7 +231,7 @@ export default function BudgetPage() {
 
     // ── Handler stergere cheltuiala ────────────────────────────────────────
     const handleDeleteExpense = async (expenseId) => {
-        if (!window.confirm("Sigur vrei sa stergi aceasta cheltuiala?")) return;
+        if (!window.confirm("Sigur vrei să ștergi această cheltuială?")) return;
         try {
             await api.delete(`/expenses/${expenseId}`);
             await Promise.all([fetchExpenses(), fetchSummary()]);
@@ -287,7 +287,7 @@ export default function BudgetPage() {
     if (loading) {
         return (
             <div className="budget-page">
-                <p className="budget-state-msg">Se incarca...</p>
+                <p className="budget-state-msg">Se încarcă...</p>
             </div>
         );
     }
@@ -318,7 +318,7 @@ export default function BudgetPage() {
 
                         {/* Selector persoane */}
                         <div className="budget-people-card">
-                            <span className="budget-people-label">Numar persoane</span>
+                            <span className="budget-people-label">Număr persoane</span>
                             <input
                                 type="number"
                                 className="budget-people-input"
@@ -337,7 +337,7 @@ export default function BudgetPage() {
                                 {formatAmount(totalEstimated)}
                             </span>
                             <span className="budget-stat-sub">
-                                pentru {numberOfPeople} {numberOfPeople === 1 ? "persoana" : "persoane"}
+                                pentru {numberOfPeople} {numberOfPeople === 1 ? "persoană" : "persoane"}
                             </span>
                         </div>
 
@@ -354,12 +354,12 @@ export default function BudgetPage() {
 
                         {/* Card diferenta */}
                         <div className={`budget-stat-card ${difference >= 0 ? "budget-stat-card--positive" : "budget-stat-card--negative"}`}>
-                            <span className="budget-stat-label">Diferenta</span>
+                            <span className="budget-stat-label">Diferența</span>
                             <span className="budget-stat-value">
                                 {difference >= 0 ? "+" : ""}{formatAmount(difference)}
                             </span>
                             <span className="budget-stat-sub">
-                                {difference >= 0 ? "in buget" : "depasit"}
+                                {difference >= 0 ? "în buget" : "depășit"}
                             </span>
                         </div>
                     </div>
@@ -375,7 +375,7 @@ export default function BudgetPage() {
                             onClick={handleEstimateAI}
                             disabled={aiLoading || objectives.length === 0}
                         >
-                            {aiLoading ? "Se estimeaza..." : "✦ Estimeaza cu AI"}
+                            {aiLoading ? "Se estimează..." : "✦ Estimează cu AI"}
                         </button>
                     </div>
 
@@ -385,7 +385,7 @@ export default function BudgetPage() {
 
                     {objectives.length === 0 ? (
                         <p className="budget-empty-msg">
-                            Nu ai obiective adaugate in aceasta calatorie.
+                            Nu ai obiective adăugate în această călătorie.
                         </p>
                     ) : (
                         <div className="budget-objectives-card">
@@ -420,7 +420,7 @@ export default function BudgetPage() {
 
                             {/* Total estimat */}
                             <div className="budget-objectives-total">
-                                <span>Total estimat ({numberOfPeople} {numberOfPeople === 1 ? "persoana" : "persoane"})</span>
+                                <span>Total estimat ({numberOfPeople} {numberOfPeople === 1 ? "persoană" : "persoane"})</span>
                                 <span className="budget-objectives-total-value">
                                     {formatAmount(totalEstimated)}
                                 </span>
@@ -477,7 +477,7 @@ export default function BudgetPage() {
                                 value={addForm.id_objective}
                                 onChange={(e) => setAddForm(prev => ({ ...prev, id_objective: e.target.value }))}
                             >
-                                <option value="">Obiectiv (optional)</option>
+                                <option value="">Obiectiv (opțional)</option>
                                 {objectives.map(obj => (
                                     <option key={obj.id_objective} value={obj.id_objective}>
                                         {obj.title}
@@ -487,7 +487,7 @@ export default function BudgetPage() {
                             <input
                                 type="text"
                                 className="budget-input budget-input--note"
-                                placeholder="Nota (optional)"
+                                placeholder="Notă (opțional)"
                                 value={addForm.note}
                                 onChange={(e) => setAddForm(prev => ({ ...prev, note: e.target.value }))}
                             />
@@ -501,13 +501,13 @@ export default function BudgetPage() {
                             onClick={handleAddExpense}
                             disabled={addLoading}
                         >
-                            {addLoading ? "Se adauga..." : "+ Adauga cheltuiala"}
+                            {addLoading ? "Se adaugă..." : "+ Adaugă cheltuiala"}
                         </button>
                     </div>
 
                     {/* Lista cheltuieli */}
                     {expenses.length === 0 ? (
-                        <p className="budget-empty-msg">Nu ai cheltuieli inregistrate inca.</p>
+                        <p className="budget-empty-msg">Nu ai cheltuieli înregistrate încă.</p>
                     ) : (
                         <div className="budget-expenses-card">
                             <div className="budget-expenses-list">
@@ -552,7 +552,7 @@ export default function BudgetPage() {
                                                 <input
                                                     type="text"
                                                     className="budget-input"
-                                                    placeholder="Nota"
+                                                    placeholder="Notă"
                                                     value={editForm.note}
                                                     onChange={(e) => setEditForm(prev => ({ ...prev, note: e.target.value }))}
                                                 />
@@ -563,14 +563,14 @@ export default function BudgetPage() {
                                                         onClick={() => handleEditSave(exp.id_expense)}
                                                         disabled={editLoading}
                                                     >
-                                                        Salveaza
+                                                        Salvează
                                                     </button>
                                                     <button
                                                         className="budget-cancel-btn"
                                                         type="button"
                                                         onClick={() => setEditingExpenseId(null)}
                                                     >
-                                                        Anuleaza
+                                                        Anulează
                                                     </button>
                                                 </div>
                                             </div>
@@ -582,7 +582,7 @@ export default function BudgetPage() {
                                                         {formatAmount(exp.amount, exp.currency)}
                                                     </span>
                                                     <span className="budget-expense-cat">
-                                                        {exp.ExpenseCategory?.name || "Fara categorie"}
+                                                        {exp.ExpenseCategory?.name || "Fără categorie"}
                                                     </span>
                                                     {exp.date && (
                                                         <span className="budget-expense-date">
@@ -601,14 +601,14 @@ export default function BudgetPage() {
                                                         type="button"
                                                         onClick={() => handleEditOpen(exp)}
                                                     >
-                                                        Editeaza
+                                                        Editează
                                                     </button>
                                                     <button
                                                         className="budget-delete-btn"
                                                         type="button"
                                                         onClick={() => handleDeleteExpense(exp.id_expense)}
                                                     >
-                                                        Sterge
+                                                        Șterge
                                                     </button>
                                                 </div>
                                             </>
@@ -633,7 +633,7 @@ export default function BudgetPage() {
                     <h2 className="budget-section-title">Defalcare pe categorii</h2>
 
                     {pieData.length === 0 ? (
-                        <p className="budget-empty-msg">Nu exista cheltuieli inregistrate inca.</p>
+                        <p className="budget-empty-msg">Nu există cheltuieli înregistrate încă.</p>
                     ) : (
                         <div className="budget-chart-row">
 

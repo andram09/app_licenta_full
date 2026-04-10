@@ -145,7 +145,7 @@ export default function TripMapPage() {
                                 type="button"
                                 className={`map-obj-item${isHighlighted ? " map-obj-item--active" : ""}${!hasCoords ? " map-obj-item--no-coords" : ""}`}
                                 onClick={() => hasCoords && handleItemClick(obj.id_objective)}
-                                title={!hasCoords ? "Fara coordonate - nu apare pe harta" : ""}
+                                title={!hasCoords ? "Fără coordonate - nu apare pe hartă" : ""}
                             >
                                 <span className="map-obj-title">{obj.title}</span>
                                 {obj.planned_time && (

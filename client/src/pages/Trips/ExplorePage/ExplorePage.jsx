@@ -39,7 +39,7 @@ export default function ExplorePage() {
                 const res = await api.get(`/trips/${id}`);
                 setTrip(res.data.data);
             } catch (err) {
-                setTripError(err?.response?.data?.message || "Nu am putut incarca calatoria.");
+                setTripError(err?.response?.data?.message || "Nu am putut încărca călătoria.");
             } finally {
                 setTripLoading(false);
             }
@@ -99,7 +99,7 @@ export default function ExplorePage() {
             } catch (err) {
                 setPlacesError(
                     err?.response?.data?.message ||
-                    "Nu am putut incarca locurile. Incearca din nou."
+                    "Nu am putut încărca locurile. Încearcă din nou."
                 );
             } finally {
                 setPlacesLoading(false);
@@ -208,7 +208,7 @@ export default function ExplorePage() {
                         <div className="explore-no-coords">
                             <p>
                                 Această călătorie nu are coordonate salvate. Locurile nu pot fi încărcate.
-                                Recreează călătoria selectând un oras din sugestii.
+                                Recreează călătoria selectând un oraș din sugestii.
                             </p>
                         </div>
                     )}
@@ -285,7 +285,7 @@ export default function ExplorePage() {
                                                     disabled={isAdded || isAdding}
                                                     type="button"
                                                 >
-                                                    {isAdded ? "Adaugat ✓" : isAdding ? "Se adauga..." : "Viziteaza"}
+                                                    {isAdded ? "Adăugat ✓" : isAdding ? "Se adaugă..." : "Vizitează"}
                                                 </button>
                                             </div>
                                         );

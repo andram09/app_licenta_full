@@ -153,16 +153,18 @@
     overflow-x: auto;
     padding-bottom: 1rem;
     scrollbar-width: thin;
-    scrollbar-color: rgba(250, 170, 141, 0.25) transparent;
+    scrollbar-color: var(--color-teal-bg) transparent;
 }
 
 /* ── Column ───────────────────────────────────────────────── */
 .board-column {
     flex: 1 1 220px;
     min-width: 220px;
-    background: var(--color-surface);
+    background: var(--color-glass-surface);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-saffron-lt);
     box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
@@ -172,14 +174,14 @@
 /* Unassigned column — dashed + beige tint */
 .board-column:first-child {
     border-style: dashed;
-    border-color: rgba(250, 170, 141, 0.28);
+    border-color: var(--color-teal-border);
     background: var(--color-surface-soft);
 }
 
 .board-column--over {
     border-color: var(--color-teal);
     border-style: solid;
-    box-shadow: 0 0 0 3px rgba(250, 170, 141, 0.18);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
 /* ── Column header ────────────────────────────────────────── */
@@ -241,11 +243,11 @@
 /* ── Drag card ────────────────────────────────────────────── */
 .board-card {
     background: var(--color-surface-soft);
-    border: 1px solid rgba(255, 64, 0, 0.26);
+    border: 1px solid var(--color-accent-border);
     border-radius: 14px;
     padding: 10px 12px;
     cursor: grab;
-    box-shadow: 0 0 0 1px rgba(255, 64, 0, 0.06), 0 8px 20px rgba(255, 64, 0, 0.10);
+    box-shadow: 0 0 0 1px rgba(42, 127, 168, 0.06), 0 8px 20px var(--color-accent-bg);
     transition: box-shadow var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast);
     user-select: none;
     position: relative;
@@ -255,14 +257,14 @@
 }
 
 .board-card:hover {
-    box-shadow: 0 0 0 1px rgba(255, 64, 0, 0.10), 0 12px 26px rgba(255, 64, 0, 0.14);
-    border-color: rgba(255, 64, 0, 0.36);
+    box-shadow: 0 0 0 1px var(--color-accent-bg), 0 12px 26px rgba(42, 127, 168, 0.14);
+    border-color: rgba(42, 127, 168, 0.36);
     transform: translateY(-2px);
 }
 
 .board-card--overlay {
-    box-shadow: 0 0 0 1px rgba(255, 64, 0, 0.12), 0 16px 36px rgba(255, 64, 0, 0.16);
-    border-color: rgba(255, 64, 0, 0.38);
+    box-shadow: 0 0 0 1px rgba(42, 127, 168, 0.12), 0 16px 36px rgba(42, 127, 168, 0.16);
+    border-color: rgba(42, 127, 168, 0.38);
     cursor: grabbing;
     rotate: 1.5deg;
     z-index: 999;
@@ -449,7 +451,7 @@
     border-color: transparent;
     color: var(--color-navy);
     font-weight: 600;
-    box-shadow: 0 3px 10px rgba(255, 64, 0, 0.22);
+    box-shadow: 0 3px 10px var(--color-accent-border);
 }
 
 .board-mobile-tab-count {
@@ -467,7 +469,7 @@
 }
 
 .board-mobile-tab--active .board-mobile-tab-count {
-    background: rgba(255, 255, 255, 0.30);
+    background: var(--color-glass);
 }
 
 /* ── Lista carduri mobile ─────────────────────────────────── */
@@ -637,7 +639,7 @@
     font-weight: 600;
     padding: 4px 10px;
     border-radius: var(--radius-pill);
-    border: 2px solid rgba(250, 170, 141, 0.24);
+    border: 2px solid var(--color-teal-glow);
     background: var(--color-surface-tint);
     color: var(--color-teal);
     cursor: pointer;

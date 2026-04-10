@@ -1,6 +1,6 @@
 :root {
     
-    /* Previous palette: */
+    /* Blue palette: */
     --color-navy: #17374A;
     --color-blue: #2F6480;
     --color-mid: #67889D;
@@ -11,9 +11,15 @@
     --color-beige: #E9F1F4;
     --color-light: #DBE8EE;
     --color-gray: #738D9E;
-     --color-saffron: #ff7c4c; 
+    --color-saffron: #ff7c4c; 
+    --color-saffron-lt: #F0BA5E;
      /* #ecd386 */
     --color-saffron-bg: rgba(226, 162, 67, 0.16);
+    --color-saffron-glow: rgba(255, 124, 76, 0.32);
+    --color-saffron-border: rgba(255, 124, 76, 0.26);
+    --color-saffron-lt-bg: rgba(240, 186, 94, 0.14);
+    --color-saffron-lt-border: rgba(240, 186, 94, 0.30);
+    --color-saffron-lt-glow: rgba(240, 186, 94, 0.32);
     --color-surface: #F4F8FA;
     --color-surface-soft: #EDF4F7;
     --color-surface-tint: #E4EEF3;
@@ -41,8 +47,17 @@
     --gradient-primary: linear-gradient(135deg, #6CA4B5 0%, #4E8598 100%);
     --gradient-primary-hover: linear-gradient(135deg, #6199AA 0%, #44788A 100%);
     --gradient-accent: linear-gradient(135deg, #ff7c4c 0%, #c43100b1 100%);
+    --gradient-accent-soft: linear-gradient(135deg, rgba(255, 124, 76, 0.781) 0%, rgba(196, 49, 0, 0.74) 100%);
     /* --gradient-accent: linear-gradient(135deg, #ecd386 0%, #ecd386 100%); */
     --gradient-accent-hover: linear-gradient(135deg, #F0BA5E 0%, #E2913A 100%);
+    --chart-1: #FF7C4C;
+    --chart-2: #2F6480;
+    --chart-3: #5B93A3;
+    --chart-4: #F0BA5E;
+    --chart-5: #67889D;
+    --chart-6: #9FC5D2;
+    --chart-7: #5B8A6F;
+    --chart-8: #17374A;
    
 /* 
     --color-navy: #4C2E26;

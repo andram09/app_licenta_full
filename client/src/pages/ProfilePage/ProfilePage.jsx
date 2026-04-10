@@ -49,7 +49,7 @@ export default function ProfilePage() {
             setProfileSuccess("Datele au fost actualizate cu succes.");
         } catch (err) {
             const msg =
-                err?.response?.data?.message || "A aparut o eroare. Incearca din nou.";
+                err?.response?.data?.message || "A apărut o eroare. Încearcă din nou.";
             setProfileError(msg);
         } finally {
             setProfileLoading(false);
@@ -82,7 +82,7 @@ export default function ProfilePage() {
                 new_password: passwordForm.new_password,
                 confirm_new_password: passwordForm.confirm_new_password,
             });
-            setPasswordSuccess("Parola a fost schimbata cu succes.");
+            setPasswordSuccess("Parola a fost schimbată cu succes.");
             // golim formularul dupa succes
             setPasswordForm({
                 current_password: "",
@@ -91,7 +91,7 @@ export default function ProfilePage() {
             });
         } catch (err) {
             const msg =
-                err?.response?.data?.message || "A aparut o eroare. Incearca din nou.";
+                err?.response?.data?.message || "A apărut o eroare. Încearcă din nou.";
             setPasswordError(msg);
         } finally {
             setPasswordLoading(false);
@@ -109,7 +109,7 @@ export default function ProfilePage() {
                 <section className="profile-card">
                     <h2 className="profile-card-title">Date personale</h2>
                     <p className="profile-card-subtitle">
-                        Modifica prenumele si numele afisat in aplicatie.
+                        Modifică prenumele și numele afișat în aplicație.
                     </p>
 
                     <form onSubmit={handleProfileSubmit} className="profile-form" noValidate>
@@ -150,7 +150,7 @@ export default function ProfilePage() {
                                 disabled
                             />
                             <span className="profile-input-hint">
-                                Adresa de email nu poate fi modificata din aceasta sectiune.
+                                Adresa de email nu poate fi modificată din această secțiune.
                             </span>
                         </label>
 
@@ -166,57 +166,57 @@ export default function ProfilePage() {
                             className="profile-btn"
                             disabled={profileLoading}
                         >
-                            {profileLoading ? "Se salveaza..." : "Salveaza modificarile"}
+                            {profileLoading ? "Se salvează..." : "Salvează modificările"}
                         </button>
                     </form>
                 </section>
 
                 {/* ── Sectiunea schimbare parola ── */}
                 <section className="profile-card">
-                    <h2 className="profile-card-title">Schimbare parola</h2>
+                    <h2 className="profile-card-title">Schimbare parolă</h2>
                     <p className="profile-card-subtitle">
-                        Parola trebuie sa contina cel putin 8 caractere, o litera mare,
-                        o litera mica, un numar si un caracter special.
+                        Parola trebuie să conțină cel puțin 8 caractere, o literă mare,
+                        o literă mică, un număr și un caracter special.
                     </p>
 
                     <form onSubmit={handlePasswordSubmit} className="profile-form" noValidate>
                         <label className="profile-label">
-                            Parola curenta
+                            Parola curentă
                             <input
                                 type="password"
                                 name="current_password"
                                 value={passwordForm.current_password}
                                 onChange={handlePasswordChange}
                                 className="profile-input"
-                                placeholder="Introdu parola curenta"
+                                placeholder="Introdu parola curentă"
                                 required
                                 autoComplete="current-password"
                             />
                         </label>
 
                         <label className="profile-label">
-                            Parola noua
+                            Parola nouă
                             <input
                                 type="password"
                                 name="new_password"
                                 value={passwordForm.new_password}
                                 onChange={handlePasswordChange}
                                 className="profile-input"
-                                placeholder="Introdu parola noua"
+                                placeholder="Introdu parola nouă"
                                 required
                                 autoComplete="new-password"
                             />
                         </label>
 
                         <label className="profile-label">
-                            Confirmare parola noua
+                            Confirmare parolă nouă
                             <input
                                 type="password"
                                 name="confirm_new_password"
                                 value={passwordForm.confirm_new_password}
                                 onChange={handlePasswordChange}
                                 className="profile-input"
-                                placeholder="Repeta parola noua"
+                                placeholder="Repetă parola nouă"
                                 required
                                 autoComplete="new-password"
                             />
@@ -234,7 +234,7 @@ export default function ProfilePage() {
                             className="profile-btn"
                             disabled={passwordLoading}
                         >
-                            {passwordLoading ? "Se schimba..." : "Schimba parola"}
+                            {passwordLoading ? "Se schimbă..." : "Schimbă parola"}
                         </button>
                     </form>
                 </section>

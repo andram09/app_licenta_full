@@ -138,7 +138,7 @@
 
 .create-trip-input:focus {
     border-color: var(--color-teal);
-    box-shadow: 0 0 0 3px rgba(250, 170, 141, 0.18);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
     background: #FFFFFF;
 }
 
@@ -152,7 +152,7 @@
     padding: 13px 28px;
     border-radius: var(--radius-pill);
     border: none;
-    background: var(--gradient-primary);
+    background: var(--gradient-accent);
     color: #FFFFFF;
     font-family: var(--font-body);
     font-size: 14px;
@@ -167,7 +167,7 @@
 }
 
 .create-trip-submit-btn:hover:not(:disabled) {
-    background: var(--gradient-primary-hover);
+    background: var(--gradient-accent-hover);
     box-shadow: var(--shadow-md);
     transform: translateY(-1px);
 }

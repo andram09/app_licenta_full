@@ -166,11 +166,11 @@ function Column({ colKey, title, objectives, onEdit, onDelete, onOptimize, isOpt
                             disabled={!canOptimize}
                             title={
                                 optimizableCount < 2
-                                    ? "Adauga cel putin 2 obiective cu locatie"
-                                    : "Optimizeaza traseul zilei"
+                                    ? "Adaugă cel puțin 2 obiective cu locație"
+                                    : "Optimizează traseul zilei"
                             }
                         >
-                            {isOptimizing ? "..." : "Optimizeaza ruta"}
+                            {isOptimizing ? "..." : "Optimizează ruta"}
                         </button>
 
                         {optimizeResult && (

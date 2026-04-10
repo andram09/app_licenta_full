@@ -29,7 +29,7 @@
 
 /* ── Card ─────────────────────────────────────────────────── */
 .register-card {
-    background: rgba(255, 249, 246, 0.82);
+    background: var(--color-glass-surface);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-radius: 24px;
@@ -110,7 +110,7 @@
 
 .register-input:focus {
     border-color: var(--color-teal);
-    box-shadow: 0 0 0 3px rgba(250, 170, 141, 0.18);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
     background: var(--color-white);
 }
 

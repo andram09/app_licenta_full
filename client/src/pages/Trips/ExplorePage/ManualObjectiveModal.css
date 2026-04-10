@@ -17,7 +17,7 @@
     background: var(--color-surface);
     border-radius: var(--radius-xl);
     border: 1px solid var(--color-border);
-    box-shadow: 0 24px 64px rgba(25, 50, 70, 0.14);
+    box-shadow: 0 24px 64px rgba(23, 55, 74, 0.14);
     padding: 36px 40px;
     width: 100%;
     max-width: 480px;
@@ -127,7 +127,7 @@
 .modal-input:focus,
 .modal-textarea:focus {
     border-color: var(--color-teal);
-    box-shadow: 0 0 0 3px rgba(250, 170, 141, 0.18);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
     background: var(--color-white);
 }
 
@@ -149,7 +149,7 @@
 /* ── Input selected (from API) ────────────────────────────── */
 .modal-input--selected {
     border-color: var(--color-teal) !important;
-    background: rgba(250, 170, 141, 0.10) !important;
+    background: var(--color-teal-bg) !important;
 }
 
 /* ── Error & hint text ────────────────────────────────────── */
