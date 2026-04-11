@@ -1,17 +1,26 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../../../api/axios";
 import { ArrowLeft } from "lucide-react";
 import "./CreateTripPage.css";
 
 export default function CreateTripPage() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
-    const [destinationName, setDestinationName] = useState("");
-    const [destinationLat, setDestinationLat] = useState(null);
-    const [destinationLng, setDestinationLng] = useState(null);
-    const [numberOfDays, setNumberOfDays] = useState("");
-    const [startDate, setStartDate] = useState("");
+    const editId = searchParams.get("id") || null;
+
+    const [destinationName, setDestinationName] = useState(() => searchParams.get("destination") || "");
+    const [destinationLat, setDestinationLat] = useState(() => {
+        const lat = searchParams.get("lat");
+        return lat ? parseFloat(lat) : null;
+    });
+    const [destinationLng, setDestinationLng] = useState(() => {
+        const lng = searchParams.get("lng");
+        return lng ? parseFloat(lng) : null;
+    });
+    const [numberOfDays, setNumberOfDays] = useState(() => searchParams.get("days") || "");
+    const [startDate, setStartDate] = useState(() => searchParams.get("start_date") || "");
 
     const [suggestions, setSuggestions] = useState([]);
     const [autocompleteLoading, setAutocompleteLoading] = useState(false);
@@ -79,18 +88,25 @@ export default function CreateTripPage() {
         setError(null);
         setLoading(true);
 
-        const body = {
-            destination_name: destinationName.trim(),
-            number_of_days: Number(numberOfDays),
-            ...(destinationLat !== null && { destination_lat: destinationLat }),
-            ...(destinationLng !== null && { destination_lng: destinationLng }),
-            ...(startDate && { start_date: startDate }),
-        };
-
         try {
-            const response = await api.post("/trips", body);
-            const { id_trip } = response.data.data;
-            navigate(`/trips/${id_trip}/explore`, { replace: true });
+            if (editId) {
+                await Promise.all([
+                    api.put(`/trips/${editId}`, { start_date: startDate || null }),
+                    api.put(`/trips/${editId}/duration`, { number_of_days: Number(numberOfDays) }),
+                ]);
+                navigate(`/trips/${editId}/explore`, { replace: true });
+            } else {
+                const body = {
+                    destination_name: destinationName.trim(),
+                    number_of_days: Number(numberOfDays),
+                    ...(destinationLat !== null && { destination_lat: destinationLat }),
+                    ...(destinationLng !== null && { destination_lng: destinationLng }),
+                    ...(startDate && { start_date: startDate }),
+                };
+                const response = await api.post("/trips", body);
+                const { id_trip } = response.data.data;
+                navigate(`/trips/${id_trip}/explore`, { replace: true });
+            }
         } catch (err) {
             setError(err?.response?.data?.message || "A apărut o eroare. Încearcă din nou.");
         } finally {
@@ -106,8 +122,14 @@ export default function CreateTripPage() {
                     <button className="create-trip-back-btn" onClick={() => navigate("/trips")} type="button">
                         <ArrowLeft size={16} strokeWidth={2} /> Înapoi
                     </button>
-                    <h1 className="create-trip-title">Călătorie nouă</h1>
-                    <p className="create-trip-subtitle">Completează detaliile pentru a planifica excursia.</p>
+                    <h1 className="create-trip-title">
+                        {editId ? "Editează călătoria" : "Călătorie nouă"}
+                    </h1>
+                    <p className="create-trip-subtitle">
+                        {editId
+                            ? "Modifică data plecării sau numărul de zile."
+                            : "Completează detaliile pentru a planifica excursia."}
+                    </p>
                 </div>
 
                 <form className="create-trip-form" onSubmit={handleSubmit} noValidate>
@@ -124,11 +146,11 @@ export default function CreateTripPage() {
                                 onChange={handleDestinationChange}
                                 onFocus={() => suggestions.length > 0 && setShowDropdown(true)}
                                 required
-                                disabled={loading}
+                                disabled={loading || !!editId}
                                 autoComplete="off"
                             />
                             {autocompleteLoading && <span className="autocomplete-loading-indicator" />}
-                            {showDropdown && suggestions.length > 0 && (
+                            {!editId && showDropdown && suggestions.length > 0 && (
                                 <ul className="autocomplete-dropdown" role="listbox">
                                     {suggestions.map((city, i) => (
                                         <li key={i} className="autocomplete-option" role="option"
@@ -169,7 +191,9 @@ export default function CreateTripPage() {
                     <div className="create-trip-field create-trip-field--action">
                         <label className="create-trip-label create-trip-label--hidden">&nbsp;</label>
                         <button type="submit" className="create-trip-submit-btn" disabled={loading}>
-                            {loading ? "Se creează..." : "Continuă"}
+                            {loading
+                                ? (editId ? "Se salvează..." : "Se creează...")
+                                : (editId ? "Salvează" : "Continuă")}
                         </button>
                     </div>
 

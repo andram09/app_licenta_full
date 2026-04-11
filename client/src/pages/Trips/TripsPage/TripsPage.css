@@ -82,6 +82,23 @@
     padding: 0.75rem 1rem;
 }
 
+/* ── Sections ─────────────────────────────────────────────── */
+.trips-section {
+    margin-bottom: 2.5rem;
+}
+
+.trips-section-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-gray);
+    margin: 0 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
 /* ── Grid ─────────────────────────────────────────────────── */
 .trips-grid {
     display: grid;
@@ -116,15 +133,51 @@
     box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
-/* ── Card destination title ───────────────────────────────── */
+/* ── Card destination row (title + edit icon) ─────────────── */
+.trip-card-destination-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 6px;
+    margin: 0 0 0.5rem 0;
+    padding-right: 28px;
+}
+
 .trip-card-destination {
     font-family: var(--font-display);
     font-size: 18px;
     font-weight: 500;
     letter-spacing: 0.01em;
     color: var(--color-navy);
-    margin: 0 0 0.5rem 0;
-    padding-right: 28px;
+    margin: 0;
+    padding-right: 0;
+}
+
+/* ── Edit icon button ─────────────────────────────────────── */
+.trip-card-edit-btn {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--color-gray);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+    margin-top: 2px;
+}
+
+.trip-card:hover .trip-card-edit-btn {
+    opacity: 1;
+}
+
+.trip-card-edit-btn:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--color-navy);
 }
 
 /* ── Card detail chips ────────────────────────────────────── */
@@ -154,7 +207,7 @@
     padding: 7px 16px;
     min-height: 36px;
     border-radius: var(--radius-pill);
-    border: 1.5px solid var(--color-border);
+    border: 1.5px solid var(--color-teal);
     background: var(--color-glass);
     color: var(--color-teal);
     font-family: var(--font-body);
@@ -170,6 +223,7 @@
     background: var(--color-glass-strong);
     color: var(--color-navy);
 }
+
 
 /* ── Card delete button ────────────────────────────────────── */
 .trip-card-delete-btn {
@@ -244,8 +298,9 @@
         gap: 1rem;
     }
 
-    /* butonul de stergere ramane vizibil pe mobile fara hover */
-    .trip-card-delete-btn {
+    /* butoanele de stergere si edit raman vizibile pe mobile fara hover */
+    .trip-card-delete-btn,
+    .trip-card-edit-btn {
         opacity: 1;
     }
 

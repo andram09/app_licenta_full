@@ -375,8 +375,8 @@
 
 /* ── Add button ───────────────────────────────────────────── */
 .explore-card-btn {
-    width: 100%;
-    padding: 8px 0;
+    width: 5rem;
+    padding: 8px 2px;
     border-radius: var(--radius-pill);
     border: 1.5px solid var(--color-teal-border);
     background: var(--gradient-primary);
