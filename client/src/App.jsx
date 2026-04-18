@@ -42,6 +42,10 @@ function App() {
           <Route path="/trips/:id/board" element={<BoardPage />} />
           <Route path="/trips/:id/map" element={<TripMapPage />} />
           <Route path="/trips/:id/budget" element={<BudgetPage />} />
+        </Route>
+
+        {/* Rute protejate - orice utilizator autentificat */}
+        <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<ProfilePage />} />
         </Route>
 

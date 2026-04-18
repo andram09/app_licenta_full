@@ -26,16 +26,23 @@ export default function RegisterPage() {
         e.preventDefault();
         setError("");
         setSuccess("");
+
+        if (!form.first_name.trim()) return setError("Prenumele este obligatoriu.");
+        if (!form.last_name.trim()) return setError("Numele este obligatoriu.");
+        if (!form.email.trim()) return setError("Email-ul este obligatoriu.");
+        if (!form.password) return setError("Parola este obligatorie.");
+
         setLoading(true);
 
         try {
             await register(form.first_name, form.last_name, form.email, form.password);
             setSuccess("Cont creat cu succes!");
-            // redirect la login dupa 1.5 secunde
             setTimeout(() => navigate("/login"), 1500);
         } catch (err) {
-            const msg =
-                err?.response?.data?.message || "Ceva nu a mers bine. Încearcă din nou.";
+            const data = err?.response?.data;
+            const msg = data?.errors?.length
+                ? data.errors.join(" ")
+                : data?.message || "Ceva nu a mers bine. Încearcă din nou.";
             setError(msg);
         } finally {
             setLoading(false);
@@ -99,7 +106,7 @@ export default function RegisterPage() {
                             value={form.password}
                             onChange={handleChange}
                             className="register-input"
-                            placeholder="Minim 8 caractere"
+                            placeholder="Min. 8 car., majusculă, cifră, simbol (!@#$%^&*)"
                             required
                             autoComplete="new-password"
                         />

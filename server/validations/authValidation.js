@@ -1,32 +1,35 @@
 import Joi from "joi";
 
-// Schema de validare pentru parola - definita separat pentru a fi reutilizata
-// in mai multe scheme fara duplicare de cod
 export const passwordSchema = Joi.string()
   .min(8)
   .max(50)
-  .pattern(new RegExp('(?=.*[a-z])'))
-  .pattern(new RegExp('(?=.*[A-Z])'))
-  .pattern(new RegExp('(?=.*[0-9])'))
-  .pattern(new RegExp('(?=.*[!@#$%^&*])'))
+  .custom((value, helpers) => {
+    const lipseste = [];
+    if (!/[a-z]/.test(value)) lipseste.push('o literă mică');
+    if (!/[A-Z]/.test(value)) lipseste.push('o literă mare');
+    if (!/[0-9]/.test(value)) lipseste.push('o cifră');
+    if (!/[!@#$%^&*]/.test(value)) lipseste.push('un caracter special (!@#$%^&*)');
+    if (lipseste.length > 0) {
+      return helpers.message(`Parola trebuie să conțină: ${lipseste.join(', ')}`);
+    }
+    return value;
+  })
   .required()
   .messages({
-    'string.min': 'Password must be at least 8 characters long',
-    'string.max': 'Password cannot exceed 50 characters',
-    'string.pattern.base': 'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character (!@#$%^&*)',
-    'any.required': 'Password is required'
+    'string.min': 'Parola trebuie să aibă cel puțin 8 caractere',
+    'string.max': 'Parola nu poate depăși 50 de caractere',
+    'any.required': 'Parola este obligatorie'
   });
 
-// Schema pentru inregistrare
 export const registerSchema = Joi.object({
   first_name: Joi.string()
     .min(2)
     .max(50)
     .required()
     .messages({
-      'string.min': 'First name must be at least 2 characters long',
-      'string.max': 'First name cannot exceed 50 characters',
-      'any.required': 'First name is required'
+      'string.min': 'Prenumele trebuie să aibă cel puțin 2 caractere',
+      'string.max': 'Prenumele nu poate depăși 50 de caractere',
+      'any.required': 'Prenumele este obligatoriu'
     }),
 
   last_name: Joi.string()
@@ -34,9 +37,9 @@ export const registerSchema = Joi.object({
     .max(50)
     .required()
     .messages({
-      'string.min': 'Last name must be at least 2 characters long',
-      'string.max': 'Last name cannot exceed 50 characters',
-      'any.required': 'Last name is required'
+      'string.min': 'Numele trebuie să aibă cel puțin 2 caractere',
+      'string.max': 'Numele nu poate depăși 50 de caractere',
+      'any.required': 'Numele este obligatoriu'
     }),
 
   email: Joi.string()
@@ -44,15 +47,14 @@ export const registerSchema = Joi.object({
     .max(100)
     .required()
     .messages({
-      'string.email': 'Please provide a valid email address',
-      'string.max': 'Email cannot exceed 100 characters',
-      'any.required': 'Email is required'
+      'string.email': 'Adresa de email nu este validă',
+      'string.max': 'Email-ul nu poate depăși 100 de caractere',
+      'any.required': 'Email-ul este obligatoriu'
     }),
 
   password: passwordSchema
 });
 
-// Schema pentru autentificare
 // La login nu verificam complexitatea parolei - doar ca exista
 // Motivul: un user creat inainte de introducerea regulilor nu trebuie blocat
 export const loginSchema = Joi.object({
@@ -60,60 +62,55 @@ export const loginSchema = Joi.object({
     .email()
     .required()
     .messages({
-      'string.email': 'Please provide a valid email address',
-      'any.required': 'Email is required'
+      'string.email': 'Adresa de email nu este validă',
+      'any.required': 'Email-ul este obligatoriu'
     }),
 
   password: Joi.string()
     .required()
     .messages({
-      'any.required': 'Password is required'
+      'any.required': 'Parola este obligatorie'
     })
 });
 
-// Schema pentru cererea de resetare parola
-// Userul introduce doar email-ul pentru a primi link-ul de reset
 export const forgotPasswordSchema = Joi.object({
   email: Joi.string()
     .email()
     .required()
     .messages({
-      'string.email': 'Please provide a valid email address',
-      'any.required': 'Email is required'
+      'string.email': 'Adresa de email nu este validă',
+      'any.required': 'Email-ul este obligatoriu'
     })
 });
 
-// Schema pentru resetarea efectiva a parolei
 export const resetPasswordSchema = Joi.object({
   token: Joi.string()
     .required()
     .messages({
-      'any.required': 'Reset token is required'
+      'any.required': 'Token-ul de resetare este obligatoriu'
     }),
 
   password: passwordSchema,
 
   // Joi.ref('password') compara automat cu valoarea campului password
-  // din acelasi obiect, fara logica manuala
   confirmPassword: Joi.string()
     .valid(Joi.ref('password'))
     .required()
     .messages({
-      'any.only': 'Passwords do not match',
-      'any.required': 'Password confirmation is required'
+      'any.only': 'Parolele nu coincid',
+      'any.required': 'Confirmarea parolei este obligatorie'
     })
 });
 
-// Schema pentru actualizarea datelor personale (prenume, nume)
 export const updateProfileSchema = Joi.object({
   first_name: Joi.string()
     .min(2)
     .max(50)
     .required()
     .messages({
-      'string.min': 'First name must be at least 2 characters long',
-      'string.max': 'First name cannot exceed 50 characters',
-      'any.required': 'First name is required'
+      'string.min': 'Prenumele trebuie să aibă cel puțin 2 caractere',
+      'string.max': 'Prenumele nu poate depăși 50 de caractere',
+      'any.required': 'Prenumele este obligatoriu'
     }),
 
   last_name: Joi.string()
@@ -121,19 +118,17 @@ export const updateProfileSchema = Joi.object({
     .max(50)
     .required()
     .messages({
-      'string.min': 'Last name must be at least 2 characters long',
-      'string.max': 'Last name cannot exceed 50 characters',
-      'any.required': 'Last name is required'
+      'string.min': 'Numele trebuie să aibă cel puțin 2 caractere',
+      'string.max': 'Numele nu poate depăși 50 de caractere',
+      'any.required': 'Numele este obligatoriu'
     })
 });
 
-// Schema pentru schimbarea parolei din interiorul aplicatiei (utilizator autentificat)
-// Necesita parola curenta pentru verificare
 export const changePasswordSchema = Joi.object({
   current_password: Joi.string()
     .required()
     .messages({
-      'any.required': 'Current password is required'
+      'any.required': 'Parola curentă este obligatorie'
     }),
 
   new_password: passwordSchema,
@@ -143,7 +138,7 @@ export const changePasswordSchema = Joi.object({
     .valid(Joi.ref('new_password'))
     .required()
     .messages({
-      'any.only': 'Passwords do not match',
-      'any.required': 'Password confirmation is required'
+      'any.only': 'Parolele nu coincid',
+      'any.required': 'Confirmarea parolei este obligatorie'
     })
 });

@@ -4,7 +4,7 @@ import { useAuth } from "../../store/authContext";
 import { User, MapPin } from "lucide-react";
 import "./Navbar.css";
 
-export default function Navbar({ pageTitle = null, hideNavLinks = false, navLink = null }) {
+export default function Navbar({ pageTitle = null, hideNavLinks = false, navLink = null, hideDropdownLinks = false }) {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -118,7 +118,7 @@ export default function Navbar({ pageTitle = null, hideNavLinks = false, navLink
                                 >
                                     Profilul meu
                                 </Link>
-                                {user.role === "ADMIN" && (
+                                {user.role === "ADMIN" && !hideDropdownLinks && (
                                     <Link
                                         to="/admin"
                                         className="navbar-profile-dropdown-item"

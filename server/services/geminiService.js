@@ -50,16 +50,34 @@ ${objectives.map(o =>
     }));
 
   } catch (err) {
-    console.error("Eroarea la modelul cu JSON schema. Incercam fallback la modelul de baza...", err);
+    console.error("Eroare la gemini-2.5-flash, încerc gemini-2.0-flash...", err.message);
 
     try {
-      const fallbackModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const res = await fallbackModel.generateContent(prompt);
+      const fallback1 = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      const res = await fallback1.generateContent(prompt);
       let text = res.response.text().replace(/```json/gi, "").replace(/```/g, "").trim();
       return JSON.parse(text);
     } catch (e) {
-      console.error("Eroare si la fallback...", e);
-      return objectives.map(o => ({ id_objective: o.id_objective, estimated_cost: 0 }));
+      console.error("Eroare la gemini-2.0-flash, încerc gemini-1.5-flash...", e.message);
+
+      try {
+        const fallback2 = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+        const res = await fallback2.generateContent(prompt);
+        let text = res.response.text().replace(/```json/gi, "").replace(/```/g, "").trim();
+        return JSON.parse(text);
+      } catch (e2) {
+        console.error("Eroare la gemini-1.5-flash-latest, încerc gemini-1.5-flash-8b...", e2.message);
+
+        try {
+          const fallback3 = genAI.getGenerativeModel({ model: "gemini-1.5-flash-8b" });
+          const res = await fallback3.generateContent(prompt);
+          let text = res.response.text().replace(/```json/gi, "").replace(/```/g, "").trim();
+          return JSON.parse(text);
+        } catch (e3) {
+          console.error("Eroare și la gemini-1.5-flash-8b:", e3.message);
+          throw new Error("Toate modelele AI sunt indisponibile momentan. Încearcă din nou mai târziu.");
+        }
+      }
     }
   }
 };

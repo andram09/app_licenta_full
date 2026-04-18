@@ -186,7 +186,7 @@ export default function LandingPage() {
             </div>
 
             <footer className="landing-footer">
-                © {new Date().getFullYear()} TripPlanner · Aplicație pentru planificarea itinerariilor turistice
+                {new Date().getFullYear()} TripPlanner - Aplicație pentru planificarea itinerariilor turistice
             </footer>
         </div>
     );

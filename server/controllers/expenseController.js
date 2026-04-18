@@ -90,6 +90,7 @@ export const expenseController = {
 
             const expenses = await Expense.findAll({
                 where: { id_trip: tripId },
+                include: [{ model: ExpenseCategory, required: false }],
                 order: [['date', 'ASC']]
             });
 
@@ -318,8 +319,8 @@ export const expenseController = {
                 return res.status(400).json({ message: "No objectives found for this trip." });
             }
 
-            // trimitem la Gemini doar obiectivele care nu au deja o estimare
-            const unestimated = objectives.filter(o => o.estimated_cost === null || o.estimated_cost === undefined);
+            // trimitem la Gemini obiectivele fara estimare sau cu estimare 0 (posibil din eroare anterioara)
+            const unestimated = objectives.filter(o => o.estimated_cost === null || o.estimated_cost === undefined || o.estimated_cost === 0);
 
             if (unestimated.length === 0) {
                 const cached = await Objective.findAll({

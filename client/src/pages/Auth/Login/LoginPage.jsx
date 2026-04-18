@@ -18,19 +18,24 @@ export default function LoginPage() {
         return null;
     }
 
+    const MESAJE_RO = {
+        "Invalid email or password.": "Email sau parolă incorectă.",
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+
+        if (!email.trim()) return setError("Email-ul este obligatoriu.");
+        if (!password) return setError("Parola este obligatorie.");
+
         setLoading(true);
 
         try {
-            // login() seteaza cookie-ul si apeleaza fetchMe intern
             await login(email, password);
-            // dupa fetchMe, user e populat in context; navigam dupa rol
         } catch (err) {
-            // eroare de la backend (401 credentiale invalide, 400 validare etc.)
-            const msg =
-                err?.response?.data?.message || "Ceva nu a mers bine. Încearcă din nou.";
+            const raw = err?.response?.data?.message;
+            const msg = MESAJE_RO[raw] || raw || "Ceva nu a mers bine. Încearcă din nou.";
             setError(msg);
         } finally {
             setLoading(false);

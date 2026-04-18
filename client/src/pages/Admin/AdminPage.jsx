@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../store/authContext";
-import { useNavigate } from "react-router-dom";
 import { api } from "../../api/axios";
+import Navbar from "../../components/layout/Navbar";
 import {
     BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
     PieChart, Pie, Cell, Legend
@@ -27,8 +27,7 @@ const TOOLTIP_LABEL_STYLE = { color: "var(--color-text-primary)" };
 const TOOLTIP_ITEM_STYLE = { color: "var(--color-text-secondary)" };
 
 export default function AdminPage() {
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
+    const { user } = useAuth();
 
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -49,25 +48,9 @@ export default function AdminPage() {
         fetchStats();
     }, []);
 
-    const handleLogout = async () => {
-        await logout();
-        navigate("/", { replace: true });
-    };
-
     return (
         <main className="admin-page">
-            <header className="admin-header">
-                <h1 className="admin-header-title">Dashboard Admin</h1>
-                <div className="admin-header-user">
-                    <span className="admin-username">
-                        {user?.first_name} {user?.last_name}
-                    </span>
-                    <span className="admin-badge">ADMIN</span>
-                    <button onClick={handleLogout} className="admin-logout-btn">
-                        Deconectare
-                    </button>
-                </div>
-            </header>
+            <Navbar pageTitle="Dashboard Admin" hideDropdownLinks />
 
             <div className="admin-container">
                 {loading ? (
