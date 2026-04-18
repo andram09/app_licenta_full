@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../store/authContext";
-import Navbar from "../../components/layout/Navbar";
-import { CalendarDays, Wallet, MapPin, ChevronDown } from "lucide-react";
+import LandingNavbar from "../../components/layout/LandingNavbar";
+import { CalendarDays, Wallet, MapPin, ChevronDown, Search, LayoutGrid } from "lucide-react";
 import parisImg from "../../assets/paris.jpg"
-import barcelonaImg from "../../assets/Barcelona-Spain.webp"
+import barcelonaImg from "../../assets/barcelona.webp"
 import positanoImg from "../../assets/positano.jpg"
 import "./LandingPage.css";
 
@@ -52,7 +52,7 @@ export default function LandingPage() {
 
     return (
         <div className="landing">
-            <Navbar pageTitle="TripPlanner" />
+            <LandingNavbar />
 
             <section className="landing-hero">
                 {/* Left — text content */}
@@ -113,23 +113,40 @@ export default function LandingPage() {
             <div className="landing-how-section">
                 <div className="landing-how-inner">
                     <h2 className="landing-how-title" data-reveal>Cum funcționează</h2>
-                    <div className="landing-steps">
-                        <div className="landing-step" data-reveal data-reveal-delay="1">
-                            <div className="landing-step-number">1</div>
+                    <div className="landing-steps-connected">
+                        <div className="landing-step-node" data-reveal data-reveal-delay="1">
+                            <div className="landing-step-circle-wrap">
+                                <span className="landing-step-badge">01</span>
+                                <div className="landing-step-circle landing-step-circle--1">
+                                    <MapPin size={26} strokeWidth={1.5} />
+                                </div>
+                            </div>
                             <h3 className="landing-step-title">Creează călătoria</h3>
                             <p className="landing-step-desc">
                                 Adaugă destinația, datele și bugetul estimat pentru excursia ta.
                             </p>
                         </div>
-                        <div className="landing-step" data-reveal data-reveal-delay="2">
-                            <div className="landing-step-number">2</div>
+                        <div className="landing-step-connector" aria-hidden="true" />
+                        <div className="landing-step-node" data-reveal data-reveal-delay="2">
+                            <div className="landing-step-circle-wrap">
+                                <span className="landing-step-badge">02</span>
+                                <div className="landing-step-circle landing-step-circle--2">
+                                    <Search size={26} strokeWidth={1.5} />
+                                </div>
+                            </div>
                             <h3 className="landing-step-title">Explorează obiective</h3>
                             <p className="landing-step-desc">
                                 Caută și adaugă obiective turistice, restaurante sau activități.
                             </p>
                         </div>
-                        <div className="landing-step" data-reveal data-reveal-delay="3">
-                            <div className="landing-step-number">3</div>
+                        <div className="landing-step-connector" aria-hidden="true" />
+                        <div className="landing-step-node" data-reveal data-reveal-delay="3">
+                            <div className="landing-step-circle-wrap">
+                                <span className="landing-step-badge">03</span>
+                                <div className="landing-step-circle landing-step-circle--3">
+                                    <LayoutGrid size={26} strokeWidth={1.5} />
+                                </div>
+                            </div>
                             <h3 className="landing-step-title">Planifică pe zile</h3>
                             <p className="landing-step-desc">
                                 Organizează obiectivele pe zile cu drag & drop în planificator.

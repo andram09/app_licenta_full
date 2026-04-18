@@ -10,6 +10,7 @@ import {
     ResponsiveContainer
 } from "recharts";
 import TripSubnav from "../../../components/trip-nav/TripSubnav";
+import Navbar from "../../../components/layout/Navbar";
 import "./BudgetPage.css";
 
 // culori pentru pie chart
@@ -302,18 +303,18 @@ export default function BudgetPage() {
 
     return (
         <div className="budget-page">
-            {/* Header */}
+            <Navbar pageTitle={trip?.destination_name || "Buget"} />
             <TripSubnav
                 tripId={id}
                 destinationName={trip?.destination_name || ""}
-                showMap={true}
-                showBudget={false}
+                numberOfDays={trip?.number_of_days}
+                startDate={trip?.start_date}
             />
 
             <div className="budget-content">
 
                 {/* ── Sectiunea 1: Sumar ───────────────────────────────── */}
-                <section className="budget-section">
+                <section className="budget-section budget-section--summary">
                     <div className="budget-summary-row">
 
                         {/* Selector persoane */}
@@ -365,7 +366,7 @@ export default function BudgetPage() {
                     </div>
                 </section>
 
-                {/* ── Sectiunea 2: Obiective si costuri estimate ───────── */}
+                {/* ── Sectiunea 2: Obiective si costuri estimate (full width) ── */}
                 <section className="budget-section">
                     <div className="budget-section-header">
                         <h2 className="budget-section-title">Costuri estimate per obiectiv</h2>
@@ -428,6 +429,10 @@ export default function BudgetPage() {
                         </div>
                     )}
                 </section>
+
+                {/* ── Layout 2 coloane: cheltuieli + grafic ─────────────── */}
+                <div className="budget-main-layout">
+                <div className="budget-main-left">
 
                 {/* ── Sectiunea 3: Cheltuieli reale ───────────────────── */}
                 <section className="budget-section">
@@ -628,6 +633,9 @@ export default function BudgetPage() {
                     )}
                 </section>
 
+                </div>{/* end budget-main-left */}
+                <div className="budget-main-right">
+
                 {/* ── Sectiunea 4: Grafic si defalcare pe categorii ───── */}
                 <section className="budget-section">
                     <h2 className="budget-section-title">Defalcare pe categorii</h2>
@@ -696,6 +704,9 @@ export default function BudgetPage() {
                         </div>
                     )}
                 </section>
+
+                </div>{/* end budget-main-right */}
+                </div>{/* end budget-main-layout */}
 
             </div>
         </div>

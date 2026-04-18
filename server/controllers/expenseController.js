@@ -318,8 +318,21 @@ export const expenseController = {
                 return res.status(400).json({ message: "No objectives found for this trip." });
             }
 
-            // trimitem la Gemini pentru estimare
-            const estimates = await estimateObjectiveCosts(objectives, trip.destination_name);
+            // trimitem la Gemini doar obiectivele care nu au deja o estimare
+            const unestimated = objectives.filter(o => o.estimated_cost === null || o.estimated_cost === undefined);
+
+            if (unestimated.length === 0) {
+                const cached = await Objective.findAll({
+                    where: { id_trip: tripId },
+                    attributes: ['id_objective', 'title', 'estimated_cost']
+                });
+                return res.status(200).json({
+                    message: "AI estimation completed.",
+                    data: cached
+                });
+            }
+
+            const estimates = await estimateObjectiveCosts(unestimated, trip.destination_name);
 
             // salvam fiecare estimare in baza de date
             for (const estimate of estimates) {

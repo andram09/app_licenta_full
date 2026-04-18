@@ -153,7 +153,24 @@
     overflow-x: auto;
     padding-bottom: 1rem;
     scrollbar-width: thin;
-    scrollbar-color: var(--color-teal-bg) transparent;
+    scrollbar-color: var(--color-border) transparent;
+}
+
+.board-columns::-webkit-scrollbar {
+    height: 1px;
+}
+
+.board-columns::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.board-columns::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 2px;
+}
+
+.board-columns::-webkit-scrollbar-button {
+    display: none;
 }
 
 /* ── Column ───────────────────────────────────────────────── */
@@ -171,11 +188,10 @@
     max-height: calc(100vh - 140px);
 }
 
-/* Unassigned column — dashed + beige tint */
+/* Unassigned column — dashed + slightly darker tint */
 .board-column:first-child {
     border-style: dashed;
-    border-color: var(--color-teal-border);
-    background: var(--color-surface-soft);
+    background: var(--color-page-gradient-2);
 }
 
 .board-column--over {

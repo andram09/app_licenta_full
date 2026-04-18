@@ -66,71 +66,77 @@ export const fetchOpenTripMapByKinds = async (lat, lng, kinds, rate = 2) => {
     );
 };
 
-// Cauta locuri turistice dupa nume (autosuggest) in jurul unor coordonate.
-// Foloseste endpoint-ul OpenTripMap /places/autosuggest care accepta parametrul "name".
-// NOTA: cu format=json returneaza acelasi format flat-array ca /places/radius (nu GeoJSON).
+// Cauta locuri turistice dupa nume folosind Nominatim (OpenStreetMap).
+// Nominatim face full-text search (nu doar prefix), deci "eiffel" gaseste "Tour Eiffel".
+// OpenTripMap autosuggest facea prefix matching si nu gasea locuri al caror nume nu incepea cu query-ul.
+//
+// REVERT: daca vrei sa revii la OpenTripMap autosuggest, inlocuieste functia cu versiunea comentata de mai jos.
+// /* VERSIUNEA VECHE CU OPENTRIPMAP AUTOSUGGEST (prefix matching):
+// export const fetchOpenTripMapByName = async (name, lat, lng, radius = 5000) => {
+//   let response;
+//   try {
+//     response = await axios.get("https://api.opentripmap.com/0.1/en/places/autosuggest", {
+//       params: { name, radius, lon: lng, lat, format: "json", limit: 10, apikey: OPENTRIPMAP_API_KEY }
+//     });
+//   } catch (err) { throw err; }
+//   const raw = response.data;
+//   if (Array.isArray(raw)) {
+//     return raw.filter(p => p.name?.trim() && p.point?.lat && p.point?.lon)
+//       .map(p => ({ external_place_id: p.xid, title: p.name.trim(), kinds: p.kinds || null,
+//         coord_lat: p.point.lat, coord_lng: p.point.lon, address: null,
+//         external_provider: "OPENTRIPMAP", description: null, source_type: "API" }));
+//   }
+//   return [];
+// };
+// */
+
+const POI_CLASSES = new Set(["tourism", "amenity", "historic", "leisure", "natural", "shop", "building"]);
+
 export const fetchOpenTripMapByName = async (name, lat, lng, radius = 5000) => {
+  // Calculam un bounding box in jurul coordonatelor trip-ului pentru a biaса rezultatele
+  // ~0.45 grade ≈ 50km — suficient pentru orice obiectiv al unui oras
+  const degOffset = 0.45;
+  const viewbox = `${lng - degOffset},${lat + degOffset},${lng + degOffset},${lat - degOffset}`;
+
   let response;
   try {
-    response = await axios.get(
-      "https://api.opentripmap.com/0.1/en/places/autosuggest",
-      {
-        params: {
-          name,
-          radius,
-          lon: lng,
-          lat,
-          // fara `rate` — autosuggest nu filtreaza la fel ca /radius si rate:2 limiteaza prea mult
-          format: "json",
-          limit: 10,
-          apikey: OPENTRIPMAP_API_KEY
-        }
-      }
-    );
+    response = await axios.get("https://nominatim.openstreetmap.org/search", {
+      params: {
+        q: name,
+        format: "json",
+        limit: 10,
+        viewbox,
+        bounded: 0, // biaseaza spre viewbox dar nu restrictioneaza strict
+        "accept-language": "en",
+        addressdetails: 0,
+        namedetails: 1
+      },
+      headers: {
+        "User-Agent": "TripPlannerApp_Licenta/1.0 (moiseandra23@stud.ase.ro)"
+      },
+      timeout: 8000
+    });
   } catch (err) {
-    console.error("OpenTripMap autosuggest failed:", err.response?.status, JSON.stringify(err.response?.data));
+    console.error("Nominatim place search failed:", err.code, err.message);
     throw err;
   }
 
-  const raw = response.data;
-
-  // Gestionam doua formate posibile: flat array (format=json) sau GeoJSON FeatureCollection
-  let places = [];
-
-  if (Array.isArray(raw)) {
-    places = raw
-      .filter(p => p.name && p.name.trim().length > 0)
-      .filter(p => p.point && p.point.lat && p.point.lon)
-      .map(p => ({
-          external_place_id: p.xid,
-          title: p.name.trim(),
-          kinds: p.kinds || null,
-          coord_lat: p.point.lat,
-          coord_lng: p.point.lon,
-          address: null,
-          external_provider: "OPENTRIPMAP",
-          description: null,
-          source_type: "API"
-        })
-      );
-  } else if (raw?.features && Array.isArray(raw.features)) {
-    places = raw.features
-      .filter(f => f.properties?.name && f.properties.name.trim().length > 0)
-      .filter(f => f.geometry?.coordinates?.length === 2)
-      .map(f => ({
-        external_place_id: f.properties.xid,
-        title: f.properties.name.trim(),
-        kinds: f.properties.kinds || null,
-        coord_lat: f.geometry.coordinates[1], // GeoJSON: [lng, lat]
-        coord_lng: f.geometry.coordinates[0],
-        address: null,
-        external_provider: "OPENTRIPMAP",
-        description: null,
-        source_type: "API"
-      }));
-  }
-
-  return places;
+  return response.data
+    .filter(p => p.lat && p.lon)
+    .filter(p => POI_CLASSES.has(p.class))
+    .map(p => ({
+      external_place_id: `nominatim_${p.osm_type}_${p.osm_id}`,
+      title: (p.namedetails?.name || p.display_name.split(",")[0]).trim(),
+      kinds: p.type || null,
+      coord_lat: parseFloat(p.lat),
+      coord_lng: parseFloat(p.lon),
+      address: null,
+      // external_provider ramane OPENTRIPMAP pentru compatibilitate cu ENUM-ul din DB
+      // (alter: false in server.js, deci schema nu se modifica automat)
+      external_provider: "OPENTRIPMAP",
+      description: null,
+      source_type: "API"
+    }));
 };
 
 // cauta orase prin Nominatim (OpenStreetMap) cu raspuns in engleza

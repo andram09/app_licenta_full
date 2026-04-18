@@ -124,7 +124,7 @@
     background: var(--gradient-accent);
     border-color: transparent;
     color: var(--color-white);
-    font-weight: 600;
+    /* font-weight: 600; */
     box-shadow: 0 3px 10px var(--color-accent-border);
 }
 

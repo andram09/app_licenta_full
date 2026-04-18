@@ -7,8 +7,8 @@ export default function ProtectedRoute({ requiredRole }) {
 
   if (loading) return <div>Se încarcă...</div>;
 
-  // neautentificat => redirect la login
-  if (!user) return <Navigate to="/login" replace />;
+  // neautentificat => redirect la landing
+  if (!user) return <Navigate to="/" replace />;
 
   // autentificat dar cu rol gresit => redirect la pagina proprie
   if (requiredRole && user.role !== requiredRole) {

@@ -103,12 +103,33 @@
 
 /* ── Content wrapper ──────────────────────────────────────── */
 .budget-content {
-    max-width: 960px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 2rem 2rem 0;
     display: flex;
     flex-direction: column;
     gap: 2rem;
+}
+
+/* ── 2-column landscape layout ────────────────────────────── */
+.budget-main-layout {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.budget-main-left,
+.budget-main-right {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+@media (max-width: 900px) {
+    .budget-main-layout {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ── Sectiuni ─────────────────────────────────────────────── */
@@ -278,6 +299,23 @@
 .budget-objectives-list {
     display: flex;
     flex-direction: column;
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-mid) transparent;
+}
+
+.budget-objectives-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.budget-objectives-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.budget-objectives-list::-webkit-scrollbar-thumb {
+    background: var(--color-mid);
+    border-radius: 4px;
 }
 
 .budget-objective-row {
@@ -450,6 +488,23 @@
 .budget-expenses-list {
     display: flex;
     flex-direction: column;
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-mid) transparent;
+}
+
+.budget-expenses-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.budget-expenses-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.budget-expenses-list::-webkit-scrollbar-thumb {
+    background: var(--color-mid);
+    border-radius: 4px;
 }
 
 .budget-expense-row {
@@ -615,16 +670,10 @@
 
 /* ── Sectiunea grafic ─────────────────────────────────────── */
 .budget-chart-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 1.5rem;
-    align-items: start;
-}
-
-@media (max-width: 680px) {
-    .budget-chart-row {
-        grid-template-columns: 1fr;
-    }
+    align-items: stretch;
 }
 
 /* ── Lista categorii ──────────────────────────────────────── */

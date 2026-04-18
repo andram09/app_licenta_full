@@ -168,7 +168,7 @@ export default function TripsPage() {
 
     return (
         <div className="trips-page">
-            <Navbar pageTitle="Călătoriile mele" hideNavLinks hideBrand/>
+            <Navbar pageTitle="Călătoriile mele" />
 
             <div className="trips-actions-bar">
                 <button

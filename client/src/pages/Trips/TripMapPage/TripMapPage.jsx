@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../../api/axios";
 import TripMap from "./TripMap";
 import TripSubnav from "../../../components/trip-nav/TripSubnav";
+import Navbar from "../../../components/layout/Navbar";
 import "./TripMapPage.css";
 
 export default function TripMapPage() {
@@ -99,12 +100,12 @@ export default function TripMapPage() {
 
     return (
         <div className="map-page">
-            {/* Header */}
+            <Navbar pageTitle={trip?.destination_name || "Hartă"} />
             <TripSubnav
                 tripId={id}
-                destinationName={trip?.destination_name}
-                activeTab="map"
-                showMap={false}
+                destinationName={trip?.destination_name || ""}
+                numberOfDays={trip?.number_of_days}
+                startDate={trip?.start_date}
             />
             {/* Tab-uri filtrare zi */}
             <nav className="map-day-tabs">

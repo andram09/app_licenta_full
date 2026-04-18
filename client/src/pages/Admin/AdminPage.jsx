@@ -51,7 +51,7 @@ export default function AdminPage() {
 
     const handleLogout = async () => {
         await logout();
-        navigate("/login", { replace: true });
+        navigate("/", { replace: true });
     };
 
     return (

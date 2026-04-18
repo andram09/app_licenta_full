@@ -12,6 +12,7 @@ import EditObjectiveModal from "./EditObjectiveModal";
 import { ArrowLeft } from "lucide-react";
 import { useRouteOptimizer } from "../../../hooks/useRouteOptimizer";
 import TripSubnav from "../../../components/trip-nav/TripSubnav";
+import Navbar from "../../../components/layout/Navbar";
 import HotelModal from "./HotelModal";
 import "./BoardPage.css";
 
@@ -319,11 +320,12 @@ function MobileBoard({
     return (
         <div className="board-page">
             {/* Header mobile */}
+            <Navbar pageTitle={trip?.destination_name || "Planificare"} />
             <TripSubnav
                 tripId={id}
                 destinationName={trip?.destination_name || ""}
-                showMap={true}
-                showBudget={false}
+                numberOfDays={trip?.number_of_days}
+                startDate={trip?.start_date}
             />
 
             {/* Tab-uri zile cu scroll orizontal */}
@@ -802,11 +804,12 @@ export default function BoardPage() {
     return (
         <>
             <div className="board-page">
+                <Navbar pageTitle={trip?.destination_name || "Planificare"} />
                 <TripSubnav
                     tripId={id}
                     destinationName={trip?.destination_name || ""}
-                    showMap={true}
-                    showBudget={false}
+                    numberOfDays={trip?.number_of_days}
+                    startDate={trip?.start_date}
                 />
                 <div className="board-page-content">
                     <DndContext

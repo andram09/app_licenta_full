@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { api } from "../../../api/axios";
 import ManualObjectiveModal from "./ManualObjectiveModal";
 import TripSubnav from "../../../components/trip-nav/TripSubnav";
+import Navbar from "../../../components/layout/Navbar";
 import "./ExplorePage.css";
 
 const CATEGORIES = [
@@ -195,11 +196,12 @@ export default function ExplorePage() {
     return (
         <>
             <div className="explore-page">
+                <Navbar pageTitle={trip?.destination_name || "Explorare"} />
                 <TripSubnav
                     tripId={id}
                     destinationName={trip?.destination_name || ""}
-                    showMap={true}
-                    showBudget={false}
+                    numberOfDays={trip?.number_of_days}
+                    startDate={trip?.start_date}
                 />
 
                 <div className="explore-page-container">
