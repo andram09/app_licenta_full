@@ -1,4 +1,4 @@
-/* ── Page wrapper ─────────────────────────────────────────── */
+/* Page wrapper */
 .map-page {
     display: flex;
     flex-direction: column;
@@ -11,7 +11,7 @@
         var(--color-beige);
 }
 
-/* ── Header ───────────────────────────────────────────────── */
+/* Header */
 .map-header {
     display: flex;
     align-items: center;
@@ -31,7 +31,7 @@
     gap: 8px;
 }
 
-/* ── Nav buttons (Planificare / Explorare) ────────────────── */
+/* Nav buttons (Planificare / Explorare) */
 .map-nav-btn {
     padding: 8px 18px;
     border-radius: var(--radius-pill);
@@ -68,7 +68,7 @@
     transform: translateY(-1px);
 }
 
-/* ── Page title ───────────────────────────────────────────── */
+/* Page title */
 .map-title {
     font-family: var(--font-display);
     font-size: 20px;
@@ -85,7 +85,7 @@
     color: var(--color-teal);
 }
 
-/* ── Day filter tabs ──────────────────────────────────────── */
+/* Day filter tabs */
 .map-day-tabs {
     display: flex;
     gap: 7px;
@@ -128,14 +128,14 @@
     box-shadow: 0 3px 10px var(--color-accent-border);
 }
 
-/* ── Main layout ──────────────────────────────────────────── */
+/* Main layout */
 .map-layout {
     display: flex;
     flex: 1;
     overflow: hidden;
 }
 
-/* ── Sidebar ──────────────────────────────────────────────── */
+/* Sidebar */
 .map-sidebar {
     flex: 0 0 40%;
     min-width: 200px;
@@ -159,7 +159,7 @@
     padding: 1rem 0;
 }
 
-/* ── Objective list items ─────────────────────────────────── */
+/* Objective list items */
 .map-obj-item {
     width: 100%;
     text-align: left;
@@ -214,7 +214,7 @@
     font-style: italic;
 }
 
-/* ── Map area ─────────────────────────────────────────────── */
+/* Map area */
 .map-main {
     flex: 1;
     position: relative;
@@ -231,7 +231,7 @@
     z-index: 0;
 }
 
-/* ── State messages ───────────────────────────────────────── */
+/* State messages */
 .map-state-msg {
     text-align: center;
     padding: 3rem;
@@ -244,7 +244,7 @@
     color: var(--color-danger);
 }
 
-/* ───────────────── MOBILE LAYOUT ───────────────── */
+/* MOBILE LAYOUT */
 @media (max-width: 768px) {
 .map-header {
     flex-wrap: wrap;

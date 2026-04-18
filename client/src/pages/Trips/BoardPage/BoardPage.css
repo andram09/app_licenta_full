@@ -1,4 +1,4 @@
-/* ── Page wrapper ─────────────────────────────────────────── */
+/* Page wrapper */
 .board-page {
     min-height: 100vh;
     font-family: var(--font-body);
@@ -27,7 +27,7 @@
     padding: 0 1rem 1.5rem;
 }
 
-/* ── Header — sticky glass bar ────────────────────────────── */
+/* Header — sticky glass bar */
 /* .board-header {
     display: flex;
     align-items: center;
@@ -53,7 +53,7 @@
     flex-wrap: wrap;
 } */
 
-/* ── Back button ──────────────────────────────────────────── */
+/* Back button */
 /* .board-back-btn {
     background: none;
     border: none;
@@ -73,7 +73,7 @@
     color: var(--color-teal);
 } */
 
-/* ── Board title ──────────────────────────────────────────── */
+/* Board title */
 .board-title {
     font-family: var(--font-display);
     font-size: 20px;
@@ -87,7 +87,7 @@
     color: var(--color-teal);
 }
 
-/* ── Header right actions ─────────────────────────────────── */
+/* Header right actions */
 /* .board-header-right {
     display: flex;
     align-items: center;
@@ -132,7 +132,7 @@
     color: #FFFFFF;
 } */
 
-/* ── State messages ───────────────────────────────────────── */
+/* State messages */
 .board-state-msg {
     text-align: center;
     padding: 4rem 1rem;
@@ -145,7 +145,7 @@
     color: var(--color-danger);
 }
 
-/* ── Kanban columns container ─────────────────────────────── */
+/* Kanban columns container */
 .board-columns {
     display: flex;
     gap: 1rem;
@@ -173,7 +173,7 @@
     display: none;
 }
 
-/* ── Column ───────────────────────────────────────────────── */
+/* Column */
 .board-column {
     flex: 1 1 220px;
     min-width: 220px;
@@ -200,7 +200,7 @@
     box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
-/* ── Column header ────────────────────────────────────────── */
+/* Column header */
 .board-column-header {
     display: flex;
     justify-content: space-between;
@@ -236,7 +236,7 @@
     padding: 2px 9px;
 }
 
-/* ── Column body ──────────────────────────────────────────── */
+/* Column body */
 .board-column-body {
     padding: 8px;
     display: flex;
@@ -256,7 +256,7 @@
     pointer-events: none;
 }
 
-/* ── Drag card ────────────────────────────────────────────── */
+/* Drag card */
 .board-card {
     background: var(--color-surface-soft);
     border: 1px solid var(--color-accent-border);
@@ -346,7 +346,7 @@
     outline-offset: 2px;
 }
 
-/* ── Card action row ──────────────────────────────────────── */
+/* Card action row */
 .board-card-actions {
     display: flex;
     align-items: center;
@@ -354,7 +354,7 @@
     margin-top: 4px;
 }
 
-/* ── Card delete button ────────────────────────────────────── */
+/* Card delete button */
 .board-card-delete-btn {
     position: absolute;
     top: 6px;
@@ -398,7 +398,7 @@
    Nu suprascriu nicio clasa desktop de mai sus.
    ════════════════════════════════════════════════════════════ */
 
-/* ── Header mobile ────────────────────────────────────────── */
+/* Header mobile */
 .board-header--mobile {
     height: auto;
     padding:1rem 2rem;
@@ -430,7 +430,7 @@
     white-space: nowrap;
 }
 
-/* ── Tab-uri zile ─────────────────────────────────────────── */
+/* Tab-uri zile */
 .board-mobile-tabs {
     display: flex;
     gap: 6px;
@@ -488,7 +488,7 @@
     background: var(--color-glass);
 }
 
-/* ── Lista carduri mobile ─────────────────────────────────── */
+/* Lista carduri mobile */
 .board-mobile-list {
     display: flex;
     flex-direction: column;
@@ -500,7 +500,7 @@
     padding: 3rem 0;
 }
 
-/* ── Card mobile — layout diferit fata de desktop ─────────── */
+/* Card mobile — layout diferit fata de desktop */
 /* Pe mobile cardul are handle pe stanga + continut in dreapta */
 .board-card--mobile {
     /* dezactivam cursor grab de pe tot cardul —
@@ -519,7 +519,7 @@
     border-color: var(--color-teal-lt);
 }
 
-/* ── Handle drag ↕ ────────────────────────────────────────── */
+/* Handle drag ↕ */
 .board-card-handle {
     /* zona de prindere — stanga cardului */
     flex-shrink: 0;
@@ -545,7 +545,7 @@
     color: var(--color-teal);
 }
 
-/* ── Continut card mobile ─────────────────────────────────── */
+/* Continut card mobile */
 .board-card-content {
     flex: 1;
     min-width: 0;
@@ -564,14 +564,14 @@
     height: 28px;
 }
 
-/* ── Actiuni card mobile ──────────────────────────────────── */
+/* Actiuni card mobile */
 .board-card-actions--mobile {
     gap: 8px;
     flex-wrap: wrap;
     margin-top: 6px;
 }
 
-/* ── Buton Muta in zi ─────────────────────────────────────── */
+/* Buton Muta in zi */
 .board-card-move-btn {
     font-family: var(--font-body);
     font-size: 11px;
@@ -593,7 +593,7 @@
     color: var(--color-navy);
 }
 
-/* ── Dropdown destinatie ──────────────────────────────────── */
+/* Dropdown destinatie */
 .board-move-wrapper {
     position: relative;
 }
@@ -642,7 +642,7 @@
     outline-offset: -3px;
 }
 
-/* ── Optimize button ──────────────────────────────────────── */
+/* Optimize button */
 .board-column-optimize {
     display: flex;
     align-items: center;

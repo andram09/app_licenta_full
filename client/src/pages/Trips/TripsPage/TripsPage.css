@@ -1,4 +1,4 @@
-/* ── Page wrapper ─────────────────────────────────────────── */
+/* Page wrapper */
 .trips-page {
     min-height: 100vh;
     font-family: var(--font-body);
@@ -24,7 +24,7 @@
     z-index: -1;
 }
 
-/* ── Actions bar ──────────────────────────────────────────── */
+/* Actions bar */
 .trips-actions-bar {
     display: flex;
     justify-content: flex-end;
@@ -33,7 +33,7 @@
     margin-bottom: 1rem;
 }
 
-/* ── Create button ────────────────────────────────────────── */
+/* Create button */
 .trips-create-btn {
     padding: 11px 26px;
     min-height: 44px;
@@ -56,14 +56,14 @@
     transform: translateY(-1px);
 }
 
-/* ── Content area ─────────────────────────────────────────── */
+/* Content area */
 .trips-content {
     width: 100%;
     padding: 0 2.5rem 2rem;
     box-sizing: border-box;
 }
 
-/* ── State messages ───────────────────────────────────────── */
+/* State messages */
 .trips-state-msg {
     text-align: center;
     color: var(--color-gray);
@@ -82,7 +82,7 @@
     padding: 0.75rem 1rem;
 }
 
-/* ── Sections ─────────────────────────────────────────────── */
+/* Sections */
 .trips-section {
     margin-bottom: 2.5rem;
 }
@@ -99,14 +99,14 @@
     border-bottom: 1px solid var(--color-border);
 }
 
-/* ── Grid ─────────────────────────────────────────────────── */
+/* Grid */
 .trips-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1.25rem;
 }
 
-/* ── Trip card ────────────────────────────────────────────── */
+/* Trip card */
 .trip-card {
     background: var(--color-glass-surface);
     backdrop-filter: blur(14px);
@@ -133,7 +133,7 @@
     box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
-/* ── Card destination row (title + edit icon) ─────────────── */
+/* Card destination row (title + edit icon) */
 .trip-card-destination-row {
     display: flex;
     align-items: flex-start;
@@ -153,7 +153,7 @@
     padding-right: 0;
 }
 
-/* ── Edit icon button ─────────────────────────────────────── */
+/* Edit icon button */
 .trip-card-edit-btn {
     flex-shrink: 0;
     width: 24px;
@@ -180,7 +180,7 @@
     color: var(--color-navy);
 }
 
-/* ── Card detail chips ────────────────────────────────────── */
+/* Card detail chips */
 .trip-card-details {
     display: flex;
     flex-direction: column;
@@ -201,7 +201,7 @@
     color: var(--color-gray);
 }
 
-/* ── Map button ───────────────────────────────────────────── */
+/* Map button */
 .trip-card-map-btn {
     margin-top: 12px;
     padding: 7px 16px;
@@ -225,7 +225,7 @@
 }
 
 
-/* ── Card delete button ────────────────────────────────────── */
+/* Card delete button */
 .trip-card-delete-btn {
     position: absolute;
     top: 10px;
@@ -257,7 +257,7 @@
     color: var(--color-danger);
 }
 
-/* ── Mobile ───────────────────────────────────────────────── */
+/* Mobile */
 @media (max-width: 768px) {
     .trips-page {
         padding: 0 0 2rem 0;

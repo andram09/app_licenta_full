@@ -1,4 +1,4 @@
-/* ── Page wrapper ─────────────────────────────────────────── */
+/* Page wrapper */
 .admin-page {
     min-height: 100vh;
     font-family: var(--font-body);
@@ -24,7 +24,7 @@
     z-index: -1;
 }
 
-/* ── Header — sticky glass bar ────────────────────────────── */
+/* Header — sticky glass bar */
 .admin-header {
     display: flex;
     justify-content: space-between;
@@ -40,7 +40,7 @@
     border-bottom: 1px solid var(--color-border-strong);
 }
 
-/* ── Header title ─────────────────────────────────────────── */
+/* Header title */
 .admin-header-title {
     font-family: var(--font-display);
     font-size: 22px;
@@ -50,7 +50,7 @@
     margin: 0;
 }
 
-/* ── Header right section ─────────────────────────────────── */
+/* Header right section */
 .admin-header-user {
     display: flex;
     align-items: center;
@@ -94,14 +94,14 @@
     color: #FFFFFF;
 }
 
-/* ── Container principal ──────────────────────────────────── */
+/* Container principal */
 .admin-container {
     max-width: 1100px;
     margin: 0 auto;
     padding: 2rem;
 }
 
-/* ── Stare mesaje (Loading/Eroare) ────────────────────────── */
+/* Stare mesaje (Loading/Eroare) */
 .admin-message {
     font-size: 1rem;
     color: var(--color-gray);
@@ -113,7 +113,7 @@
     color: var(--color-danger);
 }
 
-/* ── Grid 4 carduri (Statistici) ──────────────────────────── */
+/* Grid 4 carduri (Statistici) */
 .admin-stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -157,7 +157,7 @@
     }
 }
 
-/* ── Grafice ──────────────────────────────────────────────── */
+/* Grafice */
 .admin-charts-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;

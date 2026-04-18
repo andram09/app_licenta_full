@@ -1,4 +1,4 @@
-/* ── Page wrapper ─────────────────────────────────────────── */
+/* Page wrapper */
 .explore-page {
     min-height: 100vh;
     font-family: var(--font-body);
@@ -27,7 +27,7 @@
     padding: 0 1.5rem 3rem;
 }
 
-/* ── Page title (kept for reference) ─────────────────────── */
+/* Page title (kept for reference) */
 .explore-title {
     font-family: var(--font-display);
     font-size: 22px;
@@ -41,7 +41,7 @@
     color: var(--color-saffron);
 }
 
-/* ── Header action buttons ────────────────────────────────── */
+/* Header action buttons */
 .explore-header-actions {
     display: flex;
     align-items: center;
@@ -92,7 +92,7 @@
     box-shadow: 0 6px 22px rgba(42, 127, 168, 0.28);
 }
 
-/* ── No coords warning ────────────────────────────────────── */
+/* No coords warning */
 .explore-no-coords {
     background: var(--color-saffron-bg);
     border: 1px solid var(--color-accent-glow);
@@ -103,7 +103,7 @@
     margin-bottom: 1.5rem;
 }
 
-/* ── Category filters ─────────────────────────────────────── */
+/* Category filters */
 .explore-categories {
     display: flex;
     flex-wrap: nowrap;
@@ -200,7 +200,7 @@
     box-shadow: 0 4px 14px var(--color-accent-glow);
 }
 
-/* ── State messages ───────────────────────────────────────── */
+/* State messages */
 .explore-state-msg {
     text-align: center;
     color: var(--color-gray);
@@ -252,7 +252,7 @@
     background: var(--color-danger-bg);
 }
 
-/* ── Cards grid ───────────────────────────────────────────── */
+/* Cards grid */
 .explore-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -283,7 +283,7 @@
     }
 }
 
-/* ── Explore card ─────────────────────────────────────────── */
+/* Explore card */
 .explore-card {
     background: var(--color-glass-surface);
     border-radius: var(--radius-xl);
@@ -373,7 +373,7 @@
     text-overflow: ellipsis;
 }
 
-/* ── Add button ───────────────────────────────────────────── */
+/* Add button */
 .explore-card-btn {
     width: 5rem;
     padding: 8px 2px;
@@ -411,7 +411,7 @@
     transform: none;
 }
 
-/* ── Mobile ───────────────────────────────────────────────── */
+/* Mobile */
 @media (max-width: 768px) {
     .explore-page {
         overflow-x: hidden;

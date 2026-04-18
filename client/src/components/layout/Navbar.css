@@ -1,4 +1,4 @@
-/* ── Navbar wrapper ───────────────────────────────────────── */
+/* Navbar wrapper */
 .navbar {
     display: flex;
     align-items: center;
@@ -15,14 +15,14 @@
     z-index: 200;
 }
 
-/* ── Brand group (left) ───────────────────────────────────── */
+/* Brand group (left) */
 .navbar-brand-group {
     display: flex;
     align-items: center;
     flex-shrink: 0;
 }
 
-/* ── Brand icon ───────────────────────────────────────────── */
+/* Brand icon */
 .navbar-icon-wrap {
     display: flex;
     align-items: center;
@@ -41,7 +41,7 @@
     opacity: 0.88;
 }
 
-/* ── Center title — absolute so it's centered on the full navbar width ── */
+/* Center title — absolute so it's centered on the full navbar width */
 .navbar-center {
     position: absolute;
     left: 0;
@@ -63,7 +63,7 @@
     text-overflow: ellipsis;
 }
 
-/* ── Actions (right) ──────────────────────────────────────── */
+/* Actions (right) */
 .navbar-actions {
     display: flex;
     align-items: center;
@@ -73,7 +73,7 @@
     z-index: 1;
 }
 
-/* ── Create trip button ───────────────────────────────────── */
+/* Create trip button */
 .navbar-create-btn {
     display: inline-flex;
     align-items: center;
@@ -98,7 +98,7 @@
     color: #fff;
 }
 
-/* ── Nav links (unauthenticated) ──────────────────────────── */
+/* Nav links (unauthenticated) */
 .navbar-link {
     padding: 6px 14px;
     border-radius: var(--radius-pill);
@@ -114,7 +114,7 @@
     color: var(--color-blue);
 }
 
-/* ── Avatar ───────────────────────────────────────────────── */
+/* Avatar */
 .navbar-profile-wrapper {
     position: relative;
 }
@@ -146,7 +146,7 @@
     outline-offset: 2px;
 }
 
-/* ── Profile dropdown ─────────────────────────────────────── */
+/* Profile dropdown */
 .navbar-profile-dropdown {
     position: absolute;
     top: calc(100% + 10px);
@@ -221,7 +221,7 @@
     background: var(--color-danger-bg);
 }
 
-/* ── Burger button — mobile only ──────────────────────────── */
+/* Burger button — mobile only */
 .navbar-burger {
     display: none;
     flex-direction: column;
@@ -271,7 +271,7 @@
     transform: translateY(-7px) rotate(-45deg);
 }
 
-/* ── Mobile dropdown menu ─────────────────────────────────── */
+/* Mobile dropdown menu */
 .navbar-mobile-menu {
     display: none;
     position: absolute;
@@ -340,7 +340,7 @@
     color: var(--color-danger);
 }
 
-/* ── Mobile breakpoint ────────────────────────────────────── */
+/* Mobile breakpoint */
 @media (max-width: 768px) {
     .navbar {
         padding: 0 1rem;

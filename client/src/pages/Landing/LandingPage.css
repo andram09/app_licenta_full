@@ -1,6 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   LANDING — wrapper
-═══════════════════════════════════════════════════════════ */
+/* LANDING — wrapper */
 .landing {
     background-color: var(--color-beige);
     font-family: var(--font-body);
@@ -12,9 +10,7 @@
     position: relative;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   HERO — split layout: text left · floating cards right
-═══════════════════════════════════════════════════════════ */
+/* HERO — split layout: text left · floating cards right */
 .landing-hero {
     position: relative;
     flex: 1;
@@ -29,7 +25,7 @@
     min-height: 100vh;
 }
 
-/* ── World map asset background (right-biased) ───────────── */
+/* World map asset background (right-biased) */
 .landing-hero::before {
     content: '';
     position: absolute;
@@ -43,7 +39,7 @@
     z-index: 0;
 }
 
-/* ── Left column — text content ──────────────────────────── */
+/* Left column — text content */
 .landing-hero-content {
     position: relative;
     z-index: 1;
@@ -86,7 +82,7 @@
     animation: lp-fade-up 0.65s 0.16s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* ── CTA row ─────────────────────────────────────────────── */
+/* CTA row */
 .landing-hero-actions {
     display: flex;
     gap: 1rem;
@@ -94,7 +90,7 @@
     animation: lp-fade-up 0.65s 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* ── Primary CTA — amber/golden ──────────────────────────── */
+/* Primary CTA — amber/golden */
 .landing-cta-primary {
     padding: 0.9375rem 2.25rem;
     min-height: 52px;
@@ -126,7 +122,7 @@
 .landing-cta-primary:active  { transform: translateY(0); }
 .landing-cta-primary:focus-visible { outline: 3px solid var(--color-sky); outline-offset: 3px; }
 
-/* ── Secondary CTA — outlined teal (works on light bg) ──── */
+/* Secondary CTA — outlined teal (works on light bg) */
 .landing-cta-secondary {
     padding: 0.875rem 2rem;
     min-height: 52px;
@@ -156,7 +152,7 @@
 .landing-cta-secondary:active { transform: translateY(0); }
 .landing-cta-secondary:focus-visible { outline: 3px solid var(--color-sky); outline-offset: 3px; }
 
-/* ── Right column — floating destination cards ───────────── */
+/* Right column — floating destination cards */
 .landing-hero-cards {
     position: relative;
     z-index: 1;
@@ -216,7 +212,7 @@
         lp-float   5.7s 2.1s  ease-in-out infinite;
 }
 
-/* ── Scroll hint — bouncing chevron ─────────────────────── */
+/* Scroll hint — bouncing chevron */
 .landing-scroll-hint {
     position: absolute;
     bottom: 2rem;
@@ -230,9 +226,7 @@
     z-index: 2;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   HOW IT WORKS
-═══════════════════════════════════════════════════════════ */
+/* HOW IT WORKS */
 .landing-how-section {
     position: relative;
     padding: 7rem 2rem;
@@ -280,8 +274,7 @@
     color: var(--color-navy);
 }
 
-
-/* ── Connected steps ─────────────────────────────────────── */
+/* Connected steps */
 .landing-steps-connected {
     display: flex;
     align-items: flex-start;
@@ -372,9 +365,7 @@
     line-height: 1.72;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   FEATURES
-═══════════════════════════════════════════════════════════ */
+/* FEATURES */
 .landing-features {
     position: relative;
     background: linear-gradient(
@@ -417,8 +408,7 @@
     color: var(--color-navy);
 }
 
-
-/* ── Feature card grid ───────────────────────────────────── */
+/* Feature card grid */
 .landing-features-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -514,7 +504,7 @@
     box-shadow: 0 4px 16px var(--color-saffron-lt-glow);
 }
 
-/* ── Feature icon ────────────────────────────────────────── */
+/* Feature icon */
 .landing-feature-icon {
     display: inline-flex;
     align-items: center;
@@ -550,16 +540,8 @@
     line-height: 1.72;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   FOOTER
-═══════════════════════════════════════════════════════════ */
+/* FOOTER */
 .landing-footer {
-    background: linear-gradient(
-        160deg,
-        #112E41 0%,
-        #0C2436 45%,
-        #0F2A3A 100%
-    );
     padding: 1.5rem 2rem;
     text-align: center;
     font-family: var(--font-body);
@@ -571,9 +553,7 @@
     position: relative;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   SCROLL REVEAL
-═══════════════════════════════════════════════════════════ */
+/* SCROLL REVEAL */
 [data-reveal] {
     opacity: 0;
     transform: translateY(2.25rem);
@@ -591,9 +571,7 @@
     transform: translateY(0);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   KEYFRAMES
-═══════════════════════════════════════════════════════════ */
+/* KEYFRAMES */
 @keyframes lp-fade-up {
     from { opacity: 0; transform: translateY(1.5rem); }
     to   { opacity: 1; transform: translateY(0); }
@@ -611,9 +589,7 @@
     50%       { transform: translateX(-50%) translateY(8px); opacity: 0.90; }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   TABLET  ≤ 900px
-═══════════════════════════════════════════════════════════ */
+/* TABLET  ≤ 900px */
 @media (max-width: 900px) {
     .landing-hero {
         grid-template-columns: 1fr;
@@ -641,9 +617,7 @@
     }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   MOBILE  ≤ 640px
-═══════════════════════════════════════════════════════════ */
+/* MOBILE  ≤ 640px */
 @media (max-width: 640px) {
     .landing-hero {
         padding: 4rem 1.5rem 3.5rem;

@@ -1,4 +1,4 @@
-/* ── Layout pagina ────────────────────────────────────────── */
+/* Layout pagina */
 .profile-page {
     min-height: 100vh;
     background:
@@ -39,7 +39,7 @@
     margin: 0;
 }
 
-/* ── Card sectiune ────────────────────────────────────────── */
+/* Card sectiune */
 .profile-card {
     background: var(--color-glass-surface);
     backdrop-filter: blur(14px);
@@ -65,7 +65,7 @@
     margin: 0 0 28px;
 }
 
-/* ── Formular ─────────────────────────────────────────────── */
+/* Formular */
 .profile-form {
     display: flex;
     flex-direction: column;
@@ -118,7 +118,7 @@
     font-weight: 400;
 }
 
-/* ── Feedback mesaje ──────────────────────────────────────── */
+/* Feedback mesaje */
 .profile-feedback {
     font-family: var(--font-body);
     font-size: 14px;
@@ -140,7 +140,7 @@
     border: 1px solid var(--color-danger-border);
 }
 
-/* ── Buton submit ─────────────────────────────────────────── */
+/* Buton submit */
 .profile-btn {
     align-self: flex-start;
     padding: 10px 24px;
@@ -167,7 +167,7 @@
     cursor: not-allowed;
 }
 
-/* ── Responsive ───────────────────────────────────────────── */
+/* Responsive */
 @media (max-width: 520px) {
     .profile-form-row {
         grid-template-columns: 1fr;

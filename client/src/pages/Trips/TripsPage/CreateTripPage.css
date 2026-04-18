@@ -1,4 +1,4 @@
-/* ── Page wrapper ─────────────────────────────────────────── */
+/* Page wrapper */
 .create-trip-page {
     min-height: 100vh;
     display: flex;
@@ -12,7 +12,7 @@
     font-family: var(--font-body);
 }
 
-/* ── Card ─────────────────────────────────────────────────── */
+/* Card */
 .create-trip-card {
     background: var(--color-surface);
     border-radius: var(--radius-xl);
@@ -23,7 +23,7 @@
     max-width: 620px;
 }
 
-/* ── Card header ──────────────────────────────────────────── */
+/* Card header */
 .create-trip-header {
     margin-bottom: 2rem;
 }
@@ -67,7 +67,7 @@
     line-height: 1.5;
 }
 
-/* ── Form ─────────────────────────────────────────────────── */
+/* Form */
 .create-trip-form {
     display: flex;
     flex-wrap: wrap;
@@ -92,7 +92,7 @@
     min-width: 140px;
 }
 
-/* ── Labels ───────────────────────────────────────────────── */
+/* Labels */
 .create-trip-label {
     font-family: var(--font-body);
     font-size: 11px;
@@ -117,7 +117,7 @@
     letter-spacing: 0;
 }
 
-/* ── Inputs ───────────────────────────────────────────────── */
+/* Inputs */
 .create-trip-input {
     padding: 0.65rem 0.9rem;
     border-radius: 10px;
@@ -147,7 +147,7 @@
     cursor: not-allowed;
 }
 
-/* ── Submit button ────────────────────────────────────────── */
+/* Submit button */
 .create-trip-submit-btn {
     padding: 13px 28px;
     border-radius: var(--radius-pill);
@@ -181,14 +181,14 @@
     cursor: not-allowed;
 }
 
-/* ── Error ────────────────────────────────────────────────── */
+/* Error */
 .create-trip-error {
     margin-top: 1rem;
     font-size: 12px;
     color: var(--color-danger);
 }
 
-/* ── Autocomplete ─────────────────────────────────────────── */
+/* Autocomplete */
 .autocomplete-wrapper {
     position: relative;
     width: 100%;

@@ -1,6 +1,6 @@
 .trip-subnav {
     padding: 12px 24px 0;
-    /* position: sticky; */
+    position: sticky;
     top: 70px;
     z-index: 100;
     display: flex;
@@ -13,7 +13,7 @@
     margin-bottom: 2rem;
 }
 
-/* ── Row 1: breadcrumb + meta ─────────────────────────────── */
+/* Row 1: breadcrumb + meta */
 .trip-subnav-top {
     display: flex;
     align-items: center;
@@ -54,7 +54,7 @@
     text-overflow: ellipsis;
 }
 
-/* ── Trip meta chips ──────────────────────────────────────── */
+/* Trip meta chips */
 .trip-subnav-meta {
     display: flex;
     align-items: center;
@@ -71,7 +71,7 @@
     color: var(--color-mid);
 }
 
-/* ── Row 2: tabs — segmented pill ─────────────────────────── */
+/* Row 2: tabs — segmented pill */
 .trip-subnav-tabs {
     display: flex;
     justify-content: center;
@@ -124,7 +124,7 @@
     color: #fff;
 }
 
-/* ── Mobile ───────────────────────────────────────────────── */
+/* Mobile */
 @media (max-width: 768px) {
     .trip-subnav {
         padding: 10px 16px 0;

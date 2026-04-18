@@ -1,4 +1,4 @@
-/* ── Page wrapper ─────────────────────────────────────────── */
+/* Page wrapper */
 .budget-page {
     min-height: 100vh;
     font-family: var(--font-body);
@@ -24,7 +24,7 @@
     z-index: -1;
 }
 
-/* ── Header ───────────────────────────────────────────────── */
+/* Header */
 /* .budget-header {
     display: flex;
     align-items: center;
@@ -47,7 +47,7 @@
     gap: 8px;
 } */
 
-/* ── Nav buttons ──────────────────────────────────────────── */
+/* Nav buttons */
 /* .budget-nav-btn {
     display: inline-flex;
     align-items: center;
@@ -84,7 +84,7 @@
     transform: translateY(-1px);
 } */
 
-/* ── Page title ───────────────────────────────────────────── */
+/* Page title */
 .budget-title {
     font-family: var(--font-display);
     font-size: 20px;
@@ -101,7 +101,7 @@
     color: var(--color-teal);
 }
 
-/* ── Content wrapper ──────────────────────────────────────── */
+/* Content wrapper */
 .budget-content {
     max-width: 1200px;
     margin: 0 auto;
@@ -111,7 +111,7 @@
     gap: 2rem;
 }
 
-/* ── 2-column landscape layout ────────────────────────────── */
+/* 2-column landscape layout */
 .budget-main-layout {
     display: grid;
     grid-template-columns: 1.5fr 1fr;
@@ -132,7 +132,7 @@
     }
 }
 
-/* ── Sectiuni ─────────────────────────────────────────────── */
+/* Sectiuni */
 .budget-section {
     display: flex;
     flex-direction: column;
@@ -155,14 +155,14 @@
     margin: 0;
 }
 
-/* ── Sumar row ────────────────────────────────────────────── */
+/* Sumar row */
 .budget-summary-row {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
 }
 
-/* ── Card persoane ────────────────────────────────────────── */
+/* Card persoane */
 .budget-people-card {
     background: var(--color-surface);
     border-radius: var(--radius-xl);
@@ -202,7 +202,7 @@
     background: #FFFFFF;
 }
 
-/* ── Carduri statistici ───────────────────────────────────── */
+/* Carduri statistici */
 .budget-stat-card {
     background: var(--color-glass-surface);
     backdrop-filter: blur(14px);
@@ -254,7 +254,7 @@
     font-weight: 300;
 }
 
-/* ── Buton AI ─────────────────────────────────────────────── */
+/* Buton AI */
 .budget-ai-btn {
     display: inline-flex;
     align-items: center;
@@ -285,7 +285,7 @@
     cursor: not-allowed;
 }
 
-/* ── Card obiective ───────────────────────────────────────── */
+/* Card obiective */
 .budget-objectives-card {
     background: var(--color-glass-surface);
     backdrop-filter: blur(14px);
@@ -391,7 +391,7 @@
     font-size: 16px;
 }
 
-/* ── Formular adaugare cheltuiala ─────────────────────────── */
+/* Formular adaugare cheltuiala */
 .budget-add-form {
     background: var(--color-surface);
     border-radius: var(--radius-xl);
@@ -474,7 +474,7 @@
     cursor: not-allowed;
 }
 
-/* ── Lista cheltuieli ─────────────────────────────────────── */
+/* Lista cheltuieli */
 .budget-expenses-card {
     background: var(--color-glass-surface);
     backdrop-filter: blur(14px);
@@ -601,7 +601,7 @@
     border-color: var(--color-danger);
 }
 
-/* ── Form editare inline ──────────────────────────────────── */
+/* Form editare inline */
 .budget-edit-form {
     display: flex;
     flex-wrap: wrap;
@@ -650,7 +650,7 @@
     color: var(--color-navy);
 }
 
-/* ── Total cheltuieli ─────────────────────────────────────── */
+/* Total cheltuieli */
 .budget-expenses-total {
     display: flex;
     align-items: center;
@@ -668,7 +668,7 @@
     font-size: 16px;
 }
 
-/* ── Sectiunea grafic ─────────────────────────────────────── */
+/* Sectiunea grafic */
 .budget-chart-row {
     display: flex;
     flex-direction: column;
@@ -676,7 +676,7 @@
     align-items: stretch;
 }
 
-/* ── Lista categorii ──────────────────────────────────────── */
+/* Lista categorii */
 .budget-categories-list {
     background: var(--color-surface);
     border-radius: var(--radius-xl);
@@ -720,7 +720,7 @@
     text-align: right;
 }
 
-/* ── Pie chart wrapper ────────────────────────────────────── */
+/* Pie chart wrapper */
 .budget-pie-wrap {
     background: var(--color-surface);
     border-radius: var(--radius-xl);
@@ -729,7 +729,7 @@
     padding: 1.25rem;
 }
 
-/* ── Mesaje empty / error ─────────────────────────────────── */
+/* Mesaje empty / error */
 .budget-empty-msg {
     font-size: 13px;
     color: var(--color-gray);

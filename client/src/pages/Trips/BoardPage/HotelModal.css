@@ -125,7 +125,7 @@
     box-shadow: none;
 }
 
-/* ── Hotel salvat (afisaj read-only) ──────────────────────── */
+/* Hotel salvat (afisaj read-only) */
 .hotel-modal-saved {
     display: flex;
     align-items: center;

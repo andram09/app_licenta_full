@@ -1,4 +1,4 @@
-/* ── Page wrapper ─────────────────────────────────────────── */
+/* Page wrapper */
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -27,7 +27,7 @@
   z-index: -1;
 }
 
-/* ── Card ─────────────────────────────────────────────────── */
+/* Card */
 .login-card {
   background: var(--color-glass-surface);
   backdrop-filter: blur(16px);
@@ -41,7 +41,7 @@
   box-sizing: border-box;
 }
 
-/* ── Heading ──────────────────────────────────────────────── */
+/* Heading */
 .login-title {
   font-family: var(--font-display);
   font-size: 32px;
@@ -51,7 +51,7 @@
   margin: 0 0 4px 0;
 }
 
-/* ── Subtitle ─────────────────────────────────────────────── */
+/* Subtitle */
 .login-subtitle {
   font-family: var(--font-body);
   font-size: 13px;
@@ -62,14 +62,14 @@
   line-height: 1.5;
 }
 
-/* ── Form ─────────────────────────────────────────────────── */
+/* Form */
 .login-form {
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
 }
 
-/* ── Labels ───────────────────────────────────────────────── */
+/* Labels */
 .login-label {
   display: flex;
   flex-direction: column;
@@ -82,7 +82,7 @@
   color: var(--color-mid);
 }
 
-/* ── Inputs ───────────────────────────────────────────────── */
+/* Inputs */
 .login-input {
   padding: 0.65rem 0.9rem;
   border-radius: 10px;
@@ -107,14 +107,14 @@
   background: var(--color-white);
 }
 
-/* ── Error message ────────────────────────────────────────── */
+/* Error message */
 .login-error {
   font-size: 12px;
   color: var(--color-danger);
   margin: -4px 0 0 0;
 }
 
-/* ── Submit button ────────────────────────────────────────── */
+/* Submit button */
 .login-button {
   margin-top: 0.5rem;
   width: 100%;
@@ -156,7 +156,7 @@
   cursor: not-allowed;
 }
 
-/* ── Forgot password link ─────────────────────────────────── */
+/* Forgot password link */
 .login-forgot {
   margin-top: 1rem;
   text-align: center;
@@ -174,7 +174,7 @@
   color: var(--color-navy);
 }
 
-/* ── Register footer link ─────────────────────────────────── */
+/* Register footer link */
 .login-footer {
   margin-top: 16px;
   text-align: center;
@@ -192,7 +192,7 @@
   color: var(--color-navy);
 }
 
-/* ── Mobile ───────────────────────────────────────────────── */
+/* Mobile */
 @media (max-width: 768px) {
   .login-page {
     align-items: center;

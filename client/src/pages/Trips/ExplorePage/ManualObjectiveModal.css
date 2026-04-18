@@ -1,4 +1,4 @@
-/* ── Backdrop ─────────────────────────────────────────────── */
+/* Backdrop */
 .modal-backdrop {
     position: fixed;
     inset: 0;
@@ -12,7 +12,7 @@
     padding: 1rem;
 }
 
-/* ── Modal box ────────────────────────────────────────────── */
+/* Modal box */
 .modal-box {
     background: var(--color-surface);
     border-radius: var(--radius-xl);
@@ -23,7 +23,7 @@
     max-width: 480px;
 }
 
-/* ── Header ───────────────────────────────────────────────── */
+/* Header */
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -68,7 +68,7 @@
     color: var(--color-navy);
 }
 
-/* ── Form ─────────────────────────────────────────────────── */
+/* Form */
 .modal-form {
     display: flex;
     flex-direction: column;
@@ -81,7 +81,7 @@
     gap: 6px;
 }
 
-/* ── Labels ───────────────────────────────────────────────── */
+/* Labels */
 .modal-label {
     font-family: var(--font-body);
     font-size: 11px;
@@ -103,7 +103,7 @@
     letter-spacing: 0;
 }
 
-/* ── Inputs & textarea ────────────────────────────────────── */
+/* Inputs & textarea */
 .modal-input,
 .modal-textarea {
     width: 100%;
@@ -146,13 +146,13 @@
     min-height: 72px;
 }
 
-/* ── Input selected (from API) ────────────────────────────── */
+/* Input selected (from API) */
 .modal-input--selected {
     border-color: var(--color-teal) !important;
     background: var(--color-teal-bg) !important;
 }
 
-/* ── Error & hint text ────────────────────────────────────── */
+/* Error & hint text */
 .modal-error {
     font-size: 12px;
     color: var(--color-danger);
@@ -171,7 +171,7 @@
     font-style: normal;
 }
 
-/* ── Actions ──────────────────────────────────────────────── */
+/* Actions */
 .modal-actions {
     display: flex;
     justify-content: flex-end;
@@ -220,7 +220,7 @@
     transform: none;
 }
 
-/* ── Autocomplete search wrap ─────────────────────────────── */
+/* Autocomplete search wrap */
 .modal-search-wrap {
     position: relative;
     display: flex;
@@ -254,7 +254,7 @@
     white-space: nowrap;
 }
 
-/* ── Suggestions dropdown ─────────────────────────────────── */
+/* Suggestions dropdown */
 .modal-suggestions {
     position: absolute;
     top: calc(100% + 5px);

@@ -13,7 +13,7 @@
     z-index: 200;
 }
 
-/* ── Brand ─────────────────────────────────────────────────── */
+/* Brand */
 .landing-nav-brand {
     display: flex;
     align-items: center;
@@ -49,7 +49,7 @@
     white-space: nowrap;
 }
 
-/* ── Actions ───────────────────────────────────────────────── */
+/* Actions */
 .landing-nav-actions {
     display: flex;
     align-items: center;
@@ -84,7 +84,7 @@
     opacity: 0.88;
 }
 
-/* ── Avatar ────────────────────────────────────────────────── */
+/* Avatar */
 .landing-nav-profile {
     position: relative;
 }
@@ -111,7 +111,7 @@
     opacity: 0.9;
 }
 
-/* ── Profile dropdown ──────────────────────────────────────── */
+/* Profile dropdown */
 .landing-nav-dropdown {
     position: absolute;
     top: calc(100% + 10px);
@@ -186,7 +186,7 @@
     background: var(--color-danger-bg);
 }
 
-/* ── Mobile ────────────────────────────────────────────────── */
+/* Mobile */
 @media (max-width: 768px) {
     .landing-nav {
         padding: 0 1rem;

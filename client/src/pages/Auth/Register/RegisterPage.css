@@ -1,4 +1,4 @@
-/* ── Page wrapper ─────────────────────────────────────────── */
+/* Page wrapper */
 .register-page {
     min-height: 100vh;
     display: flex;
@@ -27,7 +27,7 @@
     z-index: -1;
 }
 
-/* ── Card ─────────────────────────────────────────────────── */
+/* Card */
 .register-card {
     background: var(--color-glass-surface);
     backdrop-filter: blur(16px);
@@ -41,7 +41,7 @@
     box-sizing: border-box;
 }
 
-/* ── Heading ──────────────────────────────────────────────── */
+/* Heading */
 .register-title {
     font-family: var(--font-display);
     font-size: 32px;
@@ -51,7 +51,7 @@
     margin: 0 0 4px 0;
 }
 
-/* ── Subtitle ─────────────────────────────────────────────── */
+/* Subtitle */
 .register-subtitle {
     font-family: var(--font-body);
     font-size: 13px;
@@ -62,21 +62,21 @@
     line-height: 1.5;
 }
 
-/* ── Form ─────────────────────────────────────────────────── */
+/* Form */
 .register-form {
     display: flex;
     flex-direction: column;
     gap: 1.1rem;
 }
 
-/* ── Two-column row (Prenume / Nume) ──────────────────────── */
+/* Two-column row (Prenume / Nume) */
 .register-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
 }
 
-/* ── Labels ───────────────────────────────────────────────── */
+/* Labels */
 .register-label {
     display: flex;
     flex-direction: column;
@@ -89,7 +89,7 @@
     color: var(--color-mid);
 }
 
-/* ── Inputs ───────────────────────────────────────────────── */
+/* Inputs */
 .register-input {
     padding: 0.65rem 0.9rem;
     border-radius: 10px;
@@ -114,21 +114,21 @@
     background: var(--color-white);
 }
 
-/* ── Error message ────────────────────────────────────────── */
+/* Error message */
 .register-error {
     font-size: 12px;
     color: var(--color-danger);
     margin: -4px 0 0 0;
 }
 
-/* ── Success message ──────────────────────────────────────── */
+/* Success message */
 .register-success {
     font-size: 12px;
     color: var(--color-success);
     margin: -4px 0 0 0;
 }
 
-/* ── Submit button ────────────────────────────────────────── */
+/* Submit button */
 .register-button {
     margin-top: 0.5rem;
     width: 100%;
@@ -165,7 +165,7 @@
     cursor: not-allowed;
 }
 
-/* ── Login footer link ────────────────────────────────────── */
+/* Login footer link */
 .register-footer {
     margin-top: 16px;
     text-align: center;
@@ -183,7 +183,7 @@
     color: var(--color-navy);
 }
 
-/* ── Mobile ───────────────────────────────────────────────── */
+/* Mobile */
 @media (max-width: 768px) {
     .register-page {
         align-items: center;
