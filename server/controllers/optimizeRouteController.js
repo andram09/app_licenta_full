@@ -2,8 +2,6 @@ import { Trip, TripDay, Objective } from '../models/index.js';
 import { callTspOptimizer } from '../services/tspService.js';
 import sequelize from '../config/db.config.js';
 
-const SUPPORTED_MODES = ['WALKING', 'DRIVING', 'CYCLING'];
-
 export const optimizeRouteController = {
 
     optimizeDayRoute: async (req, res) => {
@@ -11,15 +9,7 @@ export const optimizeRouteController = {
 
         try {
             const { id: tripId, dayId } = req.params;
-            const mode = req.body?.mode ?? 'WALKING';
             const startPoint = req.body?.start_point ?? null;
-
-            if (!SUPPORTED_MODES.includes(mode)) {
-                await transaction.rollback();
-                return res.status(400).json({
-                    message: `Invalid mode. Supported: ${SUPPORTED_MODES.join(', ')}.`
-                });
-            }
 
             // trip-ul apartine user-ului curent
             const trip = await Trip.findOne({
@@ -31,7 +21,7 @@ export const optimizeRouteController = {
                 return res.status(404).json({ message: 'Trip not found.' });
             }
 
-            //ziua apartine trip-ului
+            // ziua apartine trip-ului
             const tripDay = await TripDay.findOne({
                 where: { id_day: dayId, id_trip: tripId },
                 transaction,
@@ -68,8 +58,9 @@ export const optimizeRouteController = {
             // apel microserviciu Python
             let optimizationResult;
             try {
-                optimizationResult = await callTspOptimizer(points, null, startPoint);
+                optimizationResult = await callTspOptimizer(points, startPoint);
             } catch (tspError) {
+                console.error('TSP service call failed:', tspError.message);
                 await transaction.rollback();
                 return res.status(503).json({
                     message: 'Route optimization service is currently unavailable.',
@@ -87,7 +78,6 @@ export const optimizeRouteController = {
 
             await transaction.commit();
 
-            //rasp final
             const orderedObjectives = optimizationResult.orderedIds.map((objId, idx) => {
                 const obj = objectives.find((o) => o.id_objective === objId);
                 return {

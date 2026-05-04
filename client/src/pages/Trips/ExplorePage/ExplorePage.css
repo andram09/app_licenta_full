@@ -417,6 +417,12 @@
         overflow-x: hidden;
     }
 
+    .explore-page::before {
+        background-size: 180% auto;
+        background-position: 80% 55%;
+        opacity: 0.13;
+    }
+
     .explore-page-container {
         padding: 0 0 3rem;
     }
@@ -451,6 +457,7 @@
         align-items: flex-start;
         gap: 0.75rem;
         padding-right: 1rem;
+        margin-bottom: 1.25rem;
     }
 
     .explore-add-objective-btn {
@@ -505,5 +512,10 @@
 
     .explore-grid {
         padding: 0 1rem;
+    }
+
+    .explore-card-btn {
+        width: 100%;
+        padding: 9px 0;
     }
 }

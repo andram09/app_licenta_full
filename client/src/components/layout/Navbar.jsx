@@ -157,11 +157,11 @@ export default function Navbar({ pageTitle = null, hideNavLinks = false, navLink
                     {user?.role === "USER" && (
                         <li>
                             <Link
-                                to="/trips/create"
+                                to="/"
                                 className="navbar-mobile-link"
                                 onClick={() => setMobileOpen(false)}
                             >
-                                + Călătorie nouă
+                                Acasă
                             </Link>
                         </li>
                     )}

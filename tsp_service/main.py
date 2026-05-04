@@ -1,5 +1,4 @@
-# main.py
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from pydantic import BaseModel, field_validator
 from typing import List, Optional
 import math
@@ -12,7 +11,6 @@ app = FastAPI(
 )
 
 # ─── Modele de date 
-
 class ObjectivePoint(BaseModel):
     id: int | str
     lat: float
@@ -53,7 +51,6 @@ class StartPoint(BaseModel):
 class OptimizeRequest(BaseModel):
     objectives: List[ObjectivePoint]
     start_point: Optional[StartPoint] = None
-    distance_matrix: Optional[List[List[float]]] = None
 
 class OptimizeResponse(BaseModel):
     ordered_ids: List[int | str]
@@ -66,6 +63,7 @@ class OptimizeResponse(BaseModel):
 EARTH_RADIUS_KM = 6371.0
 
 # distanta in km pe suprafata pamantului
+
 def haversine(lat1, lng1, lat2, lng2):
     to_rad = math.pi / 180
     d_lat = (lat2 - lat1) * to_rad
@@ -95,9 +93,7 @@ def tour_cost(tour, dist):
 # algoritm DP pe submultimi - Held & Karp (1962)
 # open-path TSP: nu ne intoarcem la punctul de start
 def held_karp(dist):
-
     n = len(dist)
-
     if n == 1:
         return [0], 0.0
     if n == 2:
@@ -108,6 +104,7 @@ def held_karp(dist):
 
     # dp[S][i] = costul minim al drumului care porneste din 0,
     #viziteaza submultimea S si se termina in i
+    
     dp = [[INF] * n for _ in range(FULL + 1)]
     parent = [[-1] * n for _ in range(FULL + 1)]
 
@@ -123,7 +120,7 @@ def held_karp(dist):
                 continue
             if dp[S][u] == INF:
                 continue
-            # extindem spre un nod nevizitat v
+            # extindere spre un nod nevizitat v
             for v in range(n):
                 if S & (1 << v):
                     continue
@@ -191,19 +188,10 @@ def two_opt_open_path(initial_order, dist):
 
         for i in range(n - 2):
             for j in range(i + 2, n):
-                a = tour[i]
-                b = tour[i + 1]
-                c = tour[j - 1]
-                d = tour[j] if j < n else None
+                a, b = tour[i], tour[i + 1]
+                c, d = tour[j - 1], tour[j]
 
-                current = dist[a][b]
-                new = dist[a][c]
-
-                if d is not None:
-                    current += dist[c][d]
-                    new += dist[b][d]
-
-                if new < current - 1e-10:
+                if dist[a][c] + dist[b][d] < dist[a][b] + dist[c][d] - 1e-10:
                     tour[i + 1:j] = reversed(tour[i + 1:j])
                     improved = True
 
@@ -244,16 +232,9 @@ def optimize_route(request: OptimizeRequest):
             lat=request.start_point.lat,
             lng=request.start_point.lng
         )
-        points_for_algo = [start_node] + points_for_algo
+        points_for_algo = [start_node] + points_for_algo + [start_node]
 
-    # matricea de distante
-    if request.distance_matrix:
-        raise HTTPException(
-            status_code=400,
-            detail="distance_matrix custom nu este suportata cand folosesti start_point. Foloseste calculul intern."
-        )
-    else:
-        dist = build_distance_matrix(points_for_algo)
+    dist = build_distance_matrix(points_for_algo)
 
     start_time = time.perf_counter()
 

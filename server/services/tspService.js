@@ -2,14 +2,13 @@ import axios from 'axios';
 
 const TSP_SERVICE_URL = process.env.TSP_SERVICE_URL || 'http://localhost:5001';
 
-export async function callTspOptimizer(objectives, distanceMatrix = null, startPoint = null) {
+export async function callTspOptimizer(objectives, startPoint = null) {
     const payload = {
         objectives: objectives.map((o) => ({
             id: o.id,
             lat: Number(o.lat),
             lng: Number(o.lng),
         })),
-        distance_matrix: distanceMatrix ?? null,
     };
 
     if (startPoint) {

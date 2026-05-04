@@ -6,71 +6,220 @@ if (!OPENTRIPMAP_API_KEY) {
   console.warn("Missing OPENTRIPMAP_API_KEY in .env");
 }
 
-// delay helper pentru rate limiting la reverse geocoding
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+// Wikidata SPARQL — returneaza locuri faimoase filtrate dupa numarul de sitelinks Wikipedia.
+// sitelinks = numarul de editii Wikipedia care au articol despre acel loc => proxy fiabil pt. faima.
+//
+// Strategii per categorie:
+//   architecture — sitelinks > 10, fara filtru de tip, exclude asezari umane (au P1082/populatie)
+//   parks        — sitelinks > 2 + P31/P279* Q22698 (parc)
+//   museums      — sitelinks > 2 + P31/P279* Q33506 (muzeu)
+//   historic     — sitelinks > 2 + P31/P279* {monumente, castele, situri istorice}
+//
+// Point(lon lat) = format WKT Wikidata (longitudinea prima!)
+// LIMIT 80 — unele items au mai multe P625 (coordonate multiple), fiecare = rand separat;
+// deduplicarea dupa QID se face in JS, deci avem nevoie de un buffer mai mare decat 20.
+// OPTIONAL+FILTER(!BOUND) e mai eficient decat FILTER NOT EXISTS in Blazegraph (motorul Wikidata).
+const buildSparql = (lng, lat, typeFilter) => `
+  SELECT ?item ?itemLabel ?coordinates ?sitelinks WHERE {
+    SERVICE wikibase:around {
+      ?item wdt:P625 ?coordinates .
+      bd:serviceParam wikibase:center "Point(${lng} ${lat})"^^geo:wktLiteral .
+      bd:serviceParam wikibase:radius "10" .
+    }
+    ?item wikibase:sitelinks ?sitelinks .
+    ${typeFilter}
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "en,mul" . }
+  }
+  ORDER BY DESC(?sitelinks)
+  LIMIT 80
+`;
 
-// fetch locuri de interes din OpenTripMap cu filtrare imbunatatita
-// returneaza doar campurile necesare frontend-ului (nu modelul Objective complet)
+// OPTIONAL+FILTER(!BOUND) exclude orasele (care au P1082/populatie) fara subquery corelat
+
+const TYPE_FILTERS = {
+  architecture: `
+    FILTER(?sitelinks > 10)
+    OPTIONAL { ?item wdt:P1082 ?pop . }
+    FILTER(!BOUND(?pop))
+  `,
+  parks: `
+    FILTER(?sitelinks > 2)
+    ?item wdt:P31/wdt:P279* wd:Q22698 .
+  `,
+  museums: `
+    FILTER(?sitelinks > 2)
+    ?item wdt:P31/wdt:P279* wd:Q33506 .
+  `,
+  historic: `
+    FILTER(?sitelinks > 2)
+    VALUES ?htype { wd:Q9259 wd:Q16560 wd:Q23413 wd:Q4989906 wd:Q210272 wd:Q839954 }
+    ?item wdt:P31/wdt:P279* ?htype .
+  `,
+};
+
+export const fetchWikidataAttractions = async (lat, lng, category) => {
+  const typeFilter = TYPE_FILTERS[category];
+  if (!typeFilter) throw new Error(`Unknown Wikidata category: ${category}`);
+
+  const sparql = buildSparql(lng, lat, typeFilter);
+
+  const response = await axios.get("https://query.wikidata.org/sparql", {
+    params: { query: sparql, format: "json" },
+    headers: {
+      "Accept": "application/sparql-results+json",
+      "User-Agent": "TripPlannerApp_Licenta/1.0 (moiseandra23@stud.ase.ro)"
+    },
+    timeout: 20000
+  });
+
+  const bindings = response.data.results?.bindings ?? [];
+  const seen = new Set();
+
+  return bindings
+    .filter(row => row.item && row.itemLabel && row.coordinates)
+    .map(row => {
+      const match = row.coordinates.value.match(/Point\(([^ ]+) ([^ )]+)\)/);
+      if (!match) return null;
+      const qid = row.item.value.split("/").pop();
+      return {
+        external_place_id: `wikidata_${qid}`,
+        title: row.itemLabel.value,
+        address: null,
+        kinds: category,
+        coord_lat: parseFloat(match[2]),
+        coord_lng: parseFloat(match[1]),
+        external_provider: "WIKIDATA",
+        description: null,
+        source_type: "API"
+      };
+    })
+    .filter(Boolean)
+    .filter(item => {
+      if (seen.has(item.external_place_id)) return false;
+      seen.add(item.external_place_id);
+      return true;
+    })
+    .slice(0, 20);
+};
+
+const OVERPASS_MIRRORS = [
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter",
+  "https://api.openstreetmap.fr/oapi/interpreter",
+  "https://overpass.osm.vi-di.fr/api/interpreter",
+];
+
+const OVERPASS_FILTERS = {
+  museums:      `["tourism"="museum"]`,
+  historic:     `["historic"]`,
+  architecture: `["tourism"="attraction"]`,
+  parks:        `["leisure"="park"]`,
+};
+
+const OTM_KINDS_MAP = {
+  museums:      "museums",
+  historic:     "historic,archaeology",
+  architecture: "architecture,interesting_places,religion,cathedrals",
+  parks:        "natural,amusements",
+};
+
+// Promise.any pe 4 mirroare — primul raspuns castiga.
+// overpass-api.de e sub atac DDoS (aprilie 2026), mirrorele pot fi instabile.
+export const fetchOverpassAttractions = async (lat, lng, category) => {
+  const filter = OVERPASS_FILTERS[category] || `["tourism"="attraction"]`;
+  const query = `[out:json][timeout:15];nwr${filter}["wikipedia"](around:10000,${lat},${lng});out center 40;`;
+
+  let response;
+  try {
+    response = await Promise.any(
+      OVERPASS_MIRRORS.map(endpoint =>
+        axios.post(endpoint, query, {
+          headers: { "Content-Type": "text/plain" },
+          timeout: 18000
+        })
+      )
+    );
+  } catch {
+    console.error("All Overpass mirrors failed, falling back to OpenTripMap");
+    const kinds = OTM_KINDS_MAP[category] || "interesting_places";
+    return fetchOpenTripMapByKinds(lat, lng, kinds, 2);
+  }
+
+  const seen = new Set();
+
+  return response.data.elements
+    .filter(el => {
+      const name = el.tags?.name || el.tags?.["name:en"];
+      return name && (el.lat || el.center?.lat) && (el.lon || el.center?.lon);
+    })
+    .filter(el => {
+      const name = (el.tags?.name || el.tags?.["name:en"]).trim().toLowerCase();
+      if (seen.has(name)) return false;
+      seen.add(name);
+      return true;
+    })
+    .map(el => ({
+      external_place_id: `osm_${el.type}_${el.id}`,
+      title: (el.tags?.["name:en"] || el.tags?.name).trim(),
+      address: null,
+      kinds: category,
+      coord_lat: el.lat ?? el.center.lat,
+      coord_lng: el.lon ?? el.center.lon,
+      external_provider: "OVERPASS",
+      description: null,
+      source_type: "API"
+    }));
+};
+
 export const fetchOpenTripMapByKinds = async (lat, lng, kinds, rate = 2) => {
   let response;
   try {
-    response = await axios.get(
-      "https://api.opentripmap.com/0.1/en/places/radius",
-      {
-        params: {
-          radius: 6000,
-          lon: lng,
-          lat,
-          kinds,
-          rate,
-          format: "json",
-          limit: 20,
-          apikey: OPENTRIPMAP_API_KEY
-        }
+    response = await axios.get("https://api.opentripmap.com/0.1/en/places/radius", {
+      params: {
+        radius: 10000,
+        lon: lng,
+        lat,
+        kinds,
+        rate,
+        format: "json",
+        limit: 50,
+        apikey: OPENTRIPMAP_API_KEY
       }
-    );
+    });
   } catch (err) {
     console.error("OpenTripMap request failed:", err.response?.status, JSON.stringify(err.response?.data));
     throw err;
   }
 
-  const seen = new Set(); // pentru deduplicare dupa name
+  const seen = new Set();
 
   return response.data
-    // elimina locurile fara nume
     .filter(place => place.name && place.name.trim().length > 0)
-    // elimina locurile fara coordonate valide
-    .filter(place => place.point && place.point.lat && place.point.lon)
-    // elimina locatii la distanta mare (daca OpenTripMap returneaza campul dist)
-    .filter(place => !place.dist || place.dist <= 6000)
-    // deduplicare dupa name (pastreaza prima aparitie)
+    .filter(place => place.point?.lat && place.point?.lon)
+    .filter(place => !place.dist || place.dist <= 10000)
+    .sort((a, b) => (b.rate || 0) - (a.rate || 0))
     .filter(place => {
       const key = place.name.trim().toLowerCase();
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
     })
-    // returnez doar campurile necesare frontend-ului
+    .slice(0, 20)
     .map(place => ({
-        external_place_id: place.xid,
-        title: place.name.trim(),
-        address: null,
-        kinds: place.kinds || null,
-        // campuri necesare pentru POST /objectives/from-api
-        coord_lat: place.point.lat,
-        coord_lng: place.point.lon,
-        external_provider: "OPENTRIPMAP",
-        description: null,
-        source_type: "API"
-      })
-    );
+      external_place_id: place.xid,
+      title: place.name.trim(),
+      address: null,
+      kinds: place.kinds || null,
+      coord_lat: place.point.lat,
+      coord_lng: place.point.lon,
+      external_provider: "OPENTRIPMAP",
+      description: null,
+      source_type: "API"
+    }));
 };
 
-// Cauta locuri turistice dupa nume folosind Nominatim (OpenStreetMap).
-// Nominatim face full-text search (nu doar prefix), deci "eiffel" gaseste "Tour Eiffel".
-// OpenTripMap autosuggest facea prefix matching si nu gasea locuri al caror nume nu incepea cu query-ul.
-//
-// REVERT: daca vrei sa revii la OpenTripMap autosuggest, inlocuieste functia cu versiunea comentata de mai jos.
+const POI_CLASSES = new Set(["tourism", "amenity", "historic", "leisure", "natural", "shop", "building"]);
+
 // /* VERSIUNEA VECHE CU OPENTRIPMAP AUTOSUGGEST (prefix matching):
 // export const fetchOpenTripMapByName = async (name, lat, lng, radius = 5000) => {
 //   let response;
@@ -90,12 +239,11 @@ export const fetchOpenTripMapByKinds = async (lat, lng, kinds, rate = 2) => {
 // };
 // */
 
-const POI_CLASSES = new Set(["tourism", "amenity", "historic", "leisure", "natural", "shop", "building"]);
-
+// Nominatim face full-text search (nu doar prefix), deci "eiffel" gaseste "Tour Eiffel",
+// spre deosebire de OpenTripMap autosuggest care face prefix matching.
+// bounded: 0 biaseaza rezultatele spre viewbox fara sa restrictioneze strict aria.
 export const fetchOpenTripMapByName = async (name, lat, lng, radius = 5000) => {
-  // Calculam un bounding box in jurul coordonatelor trip-ului pentru a biaса rezultatele
-  // ~0.45 grade ≈ 50km — suficient pentru orice obiectiv al unui oras
-  const degOffset = 0.45;
+  const degOffset = 0.45; // ~50km — suficient pentru orice obiectiv al unui oras
   const viewbox = `${lng - degOffset},${lat + degOffset},${lng + degOffset},${lat - degOffset}`;
 
   let response;
@@ -106,7 +254,7 @@ export const fetchOpenTripMapByName = async (name, lat, lng, radius = 5000) => {
         format: "json",
         limit: 10,
         viewbox,
-        bounded: 0, // biaseaza spre viewbox dar nu restrictioneaza strict
+        bounded: 0,
         "accept-language": "en",
         addressdetails: 0,
         namedetails: 1
@@ -131,15 +279,12 @@ export const fetchOpenTripMapByName = async (name, lat, lng, radius = 5000) => {
       coord_lat: parseFloat(p.lat),
       coord_lng: parseFloat(p.lon),
       address: null,
-      // external_provider ramane OPENTRIPMAP pentru compatibilitate cu ENUM-ul din DB
-      // (alter: false in server.js, deci schema nu se modifica automat)
       external_provider: "OPENTRIPMAP",
       description: null,
       source_type: "API"
     }));
 };
 
-// cauta orase prin Nominatim (OpenStreetMap) cu raspuns in engleza
 export const fetchCitySuggestions = async (query, lang = "ro") => {
   let response;
   try {
@@ -162,10 +307,6 @@ export const fetchCitySuggestions = async (query, lang = "ro") => {
     throw err;
   }
 
-  if (response.data.length === 0) {
-    return [];
-  }
-
   return response.data.map(place => ({
     name: place.address?.city
       || place.address?.town
@@ -175,7 +316,6 @@ export const fetchCitySuggestions = async (query, lang = "ro") => {
     country: place.address?.country || null,
     display_label: [
       place.address?.city || place.address?.town || place.address?.village || place.address?.municipality,
-      // place.namedetails?.["name:ro"] || place.namedetails?.["name:en"] || place.address?.state,
       place.address?.country
     ].filter(Boolean).join(", "),
     lat: parseFloat(place.lat),
@@ -183,31 +323,23 @@ export const fetchCitySuggestions = async (query, lang = "ro") => {
   }));
 };
 
-
-// reverse geocoding batch pentru o lista de coordonate
-// Nominatim: max 1 request/secunda, deci procesam secvential cu delay
 export const reverseGeocodeCoords = async (coordsList) => {
   const results = new Map();
 
   const promises = coordsList.map(async (item) => {
     try {
-      const response = await axios.get(
-        "https://nominatim.openstreetmap.org/reverse",
-        {
-          params: {
-            lat: item.lat,
-            lon: item.lng,
-            format: "json",
-            "accept-language": "ro",
-            zoom: 18,
-            addressdetails: 1
-          },
-          headers: {
-            "User-Agent": "TripPlannerApp_Licenta/1.0"
-          },
-          timeout: 8000
-        }
-      );
+      const response = await axios.get("https://nominatim.openstreetmap.org/reverse", {
+        params: {
+          lat: item.lat,
+          lon: item.lng,
+          format: "json",
+          "accept-language": "ro",
+          zoom: 18,
+          addressdetails: 1
+        },
+        headers: { "User-Agent": "TripPlannerApp_Licenta/1.0" },
+        timeout: 8000
+      });
 
       const addr = response.data?.address;
 
@@ -237,10 +369,8 @@ export const reverseGeocodeCoords = async (coordsList) => {
   });
 
   await Promise.all(promises);
-
   return results;
 };
-
 
 
 // import axios from "axios";

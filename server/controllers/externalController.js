@@ -1,10 +1,32 @@
-import { fetchOpenTripMapByKinds, fetchOpenTripMapByName, fetchCitySuggestions, reverseGeocodeCoords 
-} from "../services/externalPlacesService.js";
+import {fetchWikidataAttractions, fetchOpenTripMapByKinds, fetchOverpassAttractions,
+  fetchOpenTripMapByName, fetchCitySuggestions, reverseGeocodeCoords} from "../services/externalPlacesService.js";
+
+const placesCache = new Map();
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 ora
+
+const getCached = (key) => {
+  const entry = placesCache.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) { placesCache.delete(key); return null; }
+  return entry.data;
+};
+const setCache = (key, data) => {
+  placesCache.set(key, { data, expiresAt: Date.now() + CACHE_TTL_MS });
+};
+
+const KINDS_MAP = {
+  museums:      "museums",
+  historic:     "historic,archaeology",
+  architecture: "architecture,interesting_places,religion,cathedrals",
+  parks:        "natural,amusements",
+  restaurants:  "restaurants,foods",
+  cafes:        "cafes,bars",
+};
+
+const FOOD_CATEGORIES = new Set(["restaurants", "cafes"]);
 
 export const externalController = {
-
   // GET /external/places?lat=...&lng=...&category=...
-  // endpoint unificat cu mapping explicit category -> kinds OpenTripMap
   getPlacesByCategory: async (req, res) => {
     try {
       const { lat, lng, category } = req.query;
@@ -12,54 +34,52 @@ export const externalController = {
       const latitude = Number(lat);
       const longitude = Number(lng);
 
-      if (
-        isNaN(latitude) ||
-        isNaN(longitude) ||
-        latitude < -90 ||
-        latitude > 90 ||
-        longitude < -180 ||
-        longitude > 180
-      ) {
+      if (isNaN(latitude) || isNaN(longitude) || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
         return res.status(400).json({ message: "Invalid latitude or longitude." });
       }
 
-      // mapping explicit: categoria din frontend -> kinds OpenTripMap
-      // folosim doar top-level kinds garantate de API (nu subcategorii compuse)
-      const KINDS_MAP = {
-        museums: "museums",
-        historic: "historic,religion",
-        architecture: "architecture,interesting_places",
-        parks: "natural,amusements",
-        restaurants: "restaurants,foods",
-        cafes: "cafes,bars",
-      };
-
       const kinds = KINDS_MAP[category];
-
       if (!kinds) {
         return res.status(400).json({
           message: `Unknown category "${category}". Accepted: ${Object.keys(KINDS_MAP).join(", ")}`
         });
       }
 
-      const RATE_MAP = {
-        restaurants: 1,
-        cafes: 1,
-      };
-      const rate = RATE_MAP[category] ?? 2;
+      const cacheKey = `${category}_${latitude.toFixed(3)}_${longitude.toFixed(3)}`;
+      const cached = getCached(cacheKey);
+      if (cached) {
+        console.log(`[Cache] ${category} @ ${latitude},${longitude} → hit`);
+        return res.status(200).json(cached);
+      }
 
-      const data = await fetchOpenTripMapByKinds(latitude, longitude, kinds, rate);
+      let data;
+      if (FOOD_CATEGORIES.has(category)) {
+        data = await fetchOpenTripMapByKinds(latitude, longitude, kinds, 1);
+      } else {
+        // 1. Wikidata SPARQL (primar — sitelinks ca proxy pentru faima)
+        // 2. Overpass cu Promise.any pe 4 mirroare (secundar)
+        // 3. OpenTripMap (tertiar, in fallback-ul Overpass)
+        try {
+          data = await fetchWikidataAttractions(latitude, longitude, category);
+          console.log(`[Wikidata] ${category} @ ${latitude},${longitude} → ${data.length} results`);
+          if (!data || data.length === 0) throw new Error("Wikidata returned 0 results");
+        } catch (wikidataErr) {
+          console.warn(`[Wikidata] Failed (${wikidataErr.message}), trying Overpass`);
+          data = await fetchOverpassAttractions(latitude, longitude, category);
+          console.log(`[Overpass/OTM] ${category} → ${data.length} results`);
+        }
+      }
 
+      setCache(cacheKey, data);
       return res.status(200).json(data);
 
     } catch (error) {
-      console.error("OpenTripMap places error:", error.message);
+      console.error("Places fetch error:", error.message);
       return res.status(500).json({ message: "Failed to fetch places." });
     }
   },
 
   // GET /external/search?name=...&lat=...&lng=...&radius=...
-  // Autocomplete locuri turistice dupa text, in jurul coordonatelor date
   searchPlacesByName: async (req, res) => {
     try {
       const { name, lat, lng, radius } = req.query;
@@ -85,13 +105,12 @@ export const externalController = {
       return res.status(200).json(data);
 
     } catch (error) {
-      console.error("OpenTripMap search error:", error.message);
+      console.error("Place search error:", error.message);
       return res.status(500).json({ message: "Failed to search places." });
     }
   },
 
   // GET /external/cities?query=...
-  // autocomplete orase cu api Nominatim
   getCities: async (req, res) => {
     try {
       const { query } = req.query;
@@ -100,7 +119,6 @@ export const externalController = {
         return res.status(400).json({ message: "Query must have at least 2 characters." });
       }
 
-      // apelam Nominatim cu raspuns in romana
       const results = await fetchCitySuggestions(query.trim(), "ro");
 
       return res.status(200).json({ data: results });
@@ -112,9 +130,7 @@ export const externalController = {
   },
 
   // POST /external/reverse-geocode
-  // primeste un array de { external_place_id, lat, lng }
-  // returneaza un obiect { external_place_id: address }
-  // fol POST pentru ca trimit un body, nu query params
+  // body: { coords: [{ external_place_id, lat, lng }] }
   reverseGeocode: async (req, res) => {
     try {
       const { coords } = req.body;
@@ -150,7 +166,6 @@ export const externalController = {
 
       const addressMap = await reverseGeocodeCoords(coords);
 
-      // convertesc Map in obiect JSON simplu pentru raspuns
       const result = {};
       for (const [id, address] of addressMap.entries()) {
         result[id] = address;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../../api/axios";
 import ManualObjectiveModal from "./ManualObjectiveModal";
@@ -27,12 +27,61 @@ export default function ExplorePage() {
     const [places, setPlaces] = useState([]);
     const [placesLoading, setPlacesLoading] = useState(false);
     const [placesError, setPlacesError] = useState(null);
-    // const [geocodingLoading, setGeocodingLoading] = useState(false);
 
     const [addedIds, setAddedIds] = useState([]);
     const [addingIds, setAddingIds] = useState([]);
 
     const [showModal, setShowModal] = useState(false);
+
+    const placesCache = useRef({});
+    const prefetchPromises = useRef({});
+
+    const CACHE_TTL_MS = 45 * 60 * 1000;
+
+    const lsKey = (lat, lng, cat) =>
+        `explore_${cat}_${Number(lat).toFixed(3)}_${Number(lng).toFixed(3)}`;
+
+    const readFromStorage = (key) => {
+        try {
+            const raw = localStorage.getItem(key);
+            if (!raw) return null;
+            const { data, expiresAt } = JSON.parse(raw);
+            if (Date.now() > expiresAt) { localStorage.removeItem(key); return null; }
+            return data;
+        } catch { return null; }
+    };
+
+    const writeToStorage = (key, data) => {
+        try {
+            localStorage.setItem(key, JSON.stringify({ data, expiresAt: Date.now() + CACHE_TTL_MS }));
+        } catch { /* silent fail daca storage e plin */ }
+    };
+
+    const fetchCategoryPlaces = (lat, lng, categoryKey) => {
+        if (placesCache.current[categoryKey] !== undefined) return;
+        if (prefetchPromises.current[categoryKey]) return;
+
+        // const key = lsKey(lat, lng, categoryKey);
+        // const stored = readFromStorage(key);
+        // if (stored) {
+        //     placesCache.current[categoryKey] = stored;
+        //     prefetchPromises.current[categoryKey] = Promise.resolve(stored);
+        //     return;
+        // }
+
+        prefetchPromises.current[categoryKey] = api
+            .get("/external/places", { params: { lat, lng, category: categoryKey } })
+            .then(res => {
+                const result = Array.isArray(res.data) ? res.data : [];
+                placesCache.current[categoryKey] = result;
+                // writeToStorage(key, result);
+                return result;
+            })
+            .catch(() => {
+                delete prefetchPromises.current[categoryKey];
+                return null;
+            });
+    };
 
     useEffect(() => {
         const fetchTrip = async () => {
@@ -48,20 +97,11 @@ export default function ExplorePage() {
         fetchTrip();
     }, [id]);
 
-    const fetchUnassigned = async () => {
-        const res = await api.get(`/trips/${id}/objectives/unassigned`);
-        const ids = (res.data.data || [])
-            .filter(o => o.external_place_id)
-            .map(o => o.external_place_id);
-        setAddedIds(ids);
-    };
-
     const fetchAddedObjectives = async () => {
         try {
             const res = await api.get(`/trips/${id}/board`);
             const { days, unassigned } = res.data.data;
 
-            // toate obiectivele din trip
             const allObjectives = [
                 ...unassigned,
                 ...days.flatMap(d => d.objectives || [])
@@ -84,19 +124,46 @@ export default function ExplorePage() {
     useEffect(() => {
         if (!trip?.destination_lat || !trip?.destination_lng) return;
 
+        const lat = trip.destination_lat;
+        const lng = trip.destination_lng;
+
+
         const fetchPlaces = async () => {
+            // Daca e deja in cache, afisam instant
+            if (placesCache.current[activeCategory.key] !== undefined) {
+                setPlaces(placesCache.current[activeCategory.key]);
+                setPlacesLoading(false);
+                setPlacesError(null);
+                return;
+            }
+
             setPlacesLoading(true);
             setPlacesError(null);
             setPlaces([]);
+
+            // Daca exista un prefetch in curs pentru aceasta categorie, il asteptam
+            if (prefetchPromises.current[activeCategory.key]) {
+                try {
+                    const result = await prefetchPromises.current[activeCategory.key];
+                    if (result !== null) {
+                        setPlaces(result);
+                        setPlacesLoading(false);
+                        return;
+                    }
+                } catch {
+                    // prefetch-ul a esuat, continuam cu fetch propriu
+                }
+            }
+
+            // Fetch direct
+            fetchCategoryPlaces(lat, lng, activeCategory.key);
             try {
-                const res = await api.get("/external/places", {
-                    params: {
-                        lat: trip.destination_lat,
-                        lng: trip.destination_lng,
-                        category: activeCategory.key,
-                    },
-                });
-                setPlaces(Array.isArray(res.data) ? res.data : []);
+                const result = await prefetchPromises.current[activeCategory.key];
+                if (result !== null) {
+                    setPlaces(result ?? []);
+                } else {
+                    setPlacesError("Nu am putut încărca locurile. Încearcă din nou.");
+                }
             } catch (err) {
                 setPlacesError(
                     err?.response?.data?.message ||
@@ -109,52 +176,6 @@ export default function ExplorePage() {
 
         fetchPlaces();
     }, [trip, activeCategory]);
-
-    // // reverse geocoding in background dupa ce places e populat
-    // // cardurile se afiseaza imediat, adresele se actualizeaza pe masura ce vin
-    // useEffect(() => {
-    //     if (!places || places.length === 0) return;
-
-    //     const needsGeocode = places.some(p => !p.address);
-    //     if (!needsGeocode) return;
-
-    //     const fetchAddresses = async () => {
-    //         setGeocodingLoading(true);
-
-    //         const coords = places
-    //             .filter(p => !p.address && p.coord_lat && p.coord_lng)
-    //             .map(p => ({
-    //                 external_place_id: p.external_place_id,
-    //                 lat: p.coord_lat,
-    //                 lng: p.coord_lng
-    //             }));
-
-    //         if (coords.length === 0) {
-    //             setGeocodingLoading(false);
-    //             return;
-    //         }
-
-    //         try {
-    //             const res = await api.post("/external/reverse-geocode", { coords });
-    //             const addressMap = res.data.data;
-
-    //             // actualizam places cu adresele primite fara sa refacem fetch-ul
-    //             setPlaces(prev =>
-    //                 prev.map(place => ({
-    //                     ...place,
-    //                     address: addressMap[place.external_place_id] ?? place.address ?? null
-    //                 }))
-    //             );
-    //         } catch (err) {
-    //             // eroare silentioasa - cardurile raman fara adresa, nu blocam UX-ul
-    //             console.error("Reverse geocode failed:", err.message);
-    //         } finally {
-    //             setGeocodingLoading(false);
-    //         }
-    //     };
-
-    //     fetchAddresses();
-    // }, [places.length]);
 
     const handleAddPlace = async (place) => {
         if (addedIds.includes(place.external_place_id)) return;
@@ -243,11 +264,6 @@ export default function ExplorePage() {
                             {placesLoading && (
                                 <p className="explore-state-msg">Se încarcă locurile...</p>
                             )}
-                            {/* {!placesLoading && geocodingLoading && (
-                            <p className="explore-state-msg" style={{ padding: "0.5rem 0", fontSize: "12px" }}>
-                                Se încarcă adresele...
-                            </p>
-                        )} */}
 
                             {!placesLoading && placesError && (
                                 <div className="explore-error-box">
@@ -307,7 +323,7 @@ export default function ExplorePage() {
                     onClose={() => setShowModal(false)}
                     onSaved={() => {
                         setShowModal(false);
-                        fetchUnassigned();
+                        fetchAddedObjectives();
                     }}
                 />
             )}

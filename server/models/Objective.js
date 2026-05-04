@@ -49,7 +49,7 @@ export const Objective = sequelize.define('Objective', {
         type: DataTypes.STRING
     },
     external_provider: {
-        type: DataTypes.ENUM('OPENTRIPMAP', 'FOURSQUARE')
+        type: DataTypes.ENUM('OPENTRIPMAP', 'WIKIDATA', 'OVERPASS')
     },
     estimated_cost: {
         type: DataTypes.DECIMAL(10, 2),

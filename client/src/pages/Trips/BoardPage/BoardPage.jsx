@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useParams, useNavigate } from "react-router-dom";
 import {
     DndContext, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors, useDroppable, closestCorners,
@@ -162,6 +163,23 @@ function CardPreview({ objective }) {
 // listeners sunt aplicati DOAR pe handle — restul cardului ramane scrollabil
 function MobileSortableCard({ objective, columnOrder, columnMeta, activeColKey, onEdit, onDelete, onMove }) {
     const [moveOpen, setMoveOpen] = useState(false);
+    const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
+    const moveBtnRef = useRef(null);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        if (!moveOpen) return;
+        const handler = (e) => {
+            if (
+                dropdownRef.current && !dropdownRef.current.contains(e.target) &&
+                moveBtnRef.current && !moveBtnRef.current.contains(e.target)
+            ) {
+                setMoveOpen(false);
+            }
+        };
+        document.addEventListener("pointerdown", handler, true);
+        return () => document.removeEventListener("pointerdown", handler, true);
+    }, [moveOpen]);
 
     const {
         attributes,
@@ -244,19 +262,33 @@ function MobileSortableCard({ objective, columnOrder, columnMeta, activeColKey, 
                     {/* Dropdown mutare intre zile */}
                     <div className="board-move-wrapper">
                         <button
+                            ref={moveBtnRef}
                             className="board-card-move-btn"
                             type="button"
                             onPointerDown={(e) => e.stopPropagation()}
                             onClick={(e) => {
                                 e.stopPropagation();
+                                if (!moveOpen && moveBtnRef.current) {
+                                    const rect = moveBtnRef.current.getBoundingClientRect();
+                                    const dropdownHeight = destinations.length * 42 + 8;
+                                    const spaceBelow = window.innerHeight - rect.bottom - 6;
+                                    const top = spaceBelow >= dropdownHeight
+                                        ? rect.bottom + 6
+                                        : rect.top - 6 - dropdownHeight;
+                                    setDropdownPos({ top, left: rect.left });
+                                }
                                 setMoveOpen((prev) => !prev);
                             }}
                         >
-                            Mută în zi
+                            Mută în altă zi
                         </button>
 
-                        {moveOpen && (
-                            <div className="board-move-dropdown">
+                        {moveOpen && createPortal(
+                            <div
+                                ref={dropdownRef}
+                                className="board-move-dropdown board-move-dropdown--fixed"
+                                style={{ top: dropdownPos.top, left: dropdownPos.left }}
+                            >
                                 {destinations.map((destKey) => (
                                     <button
                                         key={destKey}
@@ -272,7 +304,8 @@ function MobileSortableCard({ objective, columnOrder, columnMeta, activeColKey, 
                                         {columnMeta[destKey].title}
                                     </button>
                                 ))}
-                            </div>
+                            </div>,
+                            document.body
                         )}
                     </div>
                 </div>
@@ -288,7 +321,15 @@ function MobileBoard({
     onOptimize, optimizeResults, isOptimizing,
     navigate, id,
 }) {
-    const [activeTab, setActiveTab] = useState(columnOrder[0] ?? "unassigned");
+    const [activeTab, setActiveTab] = useState(() => {
+        if ((columns["unassigned"] ?? []).length === 0) {
+            const firstDayWithObjectives = columnOrder.find(
+                (k) => k !== "unassigned" && (columns[k] ?? []).length > 0
+            );
+            if (firstDayWithObjectives) return firstDayWithObjectives;
+        }
+        return columnOrder[0] ?? "unassigned";
+    });
     const [activeMobileObj, setActiveMobileObj] = useState(null);
 
     // TouchSensor cu delay 200ms pentru a distinge tap simplu de drag intentionat
@@ -796,6 +837,29 @@ export default function BoardPage() {
                     navigate={navigate}
                     id={id}
                 />
+
+                {hotelModal && (
+                    <HotelModal
+                        isLoading={hotelLoading}
+                        error={hotelError}
+                        initialValue={trip?.hotel_name || null}
+                        onConfirm={(hotelName, useHotelAsStart) =>
+                            runOptimize(hotelModal.colKey, hotelName, useHotelAsStart)
+                        }
+                        onClose={() => {
+                            setHotelModal(null);
+                            setHotelError(null);
+                        }}
+                    />
+                )}
+
+                {editingObj && (
+                    <EditObjectiveModal
+                        objective={editingObj}
+                        onClose={() => setEditingObj(null)}
+                        onSaved={handleEditSaved}
+                    />
+                )}
             </>
         );
     }
