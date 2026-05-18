@@ -177,6 +177,28 @@ export default function ExplorePage() {
         fetchPlaces();
     }, [trip, activeCategory]);
 
+    // Prefetch celelalte 3 categorii Wikidata in fundal, secvential cu delay de 1.5s intre cereri
+    useEffect(() => {
+        if (!trip?.destination_lat || !trip?.destination_lng) return;
+
+        const lat = trip.destination_lat;
+        const lng = trip.destination_lng;
+        const WIKIDATA_CATS = ["museums", "historic", "architecture", "parks"];
+
+        let cancelled = false;
+
+        const prefetch = async () => {
+            for (const catKey of WIKIDATA_CATS) {
+                if (cancelled) break;
+                fetchCategoryPlaces(lat, lng, catKey);
+                await new Promise(resolve => setTimeout(resolve, 1500));
+            }
+        };
+
+        prefetch();
+        return () => { cancelled = true; };
+    }, [trip?.destination_lat, trip?.destination_lng]); // eslint-disable-line react-hooks/exhaustive-deps
+
     const handleAddPlace = async (place) => {
         if (addedIds.includes(place.external_place_id)) return;
         if (addingIds.includes(place.external_place_id)) return;

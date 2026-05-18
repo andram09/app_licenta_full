@@ -7,11 +7,9 @@ import { User } from "../models/User.js";
 import { UserToken } from "../models/UserToken.js";
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.sendgrid.net',
-  port: 587,
-  secure: false,
+  service: 'gmail',
   auth: {
-    user: 'apikey',
+    user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS
   }
 });
@@ -39,7 +37,7 @@ export const authController = {
 
       if (existingUser) {
         return res.status(409).json({
-          message: "An account with this email already exists."
+          message: "Există deja un cont cu această adresă de email."
         });
       }
 
@@ -53,13 +51,13 @@ export const authController = {
       });
 
       return res.status(201).json({
-        message: "Account created successfully."
+        message: "Contul a fost creat cu succes."
       });
 
     } catch (error) {
       console.error("Register error:", error);
       return res.status(500).json({
-        message: "Something went wrong."
+        message: "A apărut o eroare. Încearcă din nou."
       });
     }
   },
@@ -77,7 +75,7 @@ export const authController = {
 
       if (!user) {
         return res.status(401).json({
-          message: "Invalid email or password."
+          message: "Email sau parolă incorectă."
         });
       }
 
@@ -88,7 +86,7 @@ export const authController = {
 
       if (!isPasswordValid) {
         return res.status(401).json({
-          message: "Invalid email or password."
+          message: "Email sau parolă incorectă."
         });
       }
 
@@ -97,7 +95,7 @@ export const authController = {
       res.cookie("accessToken", token, cookieOptions);
 
       return res.status(200).json({
-        message: "Logged in successfully.",
+        message: "Autentificare reușită.",
         data: {
           id: user.id_user,
           first_name: user.first_name,
@@ -110,7 +108,7 @@ export const authController = {
     } catch (error) {
       console.error("Login error:", error);
       return res.status(500).json({
-        message: "Something went wrong."
+        message: "A apărut o eroare. Încearcă din nou."
       });
     }
   },
@@ -120,7 +118,7 @@ export const authController = {
     res.clearCookie("accessToken", cookieOptions);
 
     return res.status(200).json({
-      message: "Logged out successfully."
+      message: "Deconectare reușită."
     });
   },
 
@@ -131,7 +129,7 @@ export const authController = {
 
       if (!user) {
         return res.status(404).json({
-          message: "User not found."
+          message: "Utilizatorul nu a fost găsit."
         });
       }
 
@@ -148,12 +146,13 @@ export const authController = {
     } catch (error) {
       console.error("GetMe error:", error);
       return res.status(500).json({
-        message: "Something went wrong."
+        message: "A apărut o eroare. Încearcă din nou."
       });
     }
   },
 
   // FORGOT PASSWORD
+
   forgotPassword: async (req, res) => {
     try {
       const { email } = req.body;
@@ -166,7 +165,7 @@ export const authController = {
 
       if (!user) {
         return res.status(200).json({
-          message: "If your email is registered, you will receive a password reset link shortly."
+          message: "Dacă adresa de email este înregistrată, vei primi un link de resetare în scurt timp."
         });
       }
 
@@ -191,23 +190,23 @@ export const authController = {
       await transporter.sendMail({
         from: process.env.EMAIL_FROM,
         to: emailNormalized,
-        subject: "Reset your password",
+        subject: "Resetare parola Travel Planner App",
         html: `
-          <h2>Password Reset Request</h2>
-          <p>You requested to reset your password. Click the link below:</p>
-          <a href="${resetLink}">Reset Password</a>
-          <p>This link will expire in <strong>1 hour</strong>.</p>
+          <h2>Solicitare resetare parolă</h2>
+          <p>Ai solicitat resetarea parolei. Apasă pe link-ul de mai jos:</p>
+          <a href="${resetLink}">Resetează parola</a>
+          <p>Acest link va expira în <strong>1 oră</strong>.</p>
         `
       });
 
       return res.status(200).json({
-        message: "If your email is registered, you will receive a password reset link shortly."
+        message: "Dacă adresa de email este înregistrată, vei primi un link de resetare în scurt timp."
       });
 
     } catch (error) {
       console.error("ForgotPassword error:", error);
       return res.status(500).json({
-        message: "Something went wrong."
+        message: "A apărut o eroare. Încearcă din nou."
       });
     }
   },
@@ -223,7 +222,7 @@ export const authController = {
 
       if (!userToken || new Date() > userToken.expires_at) {
         return res.status(400).json({
-          message: "This reset link is invalid or expired."
+          message: "Link-ul de resetare este invalid sau a expirat."
         });
       }
 
@@ -237,13 +236,13 @@ export const authController = {
       await userToken.update({ used_at: new Date() });
 
       return res.status(200).json({
-        message: "Your password has been reset successfully."
+        message: "Parola a fost resetată cu succes."
       });
 
     } catch (error) {
       console.error("ResetPassword error:", error);
       return res.status(500).json({
-        message: "Something went wrong."
+        message: "A apărut o eroare. Încearcă din nou."
       });
     }
   },
@@ -256,12 +255,12 @@ export const authController = {
       const user = await User.findByPk(req.user.id);
 
       if (!user) {
-        return res.status(404).json({ message: "User not found." });
+        return res.status(404).json({ message: "Utilizatorul nu a fost găsit." });
       }
       await user.update({ first_name, last_name });
 
       return res.status(200).json({
-        message: "Profile updated successfully.",
+        message: "Profilul a fost actualizat cu succes.",
         data: {
           id: user.id_user,
           first_name: user.first_name,
@@ -285,7 +284,7 @@ export const authController = {
 
       const user = await User.findByPk(req.user.id);
       if (!user) {
-        return res.status(404).json({ message: "User not found." });
+        return res.status(404).json({ message: "Utilizatorul nu a fost găsit." });
       }
 
       // verificam ca parola curenta introdusa este corecta
@@ -296,7 +295,7 @@ export const authController = {
 
       if (!isCurrentPasswordValid) {
         return res.status(400).json({
-          message: "Current password is incorrect."
+          message: "Parola curentă este incorectă."
         });
       }
 
@@ -308,7 +307,7 @@ export const authController = {
 
       if (isSamePassword) {
         return res.status(400).json({
-          message: "New password must be different from the current one."
+          message: "Parola nouă trebuie să fie diferită de cea curentă."
         });
       }
 
@@ -317,7 +316,7 @@ export const authController = {
       await user.update({ password_hash });
 
       return res.status(200).json({
-        message: "Password changed successfully."
+        message: "Parola a fost schimbată cu succes."
       });
 
     } catch (error) {
