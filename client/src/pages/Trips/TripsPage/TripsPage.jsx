@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../store/authContext";
 import { api } from "../../../api/axios";
-import { Pencil } from "lucide-react";
+import { Pencil, FileDown } from "lucide-react";
+import { pdf } from "@react-pdf/renderer";
+import TripPdfDocument from "../../../components/pdf/TripPdfDocument";
 import Navbar from "../../../components/layout/Navbar";
 import "./TripsPage.css";
 
@@ -13,6 +15,7 @@ export default function TripsPage() {
     const [trips, setTrips] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [pdfLoading, setPdfLoading] = useState(null); // id_trip în curs de export
 
     useEffect(() => {
         const fetchTrips = async () => {
@@ -40,6 +43,93 @@ export default function TripsPage() {
             setTrips(prev => prev.filter(t => t.id_trip !== tripId));
         } catch (err) {
             alert(err?.response?.data?.message || "Nu am putut șterge călătoria.");
+        }
+    };
+
+    const handleExportPdf = async (e, trip) => {
+        e.stopPropagation();
+        setPdfLoading(trip.id_trip);
+        try {
+            const res = await api.get(`/trips/${trip.id_trip}/board`);
+            const { days, unassigned } = res.data.data;
+
+            // obiective fara adresa dar cu coordonate — le geocodam ca in BoardPage
+            const allObjectives = [
+                ...(unassigned || []),
+                ...days.flatMap((d) => d.objectives || []),
+            ];
+            const needGeocode = allObjectives.filter(
+                (o) => !o.address && o.coord_lat != null && o.coord_lng != null
+            );
+
+            let addressMap = {};
+            if (needGeocode.length > 0) {
+                // endpoint accepta max 20 coordonate per request
+                const chunks = [];
+                for (let i = 0; i < needGeocode.length; i += 20) {
+                    chunks.push(needGeocode.slice(i, i + 20));
+                }
+                const results = await Promise.all(
+                    chunks.map((chunk) =>
+                        api.post("/external/reverse-geocode", {
+                            coords: chunk.map((o) => ({
+                                external_place_id: String(o.id_objective),
+                                lat: o.coord_lat,
+                                lng: o.coord_lng,
+                            })),
+                        }).then((r) => r.data.data).catch(() => ({}))
+                    )
+                );
+                addressMap = Object.assign({}, ...results);
+
+                // salvam adresele geocodate in DB
+                const toSave = needGeocode
+                    .filter((o) => addressMap[String(o.id_objective)])
+                    .map((o) => ({
+                        id_objective: o.id_objective,
+                        address: addressMap[String(o.id_objective)],
+                    }));
+                if (toSave.length > 0) {
+                    api.patch("/objectives/bulk-addresses", { addresses: toSave })
+                        .catch(() => {});
+                }
+            }
+
+            // injectam adresele geocodate in obiective
+            const enrichObjectives = (objs) =>
+                objs.map((o) => ({
+                    ...o,
+                    address: o.address || addressMap[String(o.id_objective)] || null,
+                }));
+
+            const enrichedDays = days.map((d) => ({
+                ...d,
+                objectives: enrichObjectives(d.objectives || []),
+            }));
+            const enrichedUnassigned = enrichObjectives(unassigned || []);
+
+            const budgetTotal = [...enrichedUnassigned, ...enrichedDays.flatMap((d) => d.objectives)]
+                .reduce((sum, obj) => sum + (obj.estimated_cost ? parseFloat(obj.estimated_cost) : 0), 0);
+
+            const blob = await pdf(
+                <TripPdfDocument
+                    trip={trip}
+                    days={enrichedDays}
+                    unassigned={enrichedUnassigned}
+                    budgetTotal={budgetTotal > 0 ? budgetTotal : null}
+                />
+            ).toBlob();
+
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `itinerar-${trip.destination_name.replace(/\s+/g, "-").toLowerCase()}.pdf`;
+            a.click();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            alert("Nu am putut genera PDF-ul. Încearcă din nou.");
+        } finally {
+            setPdfLoading(null);
         }
     };
 
@@ -149,6 +239,20 @@ export default function TripsPage() {
                     }}
                 >
                     Hartă
+                </button>
+                <button
+                    className="trip-card-pdf-btn"
+                    style={{ marginTop: 0 }}
+                    type="button"
+                    disabled={pdfLoading === trip.id_trip}
+                    title="Exportă itinerariu PDF"
+                    onClick={(e) => handleExportPdf(e, trip)}
+                >
+                    {pdfLoading === trip.id_trip ? (
+                        "..."
+                    ) : (
+                        <FileDown size={14} strokeWidth={2} />
+                    )}
                 </button>
             </div>
         </div>

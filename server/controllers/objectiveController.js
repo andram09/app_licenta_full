@@ -399,6 +399,41 @@ export const objectiveController = {
         }
     },
 
+    // PATCH /objectives/bulk-addresses
+    bulkSaveAddresses: async (req, res) => {
+        try {
+            const { addresses } = req.body; // [{ id_objective, address }]
+
+            if (!Array.isArray(addresses) || addresses.length === 0) {
+                return res.status(400).json({ message: "addresses must be a non-empty array." });
+            }
+
+            const ids = addresses.map((a) => a.id_objective);
+
+            // verificam ca toate obiectivele apartin utilizatorului curent
+            const objectives = await Objective.findAll({
+                where: { id_objective: ids },
+                include: [{ model: Trip, attributes: ["id_user"] }],
+            });
+
+            const forbidden = objectives.some((o) => o.Trip?.id_user !== req.user.id);
+            if (forbidden || objectives.length !== ids.length) {
+                return res.status(403).json({ message: "Forbidden." });
+            }
+
+            await Promise.all(
+                addresses.map(({ id_objective, address }) =>
+                    Objective.update({ address }, { where: { id_objective } })
+                )
+            );
+
+            return res.status(200).json({ message: "Addresses saved." });
+        } catch (error) {
+            console.error("Bulk save addresses error:", error);
+            return res.status(500).json({ message: "Something went wrong." });
+        }
+    },
+
     // GET /trips/:id/objectives
     getTripObjectives: async (req, res) => {
         try {

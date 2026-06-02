@@ -224,6 +224,44 @@
     color: var(--color-navy);
 }
 
+/* PDF export button */
+.trip-card-pdf-btn {
+    margin-top: 12px;
+    padding: 7px 10px;
+    min-height: 36px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--color-teal);
+    background: var(--color-glass);
+    color: var(--color-teal);
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.trip-card-pdf-btn:hover:not(:disabled) {
+    background: var(--color-glass-strong);
+    color: var(--color-navy);
+    border-color: var(--color-teal);
+}
+
+.trip-card-pdf-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .trip-card-pdf-btn {
+        min-height: 40px;
+        padding: 8px 12px;
+    }
+}
+
 
 /* Card delete button */
 .trip-card-delete-btn {

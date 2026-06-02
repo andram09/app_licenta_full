@@ -13,6 +13,7 @@ router.get("/trips/:id/objectives", objectiveController.getTripObjectives);
 router.post("/trips/:id/objectives/manual", objectiveController.createObjectiveManual);
 router.post("/trips/:id/objectives/from-api", objectiveController.createFromApi);
 
+router.patch("/objectives/bulk-addresses", objectiveController.bulkSaveAddresses);
 router.patch("/objectives/:id/move", objectiveController.moveObjective);
 router.put("/objectives/:id", objectiveController.updateObjective);
 router.delete("/objectives/:id", objectiveController.deleteObjective);

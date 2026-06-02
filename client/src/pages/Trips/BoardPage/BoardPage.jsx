@@ -547,7 +547,6 @@ export default function BoardPage() {
                 const addressMap = res.data.data;
 
                 // actualizam fiecare coloana cu adresele primite
-                // cheia din addressMap e String(id_objective) nu external_place_id
                 setColumns(prev => {
                     const next = {};
                     for (const [key, objs] of Object.entries(prev)) {
@@ -558,6 +557,19 @@ export default function BoardPage() {
                     }
                     return next;
                 });
+
+                // salvam adresele in DB ca sa nu mai fie nevoie de geocodare la urmatoarea vizita
+                const toSave = toGeocode
+                    .filter(o => addressMap[o.external_place_id])
+                    .map(o => ({
+                        id_objective: Number(o.external_place_id),
+                        address: addressMap[o.external_place_id]
+                    }));
+
+                if (toSave.length > 0) {
+                    api.patch("/objectives/bulk-addresses", { addresses: toSave })
+                        .catch(err => console.error("Save addresses failed:", err.message));
+                }
             } catch (err) {
                 // eroare silentioasa - cardurile raman fara adresa
                 console.error("Board reverse geocode failed:", err.message);
