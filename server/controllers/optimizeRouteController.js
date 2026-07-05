@@ -18,7 +18,7 @@ export const optimizeRouteController = {
             });
             if (!trip) {
                 await transaction.rollback();
-                return res.status(404).json({ message: 'Trip not found.' });
+                return res.status(404).json({ message: 'Călătoria nu a fost găsită.' });
             }
 
             // ziua apartine trip-ului
@@ -28,7 +28,7 @@ export const optimizeRouteController = {
             });
             if (!tripDay) {
                 await transaction.rollback();
-                return res.status(404).json({ message: 'Trip day not found.' });
+                return res.status(404).json({ message: 'Ziua călătoriei nu a fost găsită.' });
             }
 
             // incarc obiectivele cu coordonate valide
@@ -45,7 +45,7 @@ export const optimizeRouteController = {
             if (objectives.length < 2) {
                 await transaction.rollback();
                 return res.status(422).json({
-                    message: 'At least 2 objectives with coordinates are required.',
+                    message: 'Sunt necesare cel puțin 2 obiective cu coordonate.',
                 });
             }
 
@@ -63,7 +63,7 @@ export const optimizeRouteController = {
                 console.error('TSP service call failed:', tspError.message);
                 await transaction.rollback();
                 return res.status(503).json({
-                    message: 'Route optimization service is currently unavailable.',
+                    message: 'Serviciul de optimizare a rutei este momentan indisponibil.',
                 });
             }
 
@@ -90,7 +90,7 @@ export const optimizeRouteController = {
             });
 
             return res.status(200).json({
-                message: 'Route optimized successfully.',
+                message: 'Ruta a fost optimizată cu succes.',
                 data: {
                     orderedObjectives,
                     totalDistanceKm: optimizationResult.totalDistanceKm,
@@ -103,7 +103,7 @@ export const optimizeRouteController = {
         } catch (error) {
             await transaction.rollback();
             console.error('Optimize route error:', error);
-            return res.status(500).json({ message: 'Something went wrong.' });
+            return res.status(500).json({ message: 'A apărut o eroare. Încearcă din nou.' });
         }
     },
 };

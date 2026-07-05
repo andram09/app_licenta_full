@@ -8,7 +8,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   // Preia datele userului logat din cookie-ul existent
-  // Endpoint corect: GET /auth/profile (nu /auth/me)
+  // Endpoint corect: GET /auth/profile
   const fetchMe = async () => {
     try {
       const response = await api.get("/auth/profile");

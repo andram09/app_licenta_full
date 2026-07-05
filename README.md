@@ -19,7 +19,7 @@ app_licenta/
 | Backend | Node.js, Express 5, Sequelize ORM, MySQL, JWT, bcryptjs, Nodemailer |
 | TSP Service | Python, FastAPI, Uvicorn |
 | AI | Google Gemini 2.5 Flash / 2.0 Flash (estimare costuri) |
-| API-uri externe | Wikidata SPARQL, Overpass (OSM), OpenTripMap, Nominatim |
+| API-uri externe | Google Places (New), Wikidata SPARQL, OpenTripMap, Nominatim |
 
 ---
 
@@ -28,7 +28,7 @@ app_licenta/
 - **Autentificare** — înregistrare, login, forgot/reset password prin email
 - **Gestionare călătorii** — creare, vizualizare și ștergere călătorii
 - **Board interactiv** — organizare obiective pe zile cu drag-and-drop
-- **Explorare locuri** — descoperire obiective turistice prin Wikidata, Overpass OSM și OpenTripMap
+- **Explorare locuri** — descoperire obiective turistice prin Google Places, cu fallback pe Wikidata și OpenTripMap
 - **Hartă interactivă** — vizualizarea traseului zilnic pe Leaflet
 - **Optimizare traseu** — algoritm Held-Karp (exact, ≤12 obiective) sau Nearest Neighbour + 2-opt (greedy, >12 obiective)
 - **Buget și cheltuieli** — tracking cheltuieli pe categorii + estimare automată costuri cu Gemini AI

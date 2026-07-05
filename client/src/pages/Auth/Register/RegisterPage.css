@@ -114,6 +114,35 @@
     background: var(--color-white);
 }
 
+/* Password visibility wrapper */
+.password-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-field .register-input {
+    padding-right: 2.5rem;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0.65rem;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--color-gray);
+    display: flex;
+    align-items: center;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.password-toggle:hover {
+    color: var(--color-teal);
+}
+
 /* Error message */
 .register-error {
     font-size: 12px;

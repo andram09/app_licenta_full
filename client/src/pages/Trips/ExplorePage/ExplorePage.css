@@ -345,6 +345,26 @@
 .explore-card:nth-child(14) { animation-delay: 0.56s; }
 .explore-card:nth-child(15) { animation-delay: 0.60s; }
 
+.explore-card-img-wrap {
+    margin: -1.1rem -1rem 0.75rem;
+    width: calc(100% + 2rem);
+    height: 130px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.explore-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.explore-card:hover .explore-card-img {
+    transform: scale(1.05);
+}
+
 .explore-card-body {
     flex: 1;
 }

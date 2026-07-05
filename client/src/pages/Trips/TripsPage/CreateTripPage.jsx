@@ -32,6 +32,8 @@ export default function CreateTripPage() {
     const debounceRef = useRef(null);
     const dropdownRef = useRef(null);
 
+    const todayStr = new Date().toLocaleDateString("en-CA");
+
     useEffect(() => {
         if (destinationLat !== null) return;
 
@@ -69,12 +71,29 @@ export default function CreateTripPage() {
         return () => document.removeEventListener("mousedown", onClickOutside);
     }, []);
 
-    const handleSelect = (city) => {
+    const handleSelect = async (city) => {
+        // afisam imediat eticheta din Photon, apoi o inlocuim cu varianta in romana
         setDestinationName(city.display_label);
         setDestinationLat(city.lat);
         setDestinationLng(city.lng);
         setSuggestions([]);
         setShowDropdown(false);
+
+        // Photon nu suporta romana → cerem denumirea RO (oras + tara) prin Nominatim
+        try {
+            const res = await api.get(`/external/localize-city`, {
+                params: {
+                    lat: city.lat,
+                    lng: city.lng,
+                    name: city.name,
+                    country: city.country
+                }
+            });
+            const label = res.data?.data?.display_label;
+            if (label) setDestinationName(label);
+        } catch {
+            // pastram eticheta initiala din Photon daca traducerea esueaza
+        }
     };
 
     const handleDestinationChange = (e) => {
@@ -86,6 +105,12 @@ export default function CreateTripPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
+
+        if (startDate && startDate < todayStr) {
+            setError("Data plecării nu poate fi în trecut.");
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -184,6 +209,7 @@ export default function CreateTripPage() {
                             className="create-trip-input"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
+                            min={todayStr}
                             disabled={loading}
                         />
                     </div>

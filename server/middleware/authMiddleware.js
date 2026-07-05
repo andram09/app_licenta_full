@@ -6,13 +6,13 @@ export const authMiddleware = (req, res, next) => {
   const token = req.cookies?.accessToken;
 
   if (!token) {
-    return res.status(401).json({ success: false, message: 'Access denied. No token provided.' });
+    return res.status(401).json({ success: false, message: 'Acces refuzat. Autentifică-te pentru a continua.' });
   }
 
   const payload = verifyAccessToken(token);
 
   if (!payload) {
-    return res.status(401).json({ success: false, message: 'Access denied. Invalid or expired token.' });
+    return res.status(401).json({ success: false, message: 'Sesiune expirată. Autentifică-te din nou.' });
   }
 
   // Punem datele userului in req.user pentru a fi accesibile in controllere
@@ -24,7 +24,7 @@ export const authMiddleware = (req, res, next) => {
 // Aplicat intotdeauna dupa authMiddleware
 export const adminMiddleware = (req, res, next) => {
   if (req.user.role !== 'ADMIN') {
-    return res.status(403).json({  message: 'Access denied. Admins only.' });
+    return res.status(403).json({  message: 'Acces refuzat. Doar administratorii au acces.' });
   }
 
   next();

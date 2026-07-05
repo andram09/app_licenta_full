@@ -361,36 +361,10 @@ export default function TripPdfDocument({ trip, days, unassigned, budgetTotal })
                     </View>
                 )}
 
-                {/* ── Buget ── */}
-                {hasBudget && (
-                    <View style={S.budgetSection}>
-                        <Text style={S.budgetTitle}>Buget estimat</Text>
-                        <View style={S.budgetGrid}>
-                            <View style={S.budgetCard}>
-                                <Text style={S.budgetCardLabel}>Total obiective</Text>
-                                <Text style={S.budgetCardValue}>
-                                    {parseFloat(budgetTotal).toFixed(2)} EUR
-                                </Text>
-                            </View>
-                            {trip.number_of_people > 1 && (
-                                <View style={S.budgetCard}>
-                                    <Text style={S.budgetCardLabel}>Per persoană</Text>
-                                    <Text style={S.budgetCardValue}>
-                                        {(budgetTotal / trip.number_of_people).toFixed(2)} EUR
-                                    </Text>
-                                </View>
-                            )}
-                        </View>
-                        <Text style={S.budgetNote}>
-                            * Include doar costurile estimate pe obiective, nu și cheltuielile manuale.
-                        </Text>
-                    </View>
-                )}
-
                 {/* ── Footer ── */}
                 <View style={S.footer} fixed>
                     <Text style={S.footerText}>
-                        {"Itinerar " + trip.destination_name + " · generat pe " + today}
+                        {"Itinerar " + trip.destination_name + ", generat pe " + today}
                     </Text>
                     <Text
                         style={S.footerText}

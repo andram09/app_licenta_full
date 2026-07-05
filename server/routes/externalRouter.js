@@ -13,6 +13,9 @@ router.get("/search", externalController.searchPlacesByName);
 // /external/cities?query=...
 router.get("/cities", externalController.getCities);
 
+// /external/localize-city?lat=...&lng=...&name=...&country=...
+router.get("/localize-city", externalController.localizeCity);
+
 // /external/reverse-geocode
 router.post("/reverse-geocode", authMiddleware, externalController.reverseGeocode);
 

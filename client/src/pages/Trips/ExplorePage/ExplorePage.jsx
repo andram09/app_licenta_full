@@ -313,6 +313,19 @@ export default function ExplorePage() {
 
                                         return (
                                             <div key={place.external_place_id} className="explore-card">
+                                                {place.image_url && (
+                                                    <div className="explore-card-img-wrap">
+                                                        <img
+                                                            className="explore-card-img"
+                                                            src={place.image_url}
+                                                            alt=""
+                                                            loading="lazy"
+                                                            onError={e => {
+                                                                e.currentTarget.parentElement.style.display = "none";
+                                                            }}
+                                                        />
+                                                    </div>
+                                                )}
                                                 <div className="explore-card-body">
                                                     <h3 className="explore-card-title">{place.title}</h3>
                                                     {place.address && (

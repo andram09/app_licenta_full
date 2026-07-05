@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../../../store/authContext";
+import PasswordRequirements from "../../../components/auth/PasswordRequirements";
 import "./RegisterPage.css";
 
 export default function RegisterPage() {
@@ -13,6 +15,7 @@ export default function RegisterPage() {
         email: "",
         password: "",
     });
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
@@ -100,16 +103,27 @@ export default function RegisterPage() {
 
                     <label className="register-label">
                         Parolă
-                        <input
-                            type="password"
-                            name="password"
-                            value={form.password}
-                            onChange={handleChange}
-                            className="register-input"
-                            placeholder="Min. 8 car., majusculă, cifră, simbol (!@#$%^&*)"
-                            required
-                            autoComplete="new-password"
-                        />
+                        <div className="password-field">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                value={form.password}
+                                onChange={handleChange}
+                                className="register-input"
+                                placeholder="Min. 8 car., majusculă, cifră, simbol (!@#$%^&*)"
+                                required
+                                autoComplete="new-password"
+                            />
+                            <button
+                                type="button"
+                                className="password-toggle"
+                                onClick={() => setShowPassword((v) => !v)}
+                                aria-label={showPassword ? "Ascunde parola" : "Arată parola"}
+                            >
+                                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </button>
+                        </div>
+                        {form.password && <PasswordRequirements password={form.password} />}
                     </label>
 
                     {/* Mesaje de eroare sau succes */}

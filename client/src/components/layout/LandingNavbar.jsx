@@ -37,7 +37,7 @@ export default function LandingNavbar() {
                 <Link to="/" className="landing-nav-icon-wrap">
                     <MapPin size={18} strokeWidth={2.5} />
                 </Link>
-                <span className="landing-nav-brand-text">TripPlanner</span>
+                <span className="landing-nav-brand-text">TravelPlanner</span>
             </div>
 
             {/* Right: actions */}

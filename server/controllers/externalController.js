@@ -1,5 +1,6 @@
-import {fetchWikidataAttractions, fetchOpenTripMapByKinds, fetchOverpassAttractions,
-  fetchOpenTripMapByName, fetchCitySuggestions, reverseGeocodeCoords} from "../services/externalPlacesService.js";
+import {fetchWikidataAttractions, fetchOpenTripMapByKinds,
+  fetchOpenTripMapByName, fetchCitySuggestions, reverseGeocodeCoords,
+  localizeCityCountryRo, fetchGooglePlacesByCategory} from "../services/externalPlacesService.js";
 
 const placesCache = new Map();
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 ora
@@ -35,7 +36,7 @@ export const externalController = {
       const longitude = Number(lng);
 
       if (isNaN(latitude) || isNaN(longitude) || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
-        return res.status(400).json({ message: "Invalid latitude or longitude." });
+        return res.status(400).json({ message: "Coordonate invalide." });
       }
 
       const kinds = KINDS_MAP[category];
@@ -53,29 +54,36 @@ export const externalController = {
       }
 
       let data;
-      if (FOOD_CATEGORIES.has(category)) {
-        data = await fetchOpenTripMapByKinds(latitude, longitude, kinds, 1);
-      } else {
-        // 1. Wikidata SPARQL (primar — sitelinks ca proxy pentru faima)
-        // 2. Overpass cu Promise.any pe 4 mirroare (secundar)
-        // 3. OpenTripMap (tertiar, in fallback-ul Overpass)
-        try {
-          data = await fetchWikidataAttractions(latitude, longitude, category);
-          console.log(`[Wikidata] ${category} @ ${latitude},${longitude} → ${data.length} results`);
-          if (!data || data.length === 0) throw new Error("Wikidata returned 0 results");
-        } catch (wikidataErr) {
-          console.warn(`[Wikidata] Failed (${wikidataErr.message}), trying Overpass`);
-          data = await fetchOverpassAttractions(latitude, longitude, category);
-          console.log(`[Overpass/OTM] ${category} → ${data.length} results`);
+
+      try {
+        data = await fetchGooglePlacesByCategory(latitude, longitude, category);
+        console.log(`[Google] ${category} @ ${latitude},${longitude} → ${data.length} results`);
+        if (!data || data.length === 0) throw new Error("Google returned 0 results");
+      } catch (googleErr) {
+        console.warn(`[Google] Failed (${googleErr.message}), falling back`);
+        if (FOOD_CATEGORIES.has(category)) {
+          data = await fetchOpenTripMapByKinds(latitude, longitude, kinds, 1);
+        } else {
+          try {
+            data = await fetchWikidataAttractions(latitude, longitude, category);
+            console.log(`[Wikidata] ${category} @ ${latitude},${longitude} → ${data.length} results`);
+            if (!data || data.length === 0) throw new Error("Wikidata returned 0 results");
+          } catch (wikidataErr) {
+            console.warn(`[Wikidata] Failed (${wikidataErr.message}), trying OpenTripMap`);
+            data = await fetchOpenTripMapByKinds(latitude, longitude, kinds, 2);
+            console.log(`[OpenTripMap] ${category} → ${data.length} results`);
+          }
         }
       }
+
+      data = (data ?? []).filter(p => p.image_url);
 
       setCache(cacheKey, data);
       return res.status(200).json(data);
 
     } catch (error) {
       console.error("Places fetch error:", error.message);
-      return res.status(500).json({ message: "Failed to fetch places." });
+      return res.status(500).json({ message: "Nu am putut încărca locațiile." });
     }
   },
 
@@ -85,7 +93,7 @@ export const externalController = {
       const { name, lat, lng, radius } = req.query;
 
       if (!name || name.trim().length < 3) {
-        return res.status(400).json({ message: "Query must have at least 3 characters." });
+        return res.status(400).json({ message: "Căutarea trebuie să aibă cel puțin 3 caractere." });
       }
 
       const latitude = Number(lat);
@@ -96,7 +104,7 @@ export const externalController = {
         latitude < -90 || latitude > 90 ||
         longitude < -180 || longitude > 180
       ) {
-        return res.status(400).json({ message: "Invalid latitude or longitude." });
+        return res.status(400).json({ message: "Coordonate invalide." });
       }
 
       const r = radius ? Math.min(Number(radius), 10000) : 5000;
@@ -106,7 +114,7 @@ export const externalController = {
 
     } catch (error) {
       console.error("Place search error:", error.message);
-      return res.status(500).json({ message: "Failed to search places." });
+      return res.status(500).json({ message: "Căutarea locațiilor a eșuat." });
     }
   },
 
@@ -116,7 +124,7 @@ export const externalController = {
       const { query } = req.query;
 
       if (!query || query.trim().length < 2) {
-        return res.status(400).json({ message: "Query must have at least 2 characters." });
+        return res.status(400).json({ message: "Căutarea trebuie să aibă cel puțin 2 caractere." });
       }
 
       const results = await fetchCitySuggestions(query.trim(), "ro");
@@ -125,7 +133,39 @@ export const externalController = {
 
     } catch (error) {
       console.error("Nominatim geocoding error:", error.message);
-      return res.status(500).json({ message: "Failed to fetch city suggestions." });
+      return res.status(500).json({ message: "Nu am putut încărca sugestiile de orașe." });
+    }
+  },
+
+  // GET /external/localize-city?lat=...&lng=...&name=...&country=...
+  // Intoarce denumirea orasului si tarii in romana pentru coordonatele date.
+  localizeCity: async (req, res) => {
+    try {
+      const { lat, lng, name, country } = req.query;
+
+      const latitude = Number(lat);
+      const longitude = Number(lng);
+
+      if (
+        isNaN(latitude) || isNaN(longitude) ||
+        latitude < -90 || latitude > 90 ||
+        longitude < -180 || longitude > 180
+      ) {
+        return res.status(400).json({ message: "Coordonate invalide." });
+      }
+
+      const result = await localizeCityCountryRo({
+        lat: latitude,
+        lng: longitude,
+        fallbackName: name || null,
+        fallbackCountry: country || null
+      });
+
+      return res.status(200).json({ data: result });
+
+    } catch (error) {
+      console.error("Localize city error:", error.message);
+      return res.status(500).json({ message: "Nu am putut localiza orașul." });
     }
   },
 
@@ -175,7 +215,7 @@ export const externalController = {
 
     } catch (error) {
       console.error("Reverse geocode error:", error.message);
-      return res.status(500).json({ message: "Failed to reverse geocode coordinates." });
+      return res.status(500).json({ message: "Nu am putut determina adresa pentru coordonate." });
     }
   }
 
@@ -196,7 +236,7 @@ export const externalController = {
 //             const longitude = Number(lng);
 
 //             if (isNaN(latitude) || isNaN(longitude) || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
-//                 return res.status(400).json({ message: "Invalid latitude or longitude." });
+//                 return res.status(400).json({ message: "Coordonate invalide." });
 //             }
 
 //             const data = await fetchOpenTripMap(latitude, longitude);
@@ -220,7 +260,7 @@ export const externalController = {
 //             const allowedCategories = ["restaurant", "cafe", "bar", "nightlife"];
 
 //             if (isNaN(latitude) || isNaN(longitude) || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
-//                 return res.status(400).json({ message: "Invalid latitude or longitude." });
+//                 return res.status(400).json({ message: "Coordonate invalide." });
 //             }
 
 //             if (!allowedCategories.includes(category)) {

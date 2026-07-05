@@ -1,4 +1,4 @@
-import { Objective, TripDay, Trip, Category } from '../models/index.js';
+import { Objective, TripDay, Trip } from '../models/index.js';
 import { Op } from 'sequelize';
 import sequelize from "../config/db.config.js"
 
@@ -28,7 +28,7 @@ export const objectiveController = {
             });
 
             if (!trip) {
-                return res.status(404).json({ message: 'Trip not found.' });
+                return res.status(404).json({ message: 'Călătoria nu a fost găsită.' });
             }
 
             const objectives = await Objective.findAll({
@@ -36,9 +36,6 @@ export const objectiveController = {
                     id_trip: id,
                     id_trip_day: null
                 },
-                include: [
-                    { model: Category, attributes: ['id_category', 'name'] }
-                ],
                 order: [['createdAt', 'DESC']]
             });
 
@@ -46,7 +43,7 @@ export const objectiveController = {
 
         } catch (error) {
             console.error('Get unassigned objectives error:', error);
-            return res.status(500).json({ message: 'Something went wrong.' });
+            return res.status(500).json({ message: 'A apărut o eroare. Încearcă din nou.' });
         }
     },
 
@@ -54,11 +51,11 @@ export const objectiveController = {
     createObjectiveManual: async (req, res) => {
         try {
             const { id } = req.params;
-            const { id_category, title, description, coord_lat, coord_lng, address, planned_time } = req.body;
+            const { title, description, coord_lat, coord_lng, address, planned_time } = req.body;
 
             if (!title || title.trim().length < 2) {
                 return res.status(400).json({
-                    message: "Title must contain at least 2 characters."
+                    message: "Titlul trebuie să aibă cel puțin 2 caractere."
                 });
             }
 
@@ -66,7 +63,7 @@ export const objectiveController = {
                 const lat = Number(coord_lat);
                 if (isNaN(lat) || lat < -90 || lat > 90) {
                     return res.status(400).json({
-                        message: "Invalid latitude value."
+                        message: "Valoare invalidă pentru latitudine."
                     });
                 }
             }
@@ -75,7 +72,7 @@ export const objectiveController = {
                 const lng = Number(coord_lng);
                 if (isNaN(lng) || lng < -180 || lng > 180) {
                     return res.status(400).json({
-                        message: "Invalid longitude value."
+                        message: "Valoare invalidă pentru longitudine."
                     });
                 }
             }
@@ -85,13 +82,12 @@ export const objectiveController = {
             });
 
             if (!trip) {
-                return res.status(404).json({ message: 'Trip not found.' });
+                return res.status(404).json({ message: 'Călătoria nu a fost găsită.' });
             }
 
             const objective = await Objective.create({
                 id_trip: id,
                 id_trip_day: null,
-                id_category,
                 title: title.trim(),
                 description,
                 coord_lat: coord_lat ? Number(coord_lat) : null,
@@ -105,13 +101,13 @@ export const objectiveController = {
             });
 
             return res.status(201).json({
-                message: 'Objective created successfully.',
+                message: 'Obiectivul a fost creat cu succes.',
                 data: objective
             });
 
         } catch (error) {
             console.error('Create objective error:', error);
-            return res.status(500).json({ message: 'Something went wrong.' });
+            return res.status(500).json({ message: 'A apărut o eroare. Încearcă din nou.' });
         }
     },
 
@@ -129,12 +125,12 @@ export const objectiveController = {
 
             if (!objective) {
                 await transaction.rollback();
-                return res.status(404).json({ message: 'Objective not found.' });
+                return res.status(404).json({ message: 'Obiectivul nu a fost găsit.' });
             }
 
             if (objective.Trip?.id_user !== req.user.id) {
                 await transaction.rollback();
-                return res.status(403).json({ message: 'Forbidden.' });
+                return res.status(403).json({ message: 'Acces interzis.' });
             }
 
             const oldDayId = objective.id_trip_day;
@@ -220,13 +216,13 @@ export const objectiveController = {
             await transaction.commit();
 
             return res.status(200).json({
-                message: 'Objective moved successfully.'
+                message: 'Obiectivul a fost mutat cu succes.'
             });
 
         } catch (error) {
             await transaction.rollback();
             console.error('Move objective error:', error);
-            return res.status(500).json({ message: 'Something went wrong.' });
+            return res.status(500).json({ message: 'A apărut o eroare. Încearcă din nou.' });
         }
     },
 
@@ -241,22 +237,22 @@ export const objectiveController = {
             });
 
             if (!objective) {
-                return res.status(404).json({ message: 'Objective not found.' });
+                return res.status(404).json({ message: 'Obiectivul nu a fost găsit.' });
             }
 
             if (objective.Trip?.id_user !== req.user.id) {
-                return res.status(403).json({ message: 'Forbidden.' });
+                return res.status(403).json({ message: 'Acces interzis.' });
             }
 
             await objective.update({ planned_time, description });
 
             return res.status(200).json({
-                message: 'Objective updated successfully.'
+                message: 'Obiectivul a fost actualizat cu succes.'
             });
 
         } catch (error) {
             console.error('Update objective error:', error);
-            return res.status(500).json({ message: 'Something went wrong.' });
+            return res.status(500).json({ message: 'A apărut o eroare. Încearcă din nou.' });
         }
     },
 
@@ -270,11 +266,11 @@ export const objectiveController = {
             });
 
             if (!objective) {
-                return res.status(404).json({ message: 'Objective not found.' });
+                return res.status(404).json({ message: 'Obiectivul nu a fost găsit.' });
             }
 
             if (objective.Trip?.id_user !== req.user.id) {
-                return res.status(403).json({ message: 'Forbidden.' });
+                return res.status(403).json({ message: 'Acces interzis.' });
             }
 
             const dayId = objective.id_trip_day;
@@ -286,12 +282,12 @@ export const objectiveController = {
             }
 
             return res.status(200).json({
-                message: 'Objective deleted successfully.'
+                message: 'Obiectivul a fost șters cu succes.'
             });
 
         } catch (error) {
             console.error('Delete objective error:', error);
-            return res.status(500).json({ message: 'Something went wrong.' });
+            return res.status(500).json({ message: 'A apărut o eroare. Încearcă din nou.' });
         }
     },
 
@@ -301,7 +297,6 @@ export const objectiveController = {
         try {
             const { id } = req.params;
             const {
-                id_category,
                 title,
                 description,
                 coord_lat,
@@ -314,7 +309,7 @@ export const objectiveController = {
 
             if (!title || title.trim().length < 2) {
                 await transaction.rollback();
-                return res.status(400).json({ message: "Title must contain at least 2 characters." });
+                return res.status(400).json({ message: "Titlul trebuie să aibă cel puțin 2 caractere." });
             }
 
             if (!external_place_id || !external_provider) {
@@ -326,7 +321,7 @@ export const objectiveController = {
                 const lat = Number(coord_lat);
                 if (isNaN(lat) || lat < -90 || lat > 90) {
                     await transaction.rollback();
-                    return res.status(400).json({ message: "Invalid latitude value." });
+                    return res.status(400).json({ message: "Valoare invalidă pentru latitudine." });
                 }
             }
 
@@ -334,7 +329,7 @@ export const objectiveController = {
                 const lng = Number(coord_lng);
                 if (isNaN(lng) || lng < -180 || lng > 180) {
                     await transaction.rollback();
-                    return res.status(400).json({ message: "Invalid longitude value." });
+                    return res.status(400).json({ message: "Valoare invalidă pentru longitudine." });
                 }
             }
 
@@ -345,7 +340,7 @@ export const objectiveController = {
 
             if (!trip) {
                 await transaction.rollback();
-                return res.status(404).json({ message: "Trip not found." });
+                return res.status(404).json({ message: "Călătoria nu a fost găsită." });
             }
 
             // verificam sa nu adaugam acelasi obiectiv de 2 ori
@@ -361,7 +356,7 @@ export const objectiveController = {
             if (existing) {
                 await transaction.rollback();
                 return res.status(409).json({
-                    message: "This place is already added to your trip.",
+                    message: "Acest loc este deja adăugat în călătoria ta.",
                     data: { id_objective: existing.id_objective }
                 });
             }
@@ -370,7 +365,6 @@ export const objectiveController = {
                 {
                     id_trip: id,
                     id_trip_day: null,
-                    id_category: id_category ?? null,
                     title: title.trim(),
                     description: description ?? null,
                     coord_lat: coord_lat !== undefined && coord_lat !== null ? Number(coord_lat) : null,
@@ -388,14 +382,14 @@ export const objectiveController = {
             await transaction.commit();
 
             return res.status(201).json({
-                message: "Objective added to trip as unassigned.",
+                message: "Obiectivul a fost adăugat în călătorie.",
                 data: { id_objective: created.id_objective }
             });
 
         } catch (error) {
             await transaction.rollback();
             console.error("Create objective from API error:", error);
-            return res.status(500).json({ message: "Something went wrong." });
+            return res.status(500).json({ message: "A apărut o eroare. Încearcă din nou." });
         }
     },
 
@@ -418,7 +412,7 @@ export const objectiveController = {
 
             const forbidden = objectives.some((o) => o.Trip?.id_user !== req.user.id);
             if (forbidden || objectives.length !== ids.length) {
-                return res.status(403).json({ message: "Forbidden." });
+                return res.status(403).json({ message: "Acces interzis." });
             }
 
             await Promise.all(
@@ -427,10 +421,10 @@ export const objectiveController = {
                 )
             );
 
-            return res.status(200).json({ message: "Addresses saved." });
+            return res.status(200).json({ message: "Adresele au fost salvate." });
         } catch (error) {
             console.error("Bulk save addresses error:", error);
-            return res.status(500).json({ message: "Something went wrong." });
+            return res.status(500).json({ message: "A apărut o eroare. Încearcă din nou." });
         }
     },
 
@@ -444,14 +438,11 @@ export const objectiveController = {
             });
 
             if (!trip) {
-                return res.status(404).json({ message: 'Trip not found.' });
+                return res.status(404).json({ message: 'Călătoria nu a fost găsită.' });
             }
 
             const objectives = await Objective.findAll({
                 where: { id_trip: id },
-                include: [
-                    { model: Category, attributes: ['id_category', 'name'] }
-                ],
                 order: [['createdAt', 'DESC']]
             });
 
@@ -459,7 +450,7 @@ export const objectiveController = {
 
         } catch (error) {
             console.error('Get trip objectives error:', error);
-            return res.status(500).json({ message: 'Something went wrong.' });
+            return res.status(500).json({ message: 'A apărut o eroare. Încearcă din nou.' });
         }
     }
 

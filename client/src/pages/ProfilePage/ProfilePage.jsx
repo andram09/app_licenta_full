@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../../store/authContext";
 import { api } from "../../api/axios";
 import Navbar from "../../components/layout/Navbar";
@@ -22,6 +23,9 @@ export default function ProfilePage() {
         new_password: "",
         confirm_new_password: "",
     });
+    const [showCurrent, setShowCurrent] = useState(false);
+    const [showNew, setShowNew] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
     const [passwordLoading, setPasswordLoading] = useState(false);
     const [passwordSuccess, setPasswordSuccess] = useState("");
     const [passwordError, setPasswordError] = useState("");
@@ -48,8 +52,10 @@ export default function ProfilePage() {
             });
             setProfileSuccess("Datele au fost actualizate cu succes.");
         } catch (err) {
+            // Mesajul specific de validare e in array-ul errors, nu in message (generic).
+            const data = err?.response?.data;
             const msg =
-                err?.response?.data?.message || "A apărut o eroare. Încearcă din nou.";
+                data?.errors?.[0] || data?.message || "A apărut o eroare. Încearcă din nou.";
             setProfileError(msg);
         } finally {
             setProfileLoading(false);
@@ -90,8 +96,10 @@ export default function ProfilePage() {
                 confirm_new_password: "",
             });
         } catch (err) {
+            // Mesajul specific de validare e in array-ul errors, nu in message (generic).
+            const data = err?.response?.data;
             const msg =
-                err?.response?.data?.message || "A apărut o eroare. Încearcă din nou.";
+                data?.errors?.[0] || data?.message || "A apărut o eroare. Încearcă din nou.";
             setPasswordError(msg);
         } finally {
             setPasswordLoading(false);
@@ -182,44 +190,74 @@ export default function ProfilePage() {
                     <form onSubmit={handlePasswordSubmit} className="profile-form" noValidate>
                         <label className="profile-label">
                             Parola curentă
-                            <input
-                                type="password"
-                                name="current_password"
-                                value={passwordForm.current_password}
-                                onChange={handlePasswordChange}
-                                className="profile-input"
-                                placeholder="Introdu parola curentă"
-                                required
-                                autoComplete="current-password"
-                            />
+                            <div className="password-field">
+                                <input
+                                    type={showCurrent ? "text" : "password"}
+                                    name="current_password"
+                                    value={passwordForm.current_password}
+                                    onChange={handlePasswordChange}
+                                    className="profile-input"
+                                    placeholder="Introdu parola curentă"
+                                    required
+                                    autoComplete="current-password"
+                                />
+                                <button
+                                    type="button"
+                                    className="password-toggle"
+                                    onClick={() => setShowCurrent((v) => !v)}
+                                    aria-label={showCurrent ? "Ascunde parola" : "Arată parola"}
+                                >
+                                    {showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}
+                                </button>
+                            </div>
                         </label>
 
                         <label className="profile-label">
                             Parola nouă
-                            <input
-                                type="password"
-                                name="new_password"
-                                value={passwordForm.new_password}
-                                onChange={handlePasswordChange}
-                                className="profile-input"
-                                placeholder="Introdu parola nouă"
-                                required
-                                autoComplete="new-password"
-                            />
+                            <div className="password-field">
+                                <input
+                                    type={showNew ? "text" : "password"}
+                                    name="new_password"
+                                    value={passwordForm.new_password}
+                                    onChange={handlePasswordChange}
+                                    className="profile-input"
+                                    placeholder="Introdu parola nouă"
+                                    required
+                                    autoComplete="new-password"
+                                />
+                                <button
+                                    type="button"
+                                    className="password-toggle"
+                                    onClick={() => setShowNew((v) => !v)}
+                                    aria-label={showNew ? "Ascunde parola" : "Arată parola"}
+                                >
+                                    {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
+                                </button>
+                            </div>
                         </label>
 
                         <label className="profile-label">
                             Confirmare parolă nouă
-                            <input
-                                type="password"
-                                name="confirm_new_password"
-                                value={passwordForm.confirm_new_password}
-                                onChange={handlePasswordChange}
-                                className="profile-input"
-                                placeholder="Repetă parola nouă"
-                                required
-                                autoComplete="new-password"
-                            />
+                            <div className="password-field">
+                                <input
+                                    type={showConfirm ? "text" : "password"}
+                                    name="confirm_new_password"
+                                    value={passwordForm.confirm_new_password}
+                                    onChange={handlePasswordChange}
+                                    className="profile-input"
+                                    placeholder="Repetă parola nouă"
+                                    required
+                                    autoComplete="new-password"
+                                />
+                                <button
+                                    type="button"
+                                    className="password-toggle"
+                                    onClick={() => setShowConfirm((v) => !v)}
+                                    aria-label={showConfirm ? "Ascunde parola" : "Arată parola"}
+                                >
+                                    {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
+                                </button>
+                            </div>
                         </label>
 
                         {passwordSuccess && (

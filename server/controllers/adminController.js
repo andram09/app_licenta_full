@@ -6,8 +6,8 @@ export const adminController = {
         try {
             //total users unde role='USER'
             const totalUsers = await User.count({ where: { role: 'USER' } });
-            //total trips
-            const totalTrips = await Trip.count();
+            //total trips — include TOATE calatoriile (active + sterse), cate s-au creat in aplicatie
+            const totalTrips = await Trip.count({ paranoid: false });
 
             const avgTripsPerUser = totalUsers > 0 ? parseFloat((totalTrips / totalUsers).toFixed(2)) : 0;
 
@@ -22,28 +22,43 @@ export const adminController = {
             const avgTripDuration = avgTripDurationRaw[0].avgDuration ? parseFloat(parseFloat(avgTripDurationRaw[0].avgDuration).toFixed(1)) : 0;
 
             // avgObjectivesPerTrip
-            const totalObjectives = await Objective.count();
-            const avgObjectivesPerTrip = totalTrips > 0 ? parseFloat((totalObjectives / totalTrips).toFixed(1)) : 0;
+            // numaram doar obiectivele care apartin unui trip ne-sters (Trip e paranoid,
+            // deci INNER JOIN cu required:true exclude automat trip-urile soft-deleted)
+            const totalObjectives = await Objective.count({
+                include: [{ model: Trip, required: true, attributes: [] }]
+            });
+            // media se raporteaza doar la calatoriile active, pentru ca obiectivele numarate
+            // sunt doar ale acestora (totalTrips include si calatoriile sterse)
+            const activeTrips = await Trip.count();
+            const avgObjectivesPerTrip = activeTrips > 0 ? parseFloat((totalObjectives / activeTrips).toFixed(1)) : 0;
 
-            //top destinations
-            const topDestinationsRaw = await Trip.findAll({
-                attributes: [
-                    "destination_name",
-                    [sequelize.fn("COUNT", sequelize.col("id_trip")), "count"]
-                ],
-                group: ["destination_name"],
-                order: [[sequelize.literal("count"), "DESC"]],
-                limit: 5,
+            // top destinations — grupam dupa oras (partea dinaintea virgulei), normalizat,
+            // ca sa nu separam "Barcelona, Spania" de "Barcelona, Spain" (tara difera ca limba)
+            const allDestinations = await Trip.findAll({
+                attributes: ["destination_name"],
                 raw: true
             });
 
-            const topDestinations = topDestinationsRaw.map(item => ({
-                destination: item.destination_name,
-                tripsCount: parseInt(item.count)
-            }));
+            const destMap = new Map(); // cheie normalizata -> { destination, tripsCount }
+            for (const { destination_name } of allDestinations) {
+                if (!destination_name) continue;
+                const city = destination_name.split(",")[0].trim();
+                const key = city.toLowerCase();
+                if (destMap.has(key)) {
+                    destMap.get(key).tripsCount += 1;
+                } else {
+                    destMap.set(key, { destination: city, tripsCount: 1 });
+                }
+            }
 
-            // tripsPerMonth 
+            const topDestinations = [...destMap.values()]
+                .sort((a, b) => b.tripsCount - a.tripsCount)
+                .slice(0, 5);
+
+            // tripsPerMonth — statistica include TOATE calatoriile (active + sterse),
+            // fiindca reprezinta cate calatorii s-au creat in aplicatie pe luni
             const tripsPerMonthRaw = await Trip.findAll({
+                paranoid: false,
                 attributes: [
                     [sequelize.fn("MONTH", sequelize.col("createdAt")), "month"],
                     [sequelize.fn("YEAR", sequelize.col("createdAt")), "year"],
@@ -64,11 +79,13 @@ export const adminController = {
             }));
 
             //top expense categories
+            // doar cheltuielile trip-urilor ne-sterse (acelasi principiu ca la obiective)
             const topCategoriesRaw = await Expense.findAll({
                 attributes: [
                     "id_expense_category",
                     [sequelize.fn("SUM", sequelize.col("amount")), "total"]
                 ],
+                include: [{ model: Trip, required: true, attributes: [] }],
                 group: ["id_expense_category"],
                 order: [[sequelize.literal("total"), "DESC"]],
                 limit: 5,
@@ -83,7 +100,7 @@ export const adminController = {
                 );
 
                 return {
-                    category: category ? category.name : "Uncategorized",
+                    category: category ? category.name : "Fără categorie",
                     total: parseFloat(item.total)
                 };
             });
@@ -102,7 +119,7 @@ export const adminController = {
         } catch (error) {
             console.error("Admin dashboard error:", error);
             return res.status(500).json({
-                message: "Something went wrong."
+                message: "A apărut o eroare. Încearcă din nou."
             });
         }
     }

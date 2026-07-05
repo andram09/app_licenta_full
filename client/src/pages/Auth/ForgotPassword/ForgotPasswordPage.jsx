@@ -19,8 +19,10 @@ export default function ForgotPasswordPage() {
             await api.post("/auth/forgot-password", { email });
             setSuccess(true);
         } catch (err) {
-            // Eroare de retea sau de validare (400)
-            const msg = err?.response?.data?.message || "Ceva nu a mers bine. Încearcă din nou.";
+            // Eroare de retea sau de validare (400) - mesajul specific
+            // e in array-ul errors, nu in message (generic: "Validation failed")
+            const data = err?.response?.data;
+            const msg = data?.errors?.[0] || data?.message || "Ceva nu a mers bine. Încearcă din nou.";
             setError(msg);
         } finally {
             setLoading(false);

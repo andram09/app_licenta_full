@@ -108,8 +108,9 @@ export default function TripsPage() {
             }));
             const enrichedUnassigned = enrichObjectives(unassigned || []);
 
-            const budgetTotal = [...enrichedUnassigned, ...enrichedDays.flatMap((d) => d.objectives)]
+            const perPersonTotal = [...enrichedUnassigned, ...enrichedDays.flatMap((d) => d.objectives)]
                 .reduce((sum, obj) => sum + (obj.estimated_cost ? parseFloat(obj.estimated_cost) : 0), 0);
+            const budgetTotal = perPersonTotal * (trip.number_of_people || 1);
 
             const blob = await pdf(
                 <TripPdfDocument

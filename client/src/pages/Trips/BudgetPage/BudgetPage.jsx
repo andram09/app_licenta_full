@@ -133,6 +133,9 @@ export default function BudgetPage() {
     const totalSpent = summary?.total || 0;
     const difference = totalEstimated - totalSpent;
 
+    // Cheltuielile reale nu pot fi inregistrate in viitor → data maxima = azi
+    const today = new Date().toISOString().slice(0, 10);
+
     // ── Handler update numar persoane ─────────────────────────────────────
     const handlePeopleBlur = async () => {
         const val = Number(peopleInputValue);
@@ -474,6 +477,7 @@ export default function BudgetPage() {
                             <input
                                 type="date"
                                 className="budget-input"
+                                max={today}
                                 value={addForm.date}
                                 onChange={(e) => setAddForm(prev => ({ ...prev, date: e.target.value }))}
                             />
@@ -551,6 +555,7 @@ export default function BudgetPage() {
                                                 <input
                                                     type="date"
                                                     className="budget-input"
+                                                    max={today}
                                                     value={editForm.date}
                                                     onChange={(e) => setEditForm(prev => ({ ...prev, date: e.target.value }))}
                                                 />
@@ -639,6 +644,9 @@ export default function BudgetPage() {
                 {/* ── Sectiunea 4: Grafic si defalcare pe categorii ───── */}
                 <section className="budget-section">
                     <h2 className="budget-section-title">Defalcare pe categorii</h2>
+                    <p className="budget-section-hint">
+                        Valorile sunt convertite orientativ în EUR.
+                    </p>
 
                     {pieData.length === 0 ? (
                         <p className="budget-empty-msg">Nu există cheltuieli înregistrate încă.</p>

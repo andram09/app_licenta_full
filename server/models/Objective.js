@@ -15,10 +15,6 @@ export const Objective = sequelize.define('Objective', {
         type: DataTypes.INTEGER,
         allowNull: true
     },
-    id_category: {
-        type: DataTypes.INTEGER,
-        allowNull: true
-    },
     title: {
         type: DataTypes.STRING,
         allowNull: false
@@ -49,7 +45,7 @@ export const Objective = sequelize.define('Objective', {
         type: DataTypes.STRING
     },
     external_provider: {
-        type: DataTypes.ENUM('OPENTRIPMAP', 'WIKIDATA', 'OVERPASS')
+        type: DataTypes.ENUM('OPENTRIPMAP', 'WIKIDATA', 'OVERPASS', 'GOOGLE')
     },
     estimated_cost: {
         type: DataTypes.DECIMAL(10, 2),

@@ -1,4 +1,4 @@
-import { Trip, TripDay, Objective, Category } from '../models/index.js'
+import { Trip, TripDay, Objective } from '../models/index.js'
 import sequelize from "../config/db.config.js";
 import { Op } from 'sequelize';
 
@@ -22,7 +22,7 @@ export const tripController = {
         } catch (error) {
             console.error('GetAll trips error:', error);
             return res.status(500).json({
-                message: 'Something went wrong.'
+                message: 'A apărut o eroare. Încearcă din nou.'
             });
         }
     },
@@ -42,12 +42,6 @@ export const tripController = {
                             {
                                 model: Objective,
                                 as: 'Objectives',
-                                include: [
-                                    {
-                                        model: Category,
-                                        as: 'Category',
-                                        attributes: ['id_category', 'name']
-                                    }],
                                 order: [['position_in_day', 'ASC']]
                             }
                         ],
@@ -57,14 +51,14 @@ export const tripController = {
             });
 
             if (!trip) {
-                return res.status(404).json({ message: 'Trip not found.' });
+                return res.status(404).json({ message: 'Călătoria nu a fost găsită.' });
             }
 
             return res.status(200).json({ data: trip });
 
         } catch (error) {
             console.error('GetTripById error:', error);
-            return res.status(500).json({ message: 'Something went wrong.' });
+            return res.status(500).json({ message: 'A apărut o eroare. Încearcă din nou.' });
         }
     },
 
@@ -79,7 +73,7 @@ export const tripController = {
             if (!destination_name || destination_name.trim().length < 2) {
                 await transaction.rollback();
                 return res.status(400).json({
-                    message: "Destination name must contain at least 2 characters."
+                    message: "Destinația trebuie să aibă minim 2 caractere."
                 });
             }
 
@@ -87,14 +81,14 @@ export const tripController = {
             if (!daysNumber || isNaN(daysNumber) || daysNumber < 1 || daysNumber > 30) {
                 await transaction.rollback();
                 return res.status(400).json({
-                    message: "Number of days must be between 1 and 30."
+                    message: "Numărul de zile al călătoriei trebuie să fie între 1 și 30."
                 });
             }
 
             if (start_date && isNaN(Date.parse(start_date))) {
                 await transaction.rollback();
                 return res.status(400).json({
-                    message: "Invalid start date format."
+                    message: "Format invalid pentru dată."
                 });
             }
 
@@ -103,7 +97,7 @@ export const tripController = {
                 if (isNaN(lat) || lat < -90 || lat > 90) {
                     await transaction.rollback();
                     return res.status(400).json({
-                        message: "Invalid latitude value."
+                        message: "Valoare invalidă pentru latitudine."
                     });
                 }
             }
@@ -113,7 +107,7 @@ export const tripController = {
                 if (isNaN(lng) || lng < -180 || lng > 180) {
                     await transaction.rollback();
                     return res.status(400).json({
-                        message: "Invalid longitude value."
+                        message: "Valoare invalidă pentru longitudine."
                     });
                 }
             }
@@ -152,13 +146,13 @@ export const tripController = {
             await transaction.commit();
 
             return res.status(201).json({
-                message: 'Trip created successfully.',
+                message: 'Călătoria a fost creată cu succes.',
                 data: { id_trip: trip.id_trip }
             });
 
         } catch (error) {
             console.error('Create trip error:', error);
-            return res.status(500).json({ message: 'Something went wrong.' });
+            return res.status(500).json({ message: 'A apărut o eroare. Încearcă din nou.' });
         }
     },
 
@@ -173,11 +167,11 @@ export const tripController = {
             });
 
             if (!trip) {
-                return res.status(404).json({ message: 'Trip not found.' });
+                return res.status(404).json({ message: 'Călătoria nu a fost găsită.' });
             }
             if (start_date && isNaN(Date.parse(start_date))) {
                 return res.status(400).json({
-                    message: "Invalid start date format."
+                    message: "Format invalid pentru data de plecare."
                 });
             }
 
@@ -200,11 +194,11 @@ export const tripController = {
                 }
             }
 
-            return res.status(200).json({ message: 'Trip updated successfully.' });
+            return res.status(200).json({ message: 'Călătoria a fost actualizată cu succes.' });
 
         } catch (error) {
             console.error('Update trip error:', error);
-            return res.status(500).json({ message: 'Something went wrong.' });
+            return res.status(500).json({ message: 'A apărut o eroare. Încearcă din nou.' });
         }
     },
 
@@ -218,16 +212,16 @@ export const tripController = {
             });
 
             if (!trip) {
-                return res.status(404).json({ message: 'Trip not found.' });
+                return res.status(404).json({ message: 'Călătoria nu a fost găsită.' });
             }
 
             // Soft delete (seteaza deleted_at)
             await trip.destroy();
-            return res.status(200).json({ message: 'Trip deleted successfully.' });
+            return res.status(200).json({ message: 'Călătoria a fost ștearsă cu succes.' });
 
         } catch (error) {
             console.error('Delete trip error:', error);
-            return res.status(500).json({ message: 'Something went wrong.' });
+            return res.status(500).json({ message: 'A apărut o eroare. Încearcă din nou.' });
         }
     },
 
@@ -246,7 +240,7 @@ export const tripController = {
 
             if (!trip) {
                 await transaction.rollback();
-                return res.status(404).json({ message: 'Trip not found.' });
+                return res.status(404).json({ message: 'Călătoria nu a fost găsită.' });
             }
 
             const currentDays = trip.number_of_days;
@@ -254,7 +248,7 @@ export const tripController = {
 
             if (newDays === currentDays) {
                 await transaction.commit();
-                return res.status(200).json({ message: 'No changes needed.' });
+                return res.status(200).json({ message: 'Nu sunt modificări de făcut.' });
             }
 
             if (newDays > currentDays) {
@@ -325,14 +319,14 @@ export const tripController = {
             await transaction.commit();
 
             return res.status(200).json({
-                message: 'Trip duration updated successfully.'
+                message: 'Durata călătoriei a fost actualizată cu succes.'
             });
 
         } catch (error) {
             await transaction.rollback();
             console.error('Update duration error:', error);
             return res.status(500).json({
-                message: 'Something went wrong.'
+                message: 'A apărut o eroare. Încearcă din nou.'
             });
         }
     },
@@ -345,7 +339,7 @@ export const tripController = {
             const tripId = Number(id);
 
             if (!tripId || isNaN(tripId)) {
-                return res.status(400).json({ message: "Invalid trip id." });
+                return res.status(400).json({ message: "ID de călătorie invalid." });
             }
 
             const trip = await Trip.findOne({
@@ -353,7 +347,7 @@ export const tripController = {
             });
 
             if (!trip) {
-                return res.status(404).json({ message: "Trip not found." });
+                return res.status(404).json({ message: "Călătoria nu a fost găsită." });
             }
 
             // toate zilele tripului
@@ -367,7 +361,6 @@ export const tripController = {
             // toate obiectivele pentru zilele acestui trip (atribuite)
             const assigned = dayIds.length ? await Objective.findAll({
                 where: { id_trip_day: dayIds },
-                include: [{ model: Category, attributes: ["id_category", "name"] }],
                 order: [
                     ["id_trip_day", "ASC"],
                     ["position_in_day", "ASC"]
@@ -378,7 +371,6 @@ export const tripController = {
             // obiectivele neatribuite
             const unassigned = await Objective.findAll({
                 where: { id_trip: tripId, id_trip_day: null },
-                include: [{ model: Category, attributes: ["id_category", "name"] }],
                 order: [["createdAt", "DESC"]]
             });
 
@@ -408,7 +400,7 @@ export const tripController = {
 
         } catch (error) {
             console.error("Get trip board error:", error);
-            return res.status(500).json({ message: "Something went wrong." });
+            return res.status(500).json({ message: "A apărut o eroare. Încearcă din nou." });
         }
     },
 
@@ -431,7 +423,7 @@ export const tripController = {
             });
 
             if (!trip) {
-                return res.status(404).json({ message: 'Trip not found.' });
+                return res.status(404).json({ message: 'Călătoria nu a fost găsită.' });
             }
 
             // functie helper pentru un apel Nominatim
@@ -474,7 +466,7 @@ export const tripController = {
 
         } catch (error) {
             console.error('Save hotel error:', error);
-            return res.status(500).json({ message: 'Something went wrong.' });
+            return res.status(500).json({ message: 'A apărut o eroare. Încearcă din nou.' });
         }
 
     },
@@ -489,17 +481,17 @@ export const tripController = {
             });
 
             if (!trip) {
-                return res.status(404).json({ message: 'Trip not found.' });
+                return res.status(404).json({ message: 'Călătoria nu a fost găsită.' });
             }
 
             // resetam campurile hotelului la null
             await trip.update({ hotel_name: null, hotel_lat: null, hotel_lng: null });
 
-            return res.status(200).json({ message: 'Hotel removed successfully.' });
+            return res.status(200).json({ message: 'Hotelul a fost eliminat cu succes.' });
 
         } catch (error) {
             console.error('Remove hotel error:', error);
-            return res.status(500).json({ message: 'Something went wrong.' });
+            return res.status(500).json({ message: 'A apărut o eroare. Încearcă din nou.' });
         }
     }
 

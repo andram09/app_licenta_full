@@ -13,7 +13,7 @@ export default function LandingPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        document.title = "TripPlanner";
+        document.title = "TravelPlanner";
     }, []);
 
     // Scroll-reveal: add .is-visible when element enters viewport
@@ -186,7 +186,7 @@ export default function LandingPage() {
             </div>
 
             <footer className="landing-footer">
-                {new Date().getFullYear()} TripPlanner - Aplicație pentru planificarea itinerariilor turistice
+                {new Date().getFullYear()} TravelPlanner - Aplicație pentru planificarea itinerariilor turistice
             </footer>
         </div>
     );

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../../../store/authContext";
 import "./LoginPage.css";
 
@@ -9,6 +10,7 @@ export default function LoginPage() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -34,7 +36,10 @@ export default function LoginPage() {
         try {
             await login(email, password);
         } catch (err) {
-            const raw = err?.response?.data?.message;
+            const data = err?.response?.data;
+            // La erori de validare, mesajul specific e in array-ul errors,
+            // nu in message (care e generic: "Validation failed")
+            const raw = data?.errors?.[0] || data?.message;
             const msg = MESAJE_RO[raw] || raw || "Ceva nu a mers bine. Încearcă din nou.";
             setError(msg);
         } finally {
@@ -64,15 +69,25 @@ export default function LoginPage() {
 
                     <label className="login-label">
                         Parolă
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="login-input"
-                            placeholder="••••••••"
-                            required
-                            autoComplete="current-password"
-                        />
+                        <div className="password-field">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="login-input"
+                                placeholder="••••••••"
+                                required
+                                autoComplete="current-password"
+                            />
+                            <button
+                                type="button"
+                                className="password-toggle"
+                                onClick={() => setShowPassword((v) => !v)}
+                                aria-label={showPassword ? "Ascunde parola" : "Arată parola"}
+                            >
+                                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                            </button>
+                        </div>
                     </label>
 
                     {/* Mesaj de eroare de la backend */}

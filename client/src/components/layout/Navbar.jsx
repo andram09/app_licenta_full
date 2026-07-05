@@ -70,7 +70,7 @@ export default function Navbar({ pageTitle = null, hideNavLinks = false, navLink
 
             {/* Center: page title */}
             <div className="navbar-center">
-                <span className="navbar-title">{pageTitle ?? "TripPlanner"}</span>
+                <span className="navbar-title">{pageTitle ?? "TravelPlanner"}</span>
             </div>
 
             {/* Right: actions */}

@@ -226,12 +226,24 @@ export const authController = {
         });
       }
 
+      const user = await User.findByPk(userToken.id_user);
+      if (!user) {
+        return res.status(400).json({
+          message: "Link-ul de resetare este invalid sau a expirat."
+        });
+      }
+
+      // prevenim reutilizarea aceleiasi parole
+      const isSamePassword = await bcrypt.compare(password, user.password_hash);
+      if (isSamePassword) {
+        return res.status(400).json({
+          message: "Parola nouă trebuie să fie diferită de cea curentă."
+        });
+      }
+
       const password_hash = await bcrypt.hash(password, 10);
 
-      await User.update(
-        { password_hash },
-        { where: { id_user: userToken.id_user } }
-      );
+      await user.update({ password_hash });
 
       await userToken.update({ used_at: new Date() });
 
@@ -272,7 +284,7 @@ export const authController = {
 
     } catch (error) {
       console.error("UpdateProfile error:", error);
-      return res.status(500).json({ message: "Something went wrong." });
+      return res.status(500).json({ message: "A apărut o eroare. Încearcă din nou." });
     }
   },
 
@@ -321,7 +333,7 @@ export const authController = {
 
     } catch (error) {
       console.error("ChangePassword error:", error);
-      return res.status(500).json({ message: "Something went wrong." });
+      return res.status(500).json({ message: "A apărut o eroare. Încearcă din nou." });
     }
   }
 };
