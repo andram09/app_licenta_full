@@ -84,7 +84,6 @@ npm run dev      # development pe http://localhost:5173
 
 | POST | `/api/auth/register` | Înregistrare utilizator |
 | POST | `/api/auth/login` | Autentificare |
-| POST | `/api/auth/refresh` | Refresh token |
 | GET | `/api/trips` | Lista călătoriilor utilizatorului |
 | POST | `/api/trips` | Creare călătorie nouă |
 | GET | `/api/trips/:id/objectives` | Obiectivele unei călătorii |
