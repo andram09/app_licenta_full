@@ -102,7 +102,7 @@ npm run dev      # development pe http://localhost:5173
 - **TripDay** — zilele unei călătorii
 - **Objective** — obiective turistice ale unei zile
 - **Expense** — cheltuieli ale unei călătorii
-- **Category / ExpenseCategory** — categorii de cheltuieli
+- **ExpenseCategory** — categorii de cheltuieli
 - **UserToken** — refresh tokens
 
 
